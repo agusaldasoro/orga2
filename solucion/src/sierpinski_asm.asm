@@ -143,11 +143,13 @@ sierpinski_asm:
     cvtps2dq xmm7,xmm7
 
     ;De ints a shorts
-    packssdw xmm6,xmm0
-    packssdw xmm7,xmm1
+    packusdw xmm6,xmm0
+    packusdw xmm7,xmm1
 
     ; Y de shorts a chars :D
-    packsswb xmm6,xmm7
+    packuswb xmm6,xmm7
+
+    ; por qué necesitamos unsigned saturation? Marco señal.
 
     movdqa [rsi+rax],xmm6
 
