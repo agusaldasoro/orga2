@@ -31,7 +31,6 @@ sierpinski_asm:
     push r13
     push r14
     push r15 
-    ; mov qword [rbp-20], 0
 
     xor r15,r15 ; x
     xor r14,r14 ; y
@@ -96,7 +95,6 @@ sierpinski_asm:
     mov eax,r12d  ; 
     add eax,r13d  ; rax = y*row_size + x*4 
 
-    ; mov r11,[rdi+rax]
     
     movdqu xmm0,[rdi+rax] ; agarró 16 bytes del source!
     movdqu xmm1,xmm0      ; y me hago una copia
@@ -118,7 +116,6 @@ sierpinski_asm:
     cvtdq2ps xmm1,xmm1
     cvtdq2ps xmm7,xmm7
 
-    ; movups xmm14,xmm15
     movdqu xmm14,xmm15
     shufps xmm15,xmm15, 0x00 ; 00 00 00 00
     ; mulps xmm0,xmm15
@@ -139,31 +136,27 @@ sierpinski_asm:
     ; mulps xmm1,xmm15
     mulps xmm0,xmm15
 
-    ; Confloats 
+    ; Convierto los pixels (floats) a ints empaquetados!
     cvtps2dq xmm1,xmm1
     cvtps2dq xmm0,xmm0
     cvtps2dq xmm6,xmm6
     cvtps2dq xmm7,xmm7
-;ints
 
+    ;De ints a shorts
     packssdw xmm6,xmm0
     packssdw xmm7,xmm1
-;shorts
+
+    ; Y de shorts a chars :D
     packsswb xmm6,xmm7
 
-    ; pshufd xmm6,xmm6, 0xE4 ; 11 10 01 00 (mantiene)
-    ; pshufd xmm6,xmm6, 0xbb ; 10 11 10 11 
     movdqa [rsi+rax],xmm6
 
-    ; mov [rsi+rax],r11
 
-    add r15,4 ; avanzo 4
-    ; inc r15
+    add r15,4 ; avanzo 4 sobre x
     jmp .loop_y
 .endloop_y:
-    ; add r14,4
     inc r14
-    xor r15,r15
+    xor r15,r15 ; reinicio x
     jmp .loop_x
 .endloop_x:
 
