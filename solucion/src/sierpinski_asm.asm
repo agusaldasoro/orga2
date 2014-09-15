@@ -118,22 +118,18 @@ sierpinski_asm:
 
     movdqu xmm14,xmm15
     shufps xmm15,xmm15, 0x00 ; 00 00 00 00
-    ; mulps xmm0,xmm15
     mulps xmm1,xmm15
 
     movdqu xmm15,xmm14
     shufps xmm15,xmm15, 0x55 ; 01 01 01 01 
     mulps xmm7,xmm15       
-    ; mulps xmm6,xmm15       
     
     movdqu xmm15,xmm14
     shufps xmm15,xmm15, 0xAA ; 10 10 10 10
     mulps xmm6,xmm15
-    ; mulps xmm7,xmm15
     
     movdqu xmm15,xmm14
     shufps xmm15,xmm15, 0xFF ; 11 11 11 11
-    ; mulps xmm1,xmm15
     mulps xmm0,xmm15
 
     ; Convierto los pixels (floats) a ints empaquetados!
@@ -143,16 +139,15 @@ sierpinski_asm:
     cvtps2dq xmm7,xmm7
 
     ;De ints a shorts
-    packusdw xmm6,xmm0
+    packusdw xmm0,xmm6
     packusdw xmm7,xmm1
 
     ; Y de shorts a chars :D
-    packuswb xmm6,xmm7
+    packuswb xmm0,xmm7
 
     ; por qué necesitamos unsigned saturation? Marco señal.
 
-    movdqa [rsi+rax],xmm6
-
+    movdqa [rsi+rax],xmm0
 
     add r15,4 ; avanzo 4 sobre x
     jmp .loop_y
