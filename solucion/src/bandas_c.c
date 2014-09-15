@@ -26,22 +26,23 @@ void bandas_c (
 	unsigned char (*dst_matrix)[dst_row_size] = (unsigned char (*)[dst_row_size]) dst;
 
 	int x,y;
-	for (x = 0; x < n; x++) {
-		for (y = 0; y < m; y++) {
-			unsigned char r = src_matrix[y][x*4];
+	for (y = 0; y < m; y++) {
+		for (x = 0; x < n; x++) {
+			unsigned char b = src_matrix[y][x*4];
 			unsigned char g = src_matrix[y][x*4+1];
-			unsigned char b = src_matrix[y][x*4+2];
+			unsigned char r = src_matrix[y][x*4+2];
 			unsigned char a = src_matrix[y][x*4+3];
 
 			int i = r+g+b;
 
 			int s = bandas(i);
-
+			printf("(%d,%d) => %d+%d+%d = %d\n", x,y,b,g,r,i);
 			dst_matrix[y][x*4] = s;
 			dst_matrix[y][x*4+1] = s;
 			dst_matrix[y][x*4+2] = s;
 			dst_matrix[y][x*4+3] = a;
 		}
+		return;
 	} 
 
 
