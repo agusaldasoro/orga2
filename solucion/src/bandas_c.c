@@ -36,13 +36,12 @@ void bandas_c (
 			int i = r+g+b;
 
 			int s = bandas(i);
-			printf("(%d,%d) => %d+%d+%d = %d\n", x,y,b,g,r,i);
+			// printf("(%d,%d) => %d+%d+%d = %d\n", x,y,b,g,r,i);
 			dst_matrix[y][x*4] = s;
 			dst_matrix[y][x*4+1] = s;
 			dst_matrix[y][x*4+2] = s;
 			dst_matrix[y][x*4+3] = a;
 		}
-		return;
 	} 
 
 
