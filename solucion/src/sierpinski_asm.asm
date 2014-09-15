@@ -133,10 +133,10 @@ sierpinski_asm:
     mulps xmm0,xmm15
 
     ; Convierto los pixels (floats) a ints empaquetados!
-    cvtps2dq xmm1,xmm1
-    cvtps2dq xmm0,xmm0
-    cvtps2dq xmm6,xmm6
-    cvtps2dq xmm7,xmm7
+    cvttps2dq xmm1,xmm1
+    cvttps2dq xmm0,xmm0
+    cvttps2dq xmm6,xmm6
+    cvttps2dq xmm7,xmm7
 
     ;De ints a shorts
     packusdw xmm0,xmm6
