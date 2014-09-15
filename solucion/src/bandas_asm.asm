@@ -9,7 +9,7 @@ color3 db 128,128,128,255
 color4 db 192,192,192,255
 color5 db 255,255,255,255
 
-64s dw 64,64,64,64,64,64,64,64
+all_64w dw 64,64,64,64,64,64,64,64
 
 
 color1_bound dw 96,96,96,96,96,96,96,96
@@ -108,13 +108,14 @@ bandas_asm:
 
     pabsw xmm1,xmm1
 
-    movdqu xmm0,[64s]
+    movdqu xmm0,[all_64w]
     pmullw xmm1,xmm0
 
-    movdqu xmm15,[magic_shuffle]
-    PSHUFB xmm1,xmm15
+    ; reordeno los bytes a como estaba original
+    movdqu xmm15,[magic_shuffle] 
+    pshufb xmm1,xmm15
 
-    movdqa [rsi+rax],xmm1
+    movdqu [rsi+rax],xmm1
 
     add r15,4 ; avanzo 4 sobre x
     jmp .loop_x
