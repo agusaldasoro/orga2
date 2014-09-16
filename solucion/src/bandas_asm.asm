@@ -1,4 +1,4 @@
-
+    
 global bandas_asm
 
 section .data
@@ -9,7 +9,7 @@ color3 db 128,128,128,255
 color4 db 192,192,192,255
 color5 db 255,255,255,255
 
-all_64w dw 64,64,64,64,64,64,64,64
+all_64w dw -64,-64,-64,-64,-64,-64,-64,-64
 
 
 color1_bound dw 96,96,96,96,96,96,96,96
@@ -85,31 +85,46 @@ bandas_asm:
 
     paddw xmm1,xmm2
 
+    movdqu xmm14,[all_64w]
+    movdqu xmm7,[all_1_mask]
+
     movdqu xmm15,[color1_bound]
     movdqu xmm0,xmm1 
+    pcmpgtw xmm15,xmm1
+    pandn xmm15,xmm7
+    pmullw xmm15,xmm14
 
-    pcmpgtw xmm1,xmm15 ; pone ceros en dst donde no se cumpla la condición (greater than)
+    movdqu xmm1,xmm15
+
 
     movdqu xmm2,xmm0
     movdqu xmm15,[color2_bound]
-    pcmpgtw xmm2,xmm15 
+    pcmpgtw xmm15,xmm2
+    pandn xmm15,xmm7
+    pmullw xmm15,xmm14
+
+    movdqu xmm2,xmm15
+
 
     movdqu xmm3,xmm0
     movdqu xmm15,[color3_bound]
-    pcmpgtw xmm3,xmm15 
+    pcmpgtw xmm15,xmm3
+    pandn xmm15,xmm7
+    pmullw xmm15,xmm14
+
+    movdqu xmm3,xmm15
 
     movdqu xmm4,xmm0
     movdqu xmm15,[color4_bound]
-    pcmpgtw xmm4,xmm15 
+    pcmpgtw xmm15,xmm4
+    pandn xmm15,xmm7
+    pmullw xmm15,xmm14
 
-    paddw xmm1,xmm2
-    paddw xmm1,xmm3
-    paddw xmm1,xmm4
+    movdqu xmm4,xmm15
 
-    pabsw xmm1,xmm1
-
-    movdqu xmm0,[all_64w]
-    pmullw xmm1,xmm0
+    paddusb xmm1,xmm2
+    paddusb xmm1,xmm3
+    paddusb xmm1,xmm4
 
     ; reordeno los bytes a como estaba original
     movdqu xmm15,[magic_shuffle] 
