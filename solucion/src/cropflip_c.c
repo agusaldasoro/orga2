@@ -25,10 +25,10 @@ void cropflip_c    (
 		for (x = offsetx; x < offsetx+tamx; x++) {
 						
 			unsigned char r = src_matrix[y][x*4+0];
-			
 			unsigned char g = src_matrix[y][x*4+1];
 			unsigned char b = src_matrix[y][x*4+2];
 			unsigned char a = src_matrix[y][x*4+3];
+
 			dst_matrix[y2][x2*4-4] = r;
 			dst_matrix[y2][x2*4-3] = g;
 			dst_matrix[y2][x2*4-2] = b;
