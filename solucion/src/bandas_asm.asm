@@ -86,12 +86,12 @@ bandas_asm:
     paddw xmm1,xmm2
 
     movdqu xmm14,[all_64w]
-    movdqu xmm7,[all_1_mask]
+    movdqu xmm13,[all_1_mask]
 
     movdqu xmm15,[color1_bound]
     movdqu xmm0,xmm1 
     pcmpgtw xmm15,xmm1
-    pandn xmm15,xmm7
+    pandn xmm15,xmm13
     pmullw xmm15,xmm14
 
     movdqu xmm1,xmm15
@@ -100,7 +100,7 @@ bandas_asm:
     movdqu xmm2,xmm0
     movdqu xmm15,[color2_bound]
     pcmpgtw xmm15,xmm2
-    pandn xmm15,xmm7
+    pandn xmm15,xmm13
     pmullw xmm15,xmm14
 
     movdqu xmm2,xmm15
@@ -109,7 +109,7 @@ bandas_asm:
     movdqu xmm3,xmm0
     movdqu xmm15,[color3_bound]
     pcmpgtw xmm15,xmm3
-    pandn xmm15,xmm7
+    pandn xmm15,xmm13
     pmullw xmm15,xmm14
 
     movdqu xmm3,xmm15
@@ -117,7 +117,7 @@ bandas_asm:
     movdqu xmm4,xmm0
     movdqu xmm15,[color4_bound]
     pcmpgtw xmm15,xmm4
-    pandn xmm15,xmm7
+    pandn xmm15,xmm13
     pmullw xmm15,xmm14
 
     movdqu xmm4,xmm15

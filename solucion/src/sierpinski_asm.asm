@@ -54,7 +54,7 @@ sierpinski_asm:
 
 
     ; esto puede optimizarse haciendo 255/filas y 255/cols una única vez
-    ; en lugar de hacer en cada iteración
+    ; en lugar de hacerlo en cada iteración
     movups xmm0,[dq255]
     mulps xmm1,xmm0 ; x*255
     mulps xmm2,xmm0 ; y*255
