@@ -34,7 +34,6 @@ void cropflip_c    (
 			dst_matrix[y2][x2*4-2] = b;
 			dst_matrix[y2][x2*4-1] = a;
 			x2--;
-			//printf("HOLA\n");
 		}
 		y2--;
 	} 
