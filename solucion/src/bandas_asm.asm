@@ -3,8 +3,12 @@ global bandas_asm
 
 section .data
 
-color1 db 0,0,0,255
-color2 db 64,64,64,255,
+; color1 db 0,0,0,255
+; color2 db 64,64,64,255,
+; color1 dw 0,0,0,0,0,0,0,0
+color1 dw 64,64,64,64,64,64,64,64
+; color2 dw 64,64,64,64,64,64,64,64
+; color2 dw 64,64,64,64,64,64,64,64
 color3 db 128,128,128,255
 color4 db 192,192,192,255
 color5 db 255,255,255,255
@@ -87,12 +91,14 @@ bandas_asm:
 
     movdqu xmm14,[all_64w]
     movdqu xmm13,[all_1_mask]
+    movdqu xmm12,[color1]
+
 
     movdqu xmm15,[color1_bound]
     movdqu xmm0,xmm1 
     pcmpgtw xmm15,xmm1
     pandn xmm15,xmm13
-    pmullw xmm15,xmm14
+    pand xmm15,xmm12
 
     movdqu xmm1,xmm15
 
@@ -101,7 +107,7 @@ bandas_asm:
     movdqu xmm15,[color2_bound]
     pcmpgtw xmm15,xmm2
     pandn xmm15,xmm13
-    pmullw xmm15,xmm14
+    pand xmm15,xmm12
 
     movdqu xmm2,xmm15
 
@@ -110,7 +116,7 @@ bandas_asm:
     movdqu xmm15,[color3_bound]
     pcmpgtw xmm15,xmm3
     pandn xmm15,xmm13
-    pmullw xmm15,xmm14
+    pand xmm15,xmm12
 
     movdqu xmm3,xmm15
 
@@ -118,7 +124,7 @@ bandas_asm:
     movdqu xmm15,[color4_bound]
     pcmpgtw xmm15,xmm4
     pandn xmm15,xmm13
-    pmullw xmm15,xmm14
+    pand xmm15,xmm12
 
     movdqu xmm4,xmm15
 
