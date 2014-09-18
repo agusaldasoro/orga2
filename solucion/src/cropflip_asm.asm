@@ -13,17 +13,15 @@ section .text
 cropflip_asm:
 	push rbp
 	mov rbp,rsp
+	; push rsi
+	; push rdi
+	; push rcx
 	push rbx
-	push rcx
 	push r12
 	push r13
 	push r14
 	push r15
-
-	xor r12,r12
-	xor r13,r13
-	xor r14,r14
-	xor r15,r15
+	sub rsp,8
 
 	mov r12d, [rbp+16]
 	mov r13d, [rbp+24]
@@ -49,17 +47,16 @@ cropflip_asm:
 .loop_y:
 	cmp r10,r13 ; y < offsety+tamy
 	jge .endloop_y
-	mov r11,r14
-	mov rdx,r12 
+	mov r11,r14 ; x = offsetx
+	mov rdx,r12 ; x2 = tamx;
 .loop_x:
 	cmp r11,rbx ; x < offsetx+tamx
 	jge .endloop_x
 
-	xor rax,rax
-
 	mov rax,r10
 	imul rax,r8
-	lea rax,[rax+r11*4] 
+	lea rax,[rax+r11*4]
+
 	movdqu xmm0,[rdi+rax]
 
 	pshufd xmm0, xmm0,0x1B ; 00 01 10 11
@@ -78,11 +75,14 @@ cropflip_asm:
 	jmp .loop_y
 .endloop_y:
 	
+	add rsp,8
 	pop r15
 	pop r14
 	pop r13
 	pop r12
-	pop rcx
 	pop rbx
+	; pop rcx
+	; pop rdi
+	; pop rsi
 	pop rbp
     ret
