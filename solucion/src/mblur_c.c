@@ -14,14 +14,21 @@ void mblur_c    (
     int src_row_size,
     int dst_row_size)
 {
+
+/*
+D 0 0 0 0
+0 B 0 0 0
+0 0 A 0 0
+0 0 0 C 0
+0 0 0 0 E
+*/
+
     unsigned char (*src_matrix)[src_row_size] = (unsigned char (*)[src_row_size]) src;
     unsigned char (*dst_matrix)[dst_row_size] = (unsigned char (*)[dst_row_size]) dst;
 	
-	for (int i = 0; i < filas; i++)
-    {
-        for (int j = 0; j < cols; j++)
-        {
-            if (i < 2 || j < 2) {
+	for (int i = 0; i < filas; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (i < 2 || j < 2 || i+2 >= filas || j+2 >= cols) {
                 dst_matrix[i][j*4+0] = 0;
                 dst_matrix[i][j*4+1] = 0;
                 dst_matrix[i][j*4+2] = 0;
@@ -29,11 +36,12 @@ void mblur_c    (
                 continue;
             }
 
+
             bgra_t *a = &src_matrix[i][j*4];
             bgra_t *c = &src_matrix[i+1][(j+1)*4];
             bgra_t *b = &src_matrix[i-1][(j-1)*4];
             bgra_t *d = &src_matrix[i+2][(j+2)*4];
-            bgra_t *e = &src_matrix[i-2][(j+2)*4];
+            bgra_t *e = &src_matrix[i-2][(j-2)*4];
 
             bgra_t dst;
 
