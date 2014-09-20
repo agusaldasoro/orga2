@@ -21,8 +21,8 @@ void sierpinski_c    (
 	unsigned char (*dst_matrix)[dst_row_size] = (unsigned char (*)[dst_row_size]) dst;
 
 	int x, y;
-	for (y = 0; x < filas; x++) {
-		for (x = 0; y < cols; y++) {
+	for (y = 0; y < filas; y++) {
+		for (x = 0; x < cols; x++) {
 			int i = (int) (floor((x*255.0)/filas));
 			int j = (int) (floor((y*255.0)/cols));
 			float s = (i^j) / 255.0;
