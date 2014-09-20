@@ -2,20 +2,21 @@ global cropflip_asm
 
 section .text
 
-;	void tiles_asm(unsigned char *src, RDI
+;void tiles_asm(
+;	unsigned char *src, RDI
 ;       unsigned char *dst, RSI
-;	int cols EDX, rows R10
+;	int cols, 	EDX 
+;	int rows, 	ECX
 ;       int src_row_size, R8D
 ;       int dst_row_size, R9D
-;	int tamx 16 R12, int tamy R13,
-;	int offsetx 48 R14, int offsety) 64 R15;
+;	int tamx, 	R12d
+;	int tamy, 	R13d
+;	int offsetx, 	R14d 
+;	int offsety, 	R15d
 
 cropflip_asm:
 	push rbp
 	mov rbp,rsp
-	; push rsi
-	; push rdi
-	; push rcx
 	push rbx
 	push r12
 	push r13
@@ -23,11 +24,10 @@ cropflip_asm:
 	push r15
 	sub rsp,8
 
-	mov r12d, [rbp+16]
-	mov r13d, [rbp+24]
-	mov r14d, [rbp+32]
-	mov r15d, [rbp+40]
-
+	mov r12d, [rbp+16] ;tamx
+	mov r13d, [rbp+24] ;tamy
+	mov r14d, [rbp+32] ;offsetx
+	mov r15d, [rbp+40] ;offsety
 
 	mov r12d,r12d
 	mov r13d,r13d
@@ -48,7 +48,8 @@ cropflip_asm:
 	cmp r10,r13 ; y < offsety+tamy
 	jge .endloop_y
 	mov r11,r14 ; x = offsetx
-	mov rdx,r12 ; x2 = tamx;
+;	mov rdx,r12 ; x2 = tamx
+	mov rdx,0 ; x2 = 0
 .loop_x:
 	cmp r11,rbx ; x < offsetx+tamx
 	jge .endloop_x
@@ -59,15 +60,18 @@ cropflip_asm:
 
 	movdqu xmm0,[rdi+rax]
 
-	pshufd xmm0, xmm0,0x1B ; 00 01 10 11
+;	pshufd xmm0, xmm0,0x1B ; 00 01 10 11
 
 	mov rax,rcx
 	imul rax,r9
 	lea rax,[rax+rdx*4]
-	movdqu [rsi+rax-16],xmm0
+
+;	movdqu [rsi+rax-16],xmm0
+	movdqu [rsi+rax],xmm0
 
 	add r11,4
-	sub rdx,4
+;	sub rdx,4
+	add rdx,4
 	jmp .loop_x
 .endloop_x:
 	inc r10
@@ -81,8 +85,5 @@ cropflip_asm:
 	pop r13
 	pop r12
 	pop rbx
-	; pop rcx
-	; pop rdi
-	; pop rsi
 	pop rbp
     ret
