@@ -21,19 +21,26 @@ void cropflip_c    (
 
 	y2 = tamy-1;
 	for (y = offsety; y < offsety+tamy	; y++) {
-		x2 = tamx;
+//		x2 = tamx;
+		x2 = 0;
 		for (x = offsetx; x < offsetx+tamx; x++) {
 						
 			unsigned char r = src_matrix[y][x*4+0];
 			unsigned char g = src_matrix[y][x*4+1];
 			unsigned char b = src_matrix[y][x*4+2];
 			unsigned char a = src_matrix[y][x*4+3];
+	
+			dst_matrix[y2][x2*4+0] = r;
+			dst_matrix[y2][x2*4+1] = g;
+			dst_matrix[y2][x2*4+2] = b;
+			dst_matrix[y2][x2*4+3] = a;
 
-			dst_matrix[y2][x2*4-4] = r;
-			dst_matrix[y2][x2*4-3] = g;
-			dst_matrix[y2][x2*4-2] = b;
-			dst_matrix[y2][x2*4-1] = a;
-			x2--;
+//			dst_matrix[y2][x2*4-4] = r;
+//			dst_matrix[y2][x2*4-3] = g;
+//			dst_matrix[y2][x2*4-2] = b;
+//			dst_matrix[y2][x2*4-1] = a;
+//			x2--;
+			x2++;
 		}
 		y2--;
 	} 
