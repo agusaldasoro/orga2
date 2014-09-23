@@ -2,4 +2,3 @@
 5 sierpinski
 0 bandas
 5 mblur
-

@@ -8,12 +8,12 @@ VERDE="\e[32m"
 
 OKVALGRIND=1
 
-echo 'Iniciando test de diferencias C vs. ASM...'
+echo 'Iniciando test de memoria (valgrind sobre C y ASM)...'
 
 while read params_filtro; do
 	for imagen in $(ls $INPUTDIR); do
-	    ./implementacion_vs_valgrind.sh $imagen c 0 $params_filtro
-	    ./implementacion_vs_valgrind.sh $imagen asm 0 $params_filtro
+	    ./implementacion_vs_valgrind.sh $imagen c $params_filtro
+	    ./implementacion_vs_valgrind.sh $imagen asm $params_filtro
 		if [ $? != 0 ]; then
 			OKVALGRIND=0
 #			exit # para que pare en el primer error descomentar esta linea
