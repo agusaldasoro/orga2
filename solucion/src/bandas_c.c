@@ -26,8 +26,8 @@ void bandas_c (
 	unsigned char (*dst_matrix)[dst_row_size] = (unsigned char (*)[dst_row_size]) dst;
 
 	int x,y;
-	for (y = 0; y < m; y++) {
-		for (x = 0; x < n; x++) {
+	for (y = 0; y < n; y++) {
+		for (x = 0; x < m; x++) {
 			unsigned char b = src_matrix[y][x*4];
 			unsigned char g = src_matrix[y][x*4+1];
 			unsigned char r = src_matrix[y][x*4+2];

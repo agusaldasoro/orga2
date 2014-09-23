@@ -28,21 +28,48 @@ mblur_asm:
 
 	xor r10,r10 ; i
 	xor r11,r11 ; j
-	mov r10,2
-	sub edx,2
-	sub ecx,2
+	mov r10,0
+	; sub edx,2
+	; sub ecx,2
+	xor r15,r15
+	xor r14,r14
+	mov r15d,edx
+	mov r14d,ecx
+	sub r15,2
+	sub r14,2
+	pxor xmm13,xmm13
 .loop_y:
-	cmp r10d,edx ; y < filas
+	cmp r10d,ecx ; y < filas
 	jge .endloop_y
-	mov r11,2
+	mov r11,0
 .loop_x:
-	cmp r11d,ecx ; x < cols
+	cmp r11d,edx ; x < cols
 	jge .endloop_x
-
 
 	mov rax,r10
 	imul eax,r8d
 	lea rax,[rax+r11*4]
+
+	cmp r11,2
+	jl .cero
+	cmp r10,2 
+	jl .cero
+	cmp r10,r14
+	jge .cero
+	cmp r11,r15
+	jge .cero
+
+
+	jmp .nocero
+.cero:
+	movq [rsi+rax],xmm13		
+	add r11,2
+	jmp .loop_x
+
+.nocero:
+	; mov rax,r10
+	; imul eax,r8d
+	; lea rax,[rax+r11*4]
 
 	lea rbx,[rdi+rax]
 	movdqu xmm1,[rbx]        ; (i,j)

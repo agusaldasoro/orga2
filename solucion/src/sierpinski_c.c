@@ -23,8 +23,8 @@ void sierpinski_c    (
 	int x, y;
 	for (y = 0; y < filas; y++) {
 		for (x = 0; x < cols; x++) {
-			int i = (int) (floor((x*255.0)/filas));
-			int j = (int) (floor((y*255.0)/cols));
+			int i = (int) (floor((y*255.0)/filas));
+			int j = (int) (floor((x*255.0)/cols));
 			float s = (i^j) / 255.0;
 			
 			unsigned char r = src_matrix[y][x*4+0] * s;
