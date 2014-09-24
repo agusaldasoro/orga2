@@ -1,0 +1,59 @@
+aaldasoro@ws4:~/Documentos/orga2/solucion/src$ ./mediciones.sh sierpinski lena.bmp asm
+8819571
+8837251
+8880374
+8879731
+8974737
+8931887
+8649333
+//3947004
+8877454
+8609860
+
+aaldasoro@ws4:~/Documentos/orga2/solucion/src$ ./mediciones.sh sierpinski lena.bmp c -o0
+52058637
+64269048
+65519076
+//35576228
+50442594
+50964417
+54097662
+62322142
+69003618
+62099622
+
+aaldasoro@ws4:~/Documentos/orga2/solucion/src$ ./mediciones.sh sierpinski lena.bmp c -o1
+38856003
+50216042
+43410100
+42836153
+35041937
+46294389
+50254322
+38621475
+46882775
+50337177
+
+aaldasoro@ws4:~/Documentos/orga2/solucion/src$ ./mediciones.sh sierpinski lena.bmp c -o2
+15643596
+16078269
+16089537
+34391816
+15775098
+31564524
+18516015
+34315496
+34455671
+34384259
+
+aaldasoro@ws4:~/Documentos/orga2/solucion/src$ ./mediciones.sh sierpinski lena.bmp c -o3
+31858329
+33697077
+34537190
+34508512
+34456579
+34517423
+34516713
+34557072
+34441102
+34462931

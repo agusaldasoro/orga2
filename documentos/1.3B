@@ -1,0 +1,22 @@
+aaldasoro@ws4:~/Documentos/orga2/solucion/src$ ./medicionesCropflip.sh lena.bmp asm
+33585
+33798
+33402
+33228
+33159
+33441
+34089
+33768
+34563
+34473
+aaldasoro@ws4:~/Documentos/orga2/solucion/src$ ./medicionesCropflip.sh lena.bmp c
+542928
+544155
+544857
+543687
+543252
+543324
+544224
+760359
+542448
+542982
