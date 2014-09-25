@@ -65,7 +65,7 @@ filtro_t* detectar_filtro(configuracion_t *config)
 void correr_filtro_imagen(configuracion_t *config, aplicador_fn_t aplicador)
 {
 	snprintf(config->archivo_salida, sizeof(config->archivo_salida), "%s/%s.%s.%s%s.bmp",
-                 config->carpeta_salida, basename(config->archivo_entrada),
+                config->carpeta_salida, basename(config->archivo_entrada),
                  config->nombre_filtro, C_ASM(config), config->extra_archivo_salida );
 
 	if (config->nombre)
@@ -75,14 +75,17 @@ void correr_filtro_imagen(configuracion_t *config, aplicador_fn_t aplicador)
 	else
 	{
 		opencv_abrir_imagenes(config);
-		FILE* handler = fopen("mediciones.txt", "a");
+//		char* str = strdup(config->nombre_filtro);
+//		strcat(str, ".mediciones")
+		FILE* handler = fopen("mediciones", "a");
 		config->archivo_mediciones = handler;
                 fprintf(handler, "%s\n", config->nombre_filtro);
-		for (int i = 0; i < config->iteraciones; i++) {
+		int i = 0;
+		for (i = 0; i < config->iteraciones; i++) {
 //			fprintf(handler, "%s  (%d de %d)\n", config->nombre_filtro, i, config->iteraciones);
 			aplicador(config);
 		}
-		fclose(handler);
+		fclose(config->archivo_mediciones);
 		opencv_liberar_imagenes(config);
 	}
 }
