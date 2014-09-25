@@ -1,15 +1,19 @@
 #!/bin/bash
 
-range=10 # 100
+RANGE=10 # 100
 
 TP=../bin/tp2
 FILTRO=$1
 IMPL=$2
 IMAGEN=$3
-shift 3 
+ITERACIONES=$4
+shift 4
 PARAMS=$@ 
-echo $PARAMS
-for i in $(seq 1 $range);
+
+rm mediciones.txt
+
+for i in $(seq 1 $RANGE);
 do
-$TP $FILTRO -i $IMPL -t 10 $IMAGEN $PARAMS;
+echo "$FILTRO ($i de $RANGE)" >> mediciones.txt
+$TP $FILTRO -i $IMPL -t $ITERACIONES $IMAGEN $PARAMS;
 done
