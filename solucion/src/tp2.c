@@ -79,10 +79,10 @@ void correr_filtro_imagen(configuracion_t *config, aplicador_fn_t aplicador)
 //		strcat(str, ".mediciones")
 		FILE* handler = fopen("mediciones", "a");
 		config->archivo_mediciones = handler;
-                fprintf(handler, "%s\n", config->nombre_filtro);
+//                fprintf(handler, "%s\n", config->nombre_filtro);
 		int i = 0;
 		for (i = 0; i < config->iteraciones; i++) {
-//			fprintf(handler, "%s  (%d de %d)\n", config->nombre_filtro, i, config->iteraciones);
+//			fprintf(config->archivo_mediciones, "%d de %d \n", i, config->iteraciones);
 			aplicador(config);
 		}
 		fclose(config->archivo_mediciones);

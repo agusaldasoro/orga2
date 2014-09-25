@@ -1,6 +1,6 @@
 ASM = nasm
 DBG = gdb
-CFLAGS64 = -ggdb -Wall -std=c99 -pedantic -m64 -O2
+CFLAGS64 = -ggdb -Wall -std=c99 -pedantic -m64 -O0
 ASMFLAGS64 = -felf64 -g -F dwarf
 CFLAGS   = $(CFLAGS64)
 ASMFLAGS = $(ASMFLAGS64)

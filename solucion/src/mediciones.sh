@@ -1,10 +1,10 @@
 #!/bin/bash
 
-RANGE=10 # 100
+RANGE=1 # 100
 
 filtros="cropflip sierpinski bandas mblur"
 
-TP=../bin/tp2
+TP=./tp2
 FILTRO=$1
 IMPL=$2
 IMAGEN=$3
@@ -12,7 +12,8 @@ ITERACIONES=$4
 shift 4
 PARAMS=$@ 
 
-rm mediciones.txt
+rm xsarasa
+rm mediciones
 #rm mediciones.cropflip
 #rm mediciones.sierpinski
 #rm mediciones.bandas
@@ -20,11 +21,17 @@ rm mediciones.txt
 
 for FILTRO in cropflip sierpinski bandas mblur
 do
-#echo $FILTRO
+echo "$FILTRO" >> mediciones 
 for i in $(seq 1 $RANGE);
 do
-echo "$FILTRO ($i de $RANGE)" >> mediciones.txt
-echo $TP $FILTRO -i $IMPL -t $ITERACIONES $IMAGEN $PARAMS;
-$TP $FILTRO -i $IMPL -t $ITERACIONES $IMAGEN $PARAMS;
+#echo "$FILTRO ($i de $RANGE)" >> mediciones
+echo "$TP $FILTRO -i $IMPL -t 10 $IMAGEN $PARAMS" >> xsarasa;
+$TP $FILTRO -i $IMPL -t 10 $IMAGEN $PARAMS;
+echo "$TP $FILTRO -i $IMPL -t 100 $IMAGEN $PARAMS" >> xsarasa;
+$TP $FILTRO -i $IMPL -t 100 $IMAGEN $PARAMS;
+echo "$TP $FILTRO -i $IMPL -t 200 $IMAGEN $PARAMS" >> xsarasa;
+$TP $FILTRO -i $IMPL -t 200 $IMAGEN $PARAMS;
+echo "$TP $FILTRO -i $IMPL -t 1000 $IMAGEN $PARAMS" >> xsarasa;
+$TP $FILTRO -i $IMPL -t 1000 $IMAGEN $PARAMS;
 done
 done
