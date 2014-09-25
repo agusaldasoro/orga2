@@ -42,8 +42,12 @@ void aplicar_cropflip(configuracion_t *config)
 	opencv_abrir_destino(extra->tamx, extra->tamy, config);
 
 	buffer_info_t info = config->src;
+	unsigned long a,b;
+	MEDIR_TIEMPO_START(a);
 	cropflip(info.bytes, config->dst.bytes, info.width, info.height, info.width_with_padding,
 	         config->dst.width_with_padding, extra->tamx, extra->tamy, extra->offsetx, extra->offsety);
+	MEDIR_TIEMPO_STOP(b);
+        fprintf(config->archivo_mediciones, "%d\n", b-a);
 
 }
 

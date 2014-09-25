@@ -21,9 +21,12 @@ void aplicar_mblur(configuracion_t *config)
 {
 	mblur_fn_t *mblur = SWITCH_C_ASM ( config, mblur_c, mblur_asm ) ;
 	buffer_info_t info = config->src;
+	unsigned long a,b;
+	MEDIR_TIEMPO_START(a);
 	mblur(info.bytes, config->dst.bytes, info.width, info.height, info.width_with_padding,
 	         config->dst.width_with_padding);
-
+	MEDIR_TIEMPO_STOP(b);
+	fprintf(config->archivo_mediciones, "%d\n", b-a);
 }
 
 void ayuda_mblur()
