@@ -5,11 +5,10 @@ RANGE=1 # 100
 filtros="cropflip sierpinski bandas mblur"
 
 TP=./tp2
-FILTRO=$1
-IMPL=$2
-IMAGEN=$3
-ITERACIONES=$4
-shift 4
+#FILTRO=$1
+IMPL=$1
+IMAGEN=$2
+shift 2
 PARAMS=$@ 
 
 rm xsarasa
