@@ -17,10 +17,16 @@ void leer_params_sierpinski(configuracion_t *config, int argc, char *argv[]) {
 
 void aplicar_sierpinski(configuracion_t *config)
 {
+	unsigned long a,b;
+	a = 0;
+	b = 0;
+	MEDIR_TIEMPO_START(a);
 	sierpinski_fn_t *sierpinski = SWITCH_C_ASM ( config, sierpinski_c, sierpinski_asm ) ;
 	buffer_info_t info = config->src;
+	MEDIR_TIEMPO_START(a);	
 	sierpinski(info.bytes, config->dst.bytes, info.width, info.height, info.width_with_padding, config->dst.width_with_padding);
-
+        MEDIR_TIEMPO_STOP(b);
+        fprintf(config->archivo_mediciones, "%d\n", b-a);
 }
 
 void ayuda_sierpinski()

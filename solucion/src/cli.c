@@ -78,6 +78,7 @@ void procesar_opciones(int argc, char **argv, configuracion_t *config)
 			case 't' : /* -t o --tiempo */
 				tiempo = 1;
 				cant_iteraciones = atoi ( optarg );
+				config->iteraciones = cant_iteraciones;
 				break;
 			case 'v' : /* -v o --verbose */
 				config->verbose = true;

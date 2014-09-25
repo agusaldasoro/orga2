@@ -3,10 +3,10 @@
 #define __TP2__H__
 
 #include <stdbool.h>
-
+#include "tiempo.h"
 #define FILTRO_C   0
 #define FILTRO_ASM 1
-
+#include  <stdio.h>
 typedef struct bgra_t {
 	unsigned char b, g, r, a;
 } __attribute__((packed)) bgra_t;
@@ -57,7 +57,11 @@ typedef struct configuracion_t
 	bool verbose;
 	bool frames;
 	bool nombre;
+
+	int iteraciones;
+	FILE* archivo_mediciones;
 } configuracion_t;
+
 
 #define SWITCH_C_ASM(config,c_ver,asm_ver) ( config->tipo_filtro == FILTRO_C ? c_ver : asm_ver )
 #define C_ASM(config) ( SWITCH_C_ASM(config,"C","ASM") )

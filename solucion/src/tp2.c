@@ -75,7 +75,12 @@ void correr_filtro_imagen(configuracion_t *config, aplicador_fn_t aplicador)
 	else
 	{
 		opencv_abrir_imagenes(config);
-		aplicador(config);
+		FILE* handler = fopen("mediciones.txt", "w");
+		config->archivo_mediciones = handler;
+		for (int i = 0; i < config->iteraciones; i++) {
+			aplicador(config);
+		}
+		fclose(handler);
 		opencv_liberar_imagenes(config);
 	}
 }
