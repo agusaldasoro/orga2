@@ -1,4 +1,36 @@
-\subsection{Filtro cropflip}
+\subsection{Mediciones}
+
+Realizar una medición de performance \emph{rigurosa} es más difícil de lo 
+que parece. 
+En este experimento deberá realizar distintas mediciones de performance 
+para verificar que sean buenas mediciones.
+
+En un sistema ``ideal'' el proceso medido corre solo, sin ninguna 
+interferencia de agentes externos. 
+Sin embargo, una PC no es un sistema ideal. 
+Nuestro proceso corre junto con decenas de otros, tanto de usuarios como 
+del sistema operativo que compiten por el uso de la CPU. 
+Esto implica que al realizar mediciones aparezcan ``ruidos'' o 
+``interferencias'' que distorsionen los resultados.
+
+El primer paso para tener una idea de si la medición es buena o no, 
+es tomar varias muestras. 
+Es decir, repetir la misma medición varias veces.
+Luego de eso, es conveniente descartar los outliers
+\footnote{en español, valor atípico: \url{http://es.wikipedia.org/wiki/Valor_atípico}}, 
+que son los valores que más se alejan del promedio. 
+Con los valores de las mediciones resultantes se puede calcular el promedio 
+y también la varianza, que es algo similar el promedio de las distancias al 
+promedio\footnote{en realidad, elevadas al cuadrado en vez de tomar el módulo}.
+
+Las fórmulas para calcular el promedio $\mu$ y la varianza $\sigma^2$ son
+
+$$
+\mu = \frac{1}{n}\sum_{i=1}^{n} x_i \qquad \sigma^2 = \frac{\displaystyle\sum_{i=1}^{n}(x_i - \mu)^2} {n}
+$$
+%------------------------------------------
+
+\subsection{Filtro \textit{cropflip}}
 
 Programar el filtro \textit{cropflip} en lenguaje C y luego en ASM haciendo 
 uso de las instrucciones vectoriales (\textbf{SSE}).
@@ -39,65 +71,125 @@ Indicar
     \item Los nombres de tres optimizaciones que realizan los compiladores.
 \end{inparaenum}
 
-% ------------------------------------------------------------------------------
-% ------------------------------------------------------------------------------
-
-\subsection{Mediciones}
-
-Realizar una medición de performance \emph{rigurosa} es más difícil de lo 
-que parece. 
-En este experimento deberá realizar distintas mediciones de performance 
-para verificar que sean buenas mediciones.
-
-En un sistema ``ideal'' el proceso medido corre solo, sin ninguna 
-interferencia de agentes externos. 
-Sin embargo, una PC no es un sistema ideal. 
-Nuestro proceso corre junto con decenas de otros, tanto de usuarios como 
-del sistema operativo que compiten por el uso de la CPU. 
-Esto implica que al realizar mediciones aparezcan ``ruidos'' o 
-``interferencias'' que distorsionen los resultados.
-
-El primer paso para tener una idea de si la medición es buena o no, 
-es tomar varias muestras. 
-Es decir, repetir la misma medición varias veces.
-Luego de eso, es conveniente descartar los outliers
-\footnote{en español, valor atípico: \url{http://es.wikipedia.org/wiki/Valor_atípico}}, 
-que son los valores que más se alejan del promedio. 
-Con los valores de las mediciones resultantes se puede calcular el promedio 
-y también la varianza, que es algo similar el promedio de las distancias al 
-promedio\footnote{en realidad, elevadas al cuadrado en vez de tomar el módulo}.
-
-Las fórmulas para calcular el promedio $\mu$ y la varianza $\sigma^2$ son
-
-$$
-\mu = \frac{1}{n}\sum_{i=1}^{n} x_i \qquad \sigma^2 = \frac{\displaystyle\sum_{i=1}^{n}(x_i - \mu)^2} {n}
-$$
-
-% ******************************************************************************
-\newpage
+%----------------------------------------------
 \vspace*{0.3cm} \noindent
 \textbf{Experimento 1.3 - calidad de las mediciones}
 
 \begin{enumerate}
-    \item Medir el tiempo de ejecución de cropflip 10 veces. \\
-    	Luego de ejecutar 10 veces el filtro Cropflip obtuvimos una esperanza de X en ASM y de Y en C, con una varianza de X en ASM y de Y en C. \\
-    	PONER NUMERITOS
-    \item Implementar un programa en C que no haga más que ciclar 
-            infinitamente sumando 1 a una variable. 
-            Lanzar este programa tantas veces como \emph{cores lógicos} tenga 
-            su procesador. 
-            Medir otras 10 veces mientras estos programas corren de fondo.
-    \item Calcular el promedio y la varianza en ambos casos.
-    \item Consideraremos outliers a los 2 mayores tiempos
-     de ejecución de la medicion a) y también a los 2 menores,
-     por lo que los descartaremos. Recalcular el promedio y la varianza después de hacer este descarte.
-    \item Realizar un gráfico que presente estos dos últimos items.
+    \item Medir el tiempo de ejecución de cropflip 10 veces. Calcular el promedio y la varianza. Consideraremos outliers a los 2 mayores tiempos de ejecución de la medicion y también a los 2 menores, por lo que los descartaremos. Recalcular el promedio y la varianza después de hacer este descarte. Realizar un gráfico que presente estos dos últimos items.\\
+\\
+Luego de ejecutar 10 veces el filtro Cropflip obtuvimos los siguientes resultados: \\
+\\
+    	\begin{tabular}[c]{|c|c|c|}
+	\hline
+		\textbf{ASM} & \textbf{C}\\
+		\hline
+70.925 &	1.152.187\\
+		\hline
+70.521 &	1.151.544\\
+		\hline
+32.859 &	761.937\\
+		\hline
+43.720 &	649.248\\
+		\hline
+64.236 &	1.152.847\\
+		\hline
+70.793 &	1.153.061\\
+		\hline
+71.271 &	1.152.765\\
+		\hline
+44.616 &	1.152.798\\
+		\hline
+56.124 &	725.420\\
+		\hline
+71.775 &	1.155.718\\
+		\hline
+	\textbf{Esperanza}	\\
+		\hline
+59.684 & 1.020.752,5	\\
+		\hline
+		\textbf{Desvío Standar}	\\
+		\hline
+13.720,5329 & 203.626,443	\\
+		\hline
+	\end{tabular}\\\\
+	El cuadro denota la cantidad de ciclos de clock utilizada por cada ejecuci\'on del programa. \\
+	\\
+	Luego de eliminar los dos valores m\'as altos y los dos valores m\'as bajos, recalculamos obteniendo los siguientes datos: \\
+	\textbf{Esperanza}: 37.721,5 (ASM) y 652.407,8(C)\\
+	\textbf{Desvío Standar}:	31.706,23 (ASM) y 544485,4142(C)\\
+	Se puede ver que al eliminar los outliers, la esperanza y la Desvío Standar tienen valores m\'as cercanos. \\
+\\
+\newpage
+\begin{figure}
+  \begin{center}
+	\includegraphics[width=0.7\textwidth]{imagenes/13/asm1.jpg}
+	\caption{Assembler}
+%	\label{nombreparareferenciar}
+	\includegraphics[width=0.7\textwidth]{imagenes/13/C1.jpg}
+	\caption{C}
+  \end{center}
+\end{figure}
+\newpage
+\indent Siendo el Caso 1 las mediciones de esperanza y Desvío Standar para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers.\\
+    \item Implementar un programa en C que no haga más que ciclar infinitamente sumando 1 a una variable. Lanzar este programa tantas veces como \emph{cores lógicos} tenga su procesador. Medir otras 10 veces mientras estos programas corren de fondo. Realizar los mismos casos de experimentaci\'on que en el ejercicio anterior.\\
 \end{enumerate}
-
-A partir de aquí todos los experimentos de mediciones deberán hacerse igual 
+Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteriores: \\
+\\       
+        \begin{tabular}[c]{|c|c|c|}
+	\hline
+		\textbf{ASM} & \textbf{C}\\
+		\hline
+33.585 &	542.928 \\
+\hline
+33.798 &	544.155 \\
+\hline
+33.402 &	544.857 \\
+\hline
+33.228 &	543.687 \\
+\hline
+33.159 &	543.252 \\
+\hline
+33.441 &	543.324 \\
+\hline
+34.089 &	544.224 \\ 
+\hline
+33.768 &	760.359 \\ 
+\hline
+34.563 &	542.448 \\
+\hline
+34.473 &	542.982 \\
+\hline
+		\textbf{Esperanza}	\\
+		\hline
+33.750,6 & 565.221,6	\\		
+		\hline
+		\textbf{Desvío Standar}	\\
+		\hline
+465,49 & 65.049,34\\
+		\hline
+	\end{tabular}\\\\
+	Luego de eliminar los dos valores m\'as altos y los dos valores m\'as bajos, recalculamos obteniendo los siguientes datos: \\
+	\textbf{Esperanza}: 20.208,3 (ASM) y 326.162,4(C)\\
+	\textbf{Desvío Standar}:	16.501,015 (ASM) y 266.310,725(C)\\
+	Ac\'a tambi\'en se puede apreciar que al eliminar los outliers, la esperanza y la Desvío Standar tienen valores m\'as cercanos. \\
+\newpage
+\begin{figure}
+  \begin{center}
+	\includegraphics[width=0.7\textwidth]{imagenes/13/asm2.jpg}
+	\caption{Assembler}
+%	\label{nombreparareferenciar}
+	\includegraphics[width=0.7\textwidth]{imagenes/13/C2.jpg}
+	\caption{C}
+  \end{center}
+\end{figure}
+\newpage
+\indent Siendo el Caso 1 las mediciones de esperanza y Desvío Standar para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers. Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que .... \textbf{\color{red}{???????????????}} \\
+\\
+\textit{A partir de aquí todos los experimentos de mediciones deberán hacerse igual 
 que en el presente ejercicio: tomando 10 mediciones, luego descartando 
-outliers y finalmente calculando promedio y varianza.
-
+outliers y finalmente calculando promedio y Desvío Standar.}\\
+\\
 % ******************************************************************************
 %\newpage
 \noindent\textbf{Experimento 1.4 - secuencial vs. vectorial}
@@ -153,7 +245,7 @@ Acompañar al gráfico con una tabla que indique los valores graficados.
 % ------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------
 
-\subsection*{Filtro \textit{Sierpinski}}
+\subsection{Filtro \textit{Sierpinski}}
 
 Programar el filtro \textit{Sierpinski} en lenguaje C y en en ASM haciendo 
 uso de las instrucciones vectoriales (\textbf{SSE}).
@@ -172,7 +264,7 @@ y ASM de este filtro, de igual modo que para el experimento 1.4.
 ¿Cuál es el factor que limita la performance en este filtro?
 Repetir el experimento 1.5 para este filtro.
 
-\subsection*{Filtro \textit{Bandas}}
+\subsection{Filtro \textit{Bandas}}
 
 Programar el filtro \textit{Bandas} en lenguaje C y en en ASM haciendo uso de 
 las instrucciones vectoriales (\textbf{SSE}).
@@ -199,7 +291,7 @@ Repetir el experimento 1.4 para este filtro.
 % ------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------
 
-\subsection*{Filtro \textit{Motion Blur}}
+\subsection{Filtro \textit{Motion Blur}}
 Programar el filtro \textit{mblur} en lenguaje C y en ASM haciendo uso de 
 las instrucciones \textbf{SSE}.
 
