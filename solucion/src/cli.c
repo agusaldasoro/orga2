@@ -42,7 +42,7 @@ void procesar_opciones(int argc, char **argv, configuracion_t *config)
 	config->archivo_entrada = NULL;
 	config->carpeta_salida = ".";
 	config->extra_archivo_salida = "";
-
+	config->iteraciones = 1;
 	// extraemos opciones de la linea de comandos
 	const char* const op_cortas = "hi:vt:fo:wn";
 
@@ -126,7 +126,6 @@ void procesar_opciones(int argc, char **argv, configuracion_t *config)
 	} else {
 		config->tipo_filtro = FILTRO_ASM;
 	}
-
 
 	// Verifico nombre de archivo
 	config->archivo_entrada = argv[optind++];
