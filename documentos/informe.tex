@@ -1,0 +1,123 @@
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{charter}   % tipografia
+\usepackage{graphicx}
+%\usepackage{makeidx}
+\usepackage{paralist} %itemize inline
+
+%\usepackage{float}
+%\usepackage{amsmath, amsthm, amssymb}
+%\usepackage{amsfonts}
+%\usepackage{sectsty}
+%\usepackage{charter}
+%\usepackage{wrapfig}
+%\usepackage{listings}
+%\lstset{language=C}
+
+
+\input{codesnippet}
+\input{page.layout}
+% \setcounter{secnumdepth}{2}
+\usepackage{underscore}
+\usepackage{caratula}
+\usepackage{url}
+
+
+% ******************************************************** %
+%              TEMPLATE DE INFORME ORGA2 v0.1              %
+% ******************************************************** %
+% ******************************************************** %
+%                                                          %
+% ALGUNOS PAQUETES REQUERIDOS (EN UBUNTU):                 %
+% ========================================
+%                                                          %
+% texlive-latex-base                                       %
+% texlive-latex-recommended                                %
+% texlive-fonts-recommended                                %
+% texlive-latex-extra?                                     %
+% texlive-lang-spanish (en ubuntu 13.10)                   %
+% ******************************************************** %
+
+
+
+\begin{document}
+
+
+\thispagestyle{empty}
+\materia{Organización del Computador II}
+\submateria{Segundo Cuatrimestre de 2014}
+\titulo{Trabajo Práctico II}
+\subtitulo{Programaci\'on SIMD}
+\integrante{Agustina Aldasoro}{86/13}{agusaldasoro@gmail.com}
+\integrante{Maximiliano Rey}{37/13}{rey.maximiliano@gmail.com}
+\integrante{Ignacio Tirabasso}{718/12}{ignacio.tirabasso@gmail.com}
+
+\maketitle
+\newpage
+
+\thispagestyle{empty}
+\vfill
+\begin{abstract}
+En el presente trabajo se describen los beneficios de la programaci\'on en Lenguaje Ensamblador bajo el modelo de programaci\'on SIMD mediante el uso de instrucciones SSE.
+\end{abstract}
+
+\newpage
+\thispagestyle{empty}
+\vspace{3cm}
+\tableofcontents
+\newpage
+
+
+%\normalsize
+\newpage
+
+\section{Objetivos generales}
+
+El objetivo de este Trabajo Práctico es evaluar la eficiencia del modelo de programaci\'on SIMD mediante la implementaci\'on de diversos algoritmos en lenguaje Ensamblador utilizando instrucciones SSE. \\
+\indent Las mediciones se realizan mediante pruebas emp\'iricas del c\'odigo frente a algoritmos que cumplen la misma especificaci\'on, implementados en un lenguaje de alto nivel (C). \\
+\indent En este proyecto, los algoritmos a implementar se basaron en el procesamiento de im\'agenes y video, en el cual el uso del modelo SIMD es provechoso.
+
+
+\section{Contexto}
+
+Abordando el objetivo de este trabajo, realizamos una experimentaci\'on enfocada en reducir el tiempo de c\'omputo de un programa basado en dos sucesos que tienen la capacidad de afectarlo. \\
+\indent Por un lado se encuentra la \textit{capacidad de c\'omputo}, la cual limita la cantidad de operaciones aritm\'eticas que el procesador puede paralelizar. Si el programa ejecuta un uso intensivo en operaciones aritm\'eticas, al añadirle nuevas operaciones de esta \'indole se van a necesitar m\'as ciclos de clock para ejecutarlas. \\
+\indent El otro cuello de botella importante es el \textit{ancho de banda de la memoria}. Cuando el programa ejecuta una instrucci\'on que implica un acceso a memoria, se precisan m\'as ciclos de clock para que la memoria responda, en particular si el dato no se encuentra en el cache.\\
+\indent Diseñamos nuestros casos de testeo con el fin de observar para cada programa cu\'al es el factor que determina el tiempo de c\'omputo.\\
+\\
+\indent Nuestra experimentaci\'on se centra en la cantidad de ciclos de clock que transcurren desde el inicio hasta el final de la ejecuci\'on del programa. Se adjunta con la documentaci\'on los archivos *.py utilizados para calcular la esperanza y la varianza de cada una de las mediciones.\\
+
+%\begin{figure}
+%  \begin{center}
+%	\includegraphics[scale=0.66]{imagenes/logouba.jpg}
+%	\caption{Descripcion de la figura}
+%	\label{nombreparareferenciar}
+%  \end{center}
+%\end{figure}
+
+
+%\paragraph{\textbf{Titulo del parrafo} } Bla bla bla bla.
+%Esto se muestra en la figura~\ref{nombreparareferenciar}.
+%\begin{codesnippet}
+%\begin{verbatim}
+%
+%struct Pepe {
+%
+%    ...
+%
+%};
+%\end{verbatim}
+%\end{codesnippet}
+
+
+\section{Enunciado y solucion} 
+
+\input{enunciado}
+
+\section{Conclusiones y trabajo futuro}
+Las conclusiones que sacamos son ...\\
+
+
+\end{document}
+
