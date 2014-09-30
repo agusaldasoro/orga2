@@ -13,6 +13,7 @@ def suma(arr):
 def restarEspe(arr, esp):
     for i in range(len(arr)):
         arr[i]  = float(arr[i]) - esp
+
 	arr[i] *= int(arr[i])
     return arr
 
@@ -22,26 +23,26 @@ for i in range(4):
 
     ret = suma(lines[1:10])
     esp = ret/float(10)
-    restarEspe(lines[1:10], esp)
-    ret = suma(lines[1:10])
+    tmp = restarEspe(lines[1:10], esp)
+    ret = suma(tmp)
     print "10 pasadas: " + str(ret/float(10))
 
     ret = suma(lines[11:110])
     esp = ret/float(100)
-    restarEspe(lines[11:110], esp)
-    ret = suma(lines[11:110])
+    tmp = restarEspe(lines[11:110], esp)
+    ret = suma(tmp)
     print "100 pasadas: " + str(ret/float(100))
 
     ret = suma(lines[111:310])
     esp = ret/float(200)
-    restarEspe(lines[111:310], esp)
-    ret = suma(lines[111:310]);
+    tmp = restarEspe(lines[111:310], esp)
+    ret = suma(tmp);
     print "200 pasadas: " + str(ret/float(200))
 
     ret = suma(lines[311:1310])
     esp = ret/float(1000)
-    restarEspe(lines[311:1310], esp)
-    ret = suma(lines[311:1310])
+    tmp = restarEspe(lines[311:1310], esp)
+    ret = suma(tmp)
     print "1000 pasadas: " + str(ret/float(1000))
 
     lines = lines[1311:]
