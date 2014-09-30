@@ -26,7 +26,7 @@ void aplicar_sierpinski(configuracion_t *config)
 	MEDIR_TIEMPO_START(a);	
 	sierpinski(info.bytes, config->dst.bytes, info.width, info.height, info.width_with_padding, config->dst.width_with_padding);
         MEDIR_TIEMPO_STOP(b);
-        fprintf(config->archivo_mediciones, "%d\n", b-a);
+        fprintf(config->archivo_mediciones, "%lu\n", b-a);
 }
 
 void ayuda_sierpinski()

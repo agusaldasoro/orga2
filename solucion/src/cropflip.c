@@ -47,7 +47,7 @@ void aplicar_cropflip(configuracion_t *config)
 	cropflip(info.bytes, config->dst.bytes, info.width, info.height, info.width_with_padding,
 	         config->dst.width_with_padding, extra->tamx, extra->tamy, extra->offsetx, extra->offsety);
 	MEDIR_TIEMPO_STOP(b);
-        fprintf(config->archivo_mediciones, "%d\n", b-a);
+        fprintf(config->archivo_mediciones, "%lu\n", b-a);
 
 }
 

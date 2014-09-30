@@ -24,7 +24,7 @@ void aplicar_bandas(configuracion_t *config)
 	unsigned long a,b;
 	MEDIR_TIEMPO_START(a);
 	bandas(info.bytes, config->dst.bytes, info.width, info.height, info.width_with_padding,
-	         config->dst.width_with_padding);
+        config->dst.width_with_padding);
 	MEDIR_TIEMPO_STOP(b);
         fprintf(config->archivo_mediciones, "%lu\n", b-a);
 
