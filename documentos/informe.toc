@@ -4,7 +4,7 @@
 \contentsline {section}{\numberline {3}Enunciado y solucion}{4}
 \contentsline {subsection}{\numberline {3.1}Mediciones}{4}
 \contentsline {subsection}{\numberline {3.2}Filtro \textit {cropflip}}{5}
-\contentsline {subsection}{\numberline {3.3}Filtro \textit {Sierpinski}}{9}
-\contentsline {subsection}{\numberline {3.4}Filtro \textit {Bandas}}{9}
-\contentsline {subsection}{\numberline {3.5}Filtro \textit {Motion Blur}}{9}
-\contentsline {section}{\numberline {4}Conclusiones y trabajo futuro}{9}
+\contentsline {subsection}{\numberline {3.3}Filtro \textit {Sierpinski}}{10}
+\contentsline {subsection}{\numberline {3.4}Filtro \textit {Bandas}}{12}
+\contentsline {subsection}{\numberline {3.5}Filtro \textit {Motion Blur}}{14}
+\contentsline {section}{\numberline {4}Conclusiones y trabajo futuro}{15}

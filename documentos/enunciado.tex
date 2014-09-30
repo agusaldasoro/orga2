@@ -108,7 +108,7 @@ Luego de ejecutar 10 veces el filtro Cropflip obtuvimos los siguientes resultado
 		\hline
 59.684 & 1.020.752,5	\\
 		\hline
-		\textbf{Desvío Standar}	\\
+		\textbf{Desvío standard}	\\
 		\hline
 13.720,5329 & 203.626,443	\\
 		\hline
@@ -116,9 +116,10 @@ Luego de ejecutar 10 veces el filtro Cropflip obtuvimos los siguientes resultado
 	El cuadro denota la cantidad de ciclos de clock utilizada por cada ejecuci\'on del programa. \\
 	\\
 	Luego de eliminar los dos valores m\'as altos y los dos valores m\'as bajos, recalculamos obteniendo los siguientes datos: \\
-	\textbf{Esperanza}: 37.721,5 (ASM) y 652.407,8(C)\\
-	\textbf{Desvío Standar}:	31.706,23 (ASM) y 544485,4142(C)\\
-	Se puede ver que al eliminar los outliers, la esperanza y la Desvío Standar tienen valores m\'as cercanos. \\
+	\textbf{Esperanza}: 62.869,166
+ (ASM) y 1.087.346,333(C)\\
+	\textbf{Desvío standard}:	9.719,205 (ASM) y 145.528,202(C)\\
+	Se puede ver que al eliminar los outliers, la esperanza comienza a converger a su valor esperado y el desvío standard disminuye. \\
 \\
 \newpage
 \begin{figure}
@@ -131,7 +132,7 @@ Luego de ejecutar 10 veces el filtro Cropflip obtuvimos los siguientes resultado
   \end{center}
 \end{figure}
 \newpage
-\indent Siendo el Caso 1 las mediciones de esperanza y Desvío Standar para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers.\\
+\indent Siendo el Caso 1 las mediciones de esperanza y Desvío standard para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers.\\
     \item Implementar un programa en C que no haga más que ciclar infinitamente sumando 1 a una variable. Lanzar este programa tantas veces como \emph{cores lógicos} tenga su procesador. Medir otras 10 veces mientras estos programas corren de fondo. Realizar los mismos casos de experimentaci\'on que en el ejercicio anterior.\\
 \end{enumerate}
 Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteriores: \\
@@ -164,15 +165,15 @@ Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteri
 		\hline
 33.750,6 & 565.221,6	\\		
 		\hline
-		\textbf{Desvío Standar}	\\
+		\textbf{Desvío standard}	\\
 		\hline
 465,49 & 65.049,34\\
 		\hline
 	\end{tabular}\\\\
 	Luego de eliminar los dos valores m\'as altos y los dos valores m\'as bajos, recalculamos obteniendo los siguientes datos: \\
-	\textbf{Esperanza}: 20.208,3 (ASM) y 326.162,4(C)\\
-	\textbf{Desvío Standar}:	16.501,015 (ASM) y 266.310,725(C)\\
-	Ac\'a tambi\'en se puede apreciar que al eliminar los outliers, la esperanza y la Desvío Standar tienen valores m\'as cercanos. \\
+	\textbf{Esperanza}: 33.680,5 (ASM) y 543.604(C)\\
+	\textbf{Desvío standard}:	235,364 (ASM) y 462,615(C)\\
+	Ac\'a tambi\'en se puede apreciar que al eliminar los outliers, el Desvío standard disminuye su valor. \\
 \newpage
 \begin{figure}
   \begin{center}
@@ -184,11 +185,16 @@ Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteri
   \end{center}
 \end{figure}
 \newpage
-\indent Siendo el Caso 1 las mediciones de esperanza y Desvío Standar para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers. Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que .... \textbf{\color{red}{???????????????}} \\
+\indent Siendo el Caso 1 las mediciones de esperanza y Desvío standard para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers. Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que fue ejecutado en una computadora con un procesador i5. \\
 \\
 \textit{A partir de aquí todos los experimentos de mediciones deberán hacerse igual 
 que en el presente ejercicio: tomando 10 mediciones, luego descartando 
-outliers y finalmente calculando promedio y Desvío Standar.}\\
+outliers y finalmente calculando promedio y Desvío standard.}\\
+\\
+Decidimos: \\
+Realizar 12000 mediciones por experimento, eliminando los primeros mil casos que hayan llevado menos ciclos de clock y los mil casos que hayan llevado la mayor cantidad de ciclos de clock. \\
+Lo determinamos de esta manera, ya que dejar dos mediciones afuera, como dice el enunciado, no tiene influencia en los c\'alculos de la esperanza y la varianza para muestras tan grandes. \\
+Luego de experimentar distintas cantidades de casos de testeo, notamos que elegir 7000 valores pertenecientes a la franja del medio de los 12000 es una soluci\'on lo suficientemente establo, por lo cual es la que llevamos a cabo. \\
 \\
 % ******************************************************************************
 %\newpage
@@ -196,7 +202,35 @@ outliers y finalmente calculando promedio y Desvío Standar.}\\
 
 En este experimento deberá realizar una medición de las diferencias de 
 performance entre las versiones de C y ASM (el primero con -O0, -O1, -O2 y -O3) 
-y graficar los resultados.
+y graficar los resultados. \\
+\\
+El siguiente gr\'afico indica la esperanza de la cantidad de ciclos de clock que toma ejecutar el filtro Cropflip con los par\'ametros 404 404 4 4 en ASM y en C variando los flags de o0 a o3. \\
+Reflejando las siguientes magnitudes: \\
+\\
+ \begin{tabular}[c]{|c|c|c|}
+	\hline
+		 & Esperanza & Desv\'io Standard\\
+		\hline
+C -o0 & 6.761.044,5 & 131,463 \\
+\hline
+C -o1 & 1.300.109 & 53,447 \\
+\hline
+C -o2 & 1.227.102,5 & 50,143\\
+\hline
+C -o3 & 266.688 & 0,287 \\
+\hline
+ASM & 362.232 & 2,079\\
+\hline
+	\end{tabular}\\\\
+\\
+Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. \\
+\newpage
+\begin{figure}
+  \begin{center}
+	\includegraphics[width=0.7\textwidth]{imagenes/14.jpg}
+  \end{center}
+\end{figure}
+\newpage
 
 % ******************************************************************************
 \vspace*{0.3cm} \noindent
@@ -228,21 +262,6 @@ Realizar un único gráfico que compare:
 
 Acompañar al gráfico con una tabla que indique los valores graficados.  
   
-%\vspace*{0.3cm} \noindent
-%\textbf{Experimento 1.6 (\textit{opcional}) - secuencial vs. vectorial (parte II)}
-%
-%
-%Si vemos a los pixeles como una tira muy larga de
-%bytes, este filtro en realidad no requiere \emph{casi}
-%ningún procesamiento de datos en paralelo. Esto podría
-%significar que la velocidad del filtro de C puede
-%aumentarse hasta casi alcanzar la del de ASM. ¿ocurre esto?
-%	
-%Modificar el filtro para que en vez de acceder
-%a los bytes de a uno a la vez se accedan como
-%tiras de 64 bits y analizar la performance.
-
-% ------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------
 
 \subsection{Filtro \textit{Sierpinski}}
@@ -255,7 +274,35 @@ uso de las instrucciones vectoriales (\textbf{SSE}).
 \textbf{Experimento 2.1 - secuencial vs. vectorial}
 
 Analizar cuales son las diferencias de performace entre las versiones de C 
-y ASM de este filtro, de igual modo que para el experimento 1.4.
+y ASM de este filtro, de igual modo que para el experimento 1.4. \\
+\\
+El siguiente gr\'afico indica la esperanza de la cantidad de ciclos de clock que toma ejecutar el filtro Sierpinski en ASM y en C variando los flags de o0 a o3. \\
+Reflejando las siguientes magnitudes: \\
+\\
+ \begin{tabular}[c]{|c|c|c|}
+	\hline
+		 & Esperanza & Desv\'io Standard\\
+		\hline
+C -o0 & 28.801.586,5 & 78,016 \\
+\hline
+C -o1 & 21.395.732 & 78,447 \\
+\hline
+C -o2 & 14.231.758 & 116,445 \\
+\hline
+C -o3 & 14.229.650 & 116,022 \\
+\hline
+ASM & 3.661.626 & 115,583 \\
+\hline
+	\end{tabular}\\\\
+\\
+Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. \\
+\newpage
+\begin{figure}
+  \begin{center}
+	\includegraphics[width=0.7\textwidth]{imagenes/21.jpg}
+  \end{center}
+\end{figure}
+\newpage
 
 % ******************************************************************************
 \vspace*{0.3cm} \noindent
@@ -286,9 +333,36 @@ Analizar como varía la performance.
 \vspace*{0.3cm} \noindent
 \textbf{Experimento 3.2 - secuencial vs. vectorial}
 
-Repetir el experimento 1.4 para este filtro.
+Repetir el experimento 1.4 para este filtro. \\
+\\
+El siguiente gr\'afico indica la esperanza de la cantidad de ciclos de clock que toma ejecutar el filtro Bandas en ASM y en C variando los flags de o0 a o3. \\
+Reflejando las siguientes magnitudes: \\
+\\
+ \begin{tabular}[c]{|c|c|c|}
+	\hline
+		 & Esperanza & Desv\'io Standard\\
+		\hline
+C -o0 & 17.472.791 & 120,620 \\
+\hline
+C -o1 & 4.583.340 & 128,514 \\
+\hline
+C -o2 & 3.259.839 & 117,746 \\
+\hline
+C -o3 & 3.259.767 & 117,391  \\
+\hline
+ASM & 3.703.203,5 & 115,659 \\
+\hline
+	\end{tabular}\\\\
+\\
+Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. \\
+\newpage
+\begin{figure}
+  \begin{center}
+	\includegraphics[width=0.7\textwidth]{imagenes/32.jpg}
+  \end{center}
+\end{figure}
+\newpage
 
-% ------------------------------------------------------------------------------
 % ------------------------------------------------------------------------------
 
 \subsection{Filtro \textit{Motion Blur}}
@@ -299,4 +373,32 @@ las instrucciones \textbf{SSE}.
 \vspace*{0.3cm} \noindent
 \textbf{Experimento 4.1}
 
-Repetir el experimento 1.4 para este filtro
+Repetir el experimento 1.4 para este filtro \\
+\\
+El siguiente gr\'afico indica la esperanza de la cantidad de ciclos de clock que toma ejecutar el filtro Bandas en ASM y en C variando los flags de o0 a o3. \\
+Reflejando las siguientes magnitudes: \\
+\\
+ \begin{tabular}[c]{|c|c|c|}
+	\hline
+		 & Esperanza & Desv\'io Standard\\
+		\hline
+C -o0 & 24.652.732,5 & 117,738 \\
+\hline
+C -o1 & 11.562.261 & 103,024  \\
+\hline
+C -o2 & 9.641.346 & 78,159  \\
+\hline
+C -o3 & 9.639.625 & 78,227 \\
+\hline
+ASM & 2.993.980,5 & 118,245 \\
+\hline
+	\end{tabular}\\\\
+\\
+Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. \\
+\newpage
+\begin{figure}
+  \begin{center}
+	\includegraphics[width=0.7\textwidth]{imagenes/41.jpg}
+  \end{center}
+\end{figure}
+\newpage
