@@ -110,12 +110,11 @@ modo_protegido:
     ; Cargar IDT
     lidt [IDT_DESC]
 
-    ; xchg bx, bx
-
-    ; mov edx,0
-    ; mov ecx,0
-    ; mov eax,3
-    ; div ecx
+    ; test para que salte la divide by 0 exception (0)
+    mov edx,0
+    mov ecx,0
+    mov eax,3
+    div ecx
  
     ; Configurar controlador de interrupciones
 

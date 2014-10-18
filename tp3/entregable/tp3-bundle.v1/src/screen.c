@@ -7,9 +7,49 @@
 
 #include "screen.h"
 
+// http://en.wikipedia.org/wiki/Interrupt_descriptor_table
+static char *exceptions[] = {
+    "Division by zero",
+    "Debugger",
+    "NMI",
+    "Breakpoint",
+    "Overflow",
+    "Bounds",
+    "Invalid Opcode",
+    "Coprocessor not available",
+    "Double fault",
+    "Coprocessor Segment Overrun (386 or earlier only)",
+    "Invalid Task State Segment",
+    "Segment not present",
+    "Stack Fault",
+    "General protection fault",
+    "Page fault",
+    "reserved",
+    "Math Fault",
+    "Alignment Check",
+    "Machine Check",
+    "SIMD Floating-Point Exception"
+};
 
+// ;;  Color:
+// ;;      * Bit #: 7 6 5 4 3 2 1 0
+// ;;               | | | | | | | |
+// ;;               | | | | | ^-^-^-- Fore color
+// ;;               | | | | ^-------- Fore color bright bit
+// ;;               | ^-^-^---------- Back color
+// ;;               ^---------------- Back color bright bit OR enables blinking text
+unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned char back_color, char blink) {
+    return fore_color | fore_bright | back_color | blink; 
+}
 
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
+
+    // void black print error
+    unsigned char a = (unsigned char) attr;
+    if (a == 0) {
+        a = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
+    }
+
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
     int i;
     for (i = 0; text[i] != 0; i++) {
@@ -43,24 +83,15 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 }
 
 
-// ;;  Color:
-// ;;      * Bit #: 7 6 5 4 3 2 1 0
-// ;;               | | | | | | | |
-// ;;               | | | | | ^-^-^-- Fore color
-// ;;               | | | | ^-------- Fore color bright bit
-// ;;               | ^-^-^---------- Back color
-// ;;               ^---------------- Back color bright bit OR enables blinking text
-unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned char back_color, char blink) {
-    return fore_color | fore_bright | back_color | blink; 
-}
+
 
 void clear_screen() {
     int size = VIDEO_COLS * VIDEO_FILS;    
     ca (*p) = (ca (*)) VIDEO; // magia
     int i = 0;
     ca empty;
-    empty.c = 71;
-    empty.a = 71; //getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
+    empty.c = 0;
+    empty.a = 0; //getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
     while(i < size) {
         p[i] = empty;
         i++;
@@ -105,6 +136,11 @@ void print_map() {
         for(x = 0; x < cols; x++) {
         }
     }
+}
 
+void print_exception(int number) {
+    clear_screen();
+    char * str = exceptions[number];
+    print(str, 5, 5, 77);
 
 }

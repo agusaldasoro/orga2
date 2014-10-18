@@ -18,6 +18,8 @@ extern fin_intr_pic1
 ;; Sched
 extern sched_proximo_indice
 
+extern print_exception
+
 ;extern printf
 ;;
 ;; Definición de MACROS
@@ -28,7 +30,8 @@ global _isr%1
 _isr%1:
     xchg bx, bx
     mov eax, %1
-    mov dword [0xb8000],0x71717171    
+    push eax
+    call print_exception
     jmp $
 
 %endmacro
