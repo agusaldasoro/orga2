@@ -54,7 +54,7 @@ void print(const char * text, unsigned int x, unsigned int y, unsigned short att
     int i;
     for (i = 0; text[i] != 0; i++) {
         p[y][x].c = (unsigned char) text[i];
-        p[y][x].a = (unsigned char) attr;
+        p[y][x].a = a;
         x++;
         if (x == VIDEO_COLS) {
             x = 0;
@@ -141,6 +141,6 @@ void print_map() {
 void print_exception(int number) {
     clear_screen();
     char * str = exceptions[number];
-    print(str, 5, 5, 77);
+    print(str, 5, 5, 0);
 
 }
