@@ -56,21 +56,20 @@ start:
 	or eax,1
 	mov cr0,eax
 
-	jmp 0x40:modo_protegido
+	jmp 0x50:modo_protegido
 
 BITS 32
 modo_protegido:
 
-    ; xchg bx, bx
     ; Saltar a modo protegido
 
     ; Establecer selectores de segmentos
     xor eax, eax
-    mov ax, 0x50
+    mov ax, 0x40
      
     mov es, ax
     mov ds, ax
-    ; mov ss, ax    
+    mov ss, ax    
     mov gs, ax
 
     mov ax, 0x60 
@@ -82,7 +81,7 @@ modo_protegido:
     mov ebp, 0x27000
     ; mov esp, ebp
 
-    imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len,0x07,0,0
+    ; imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len,0x07,0,0
 
     ; Imprimir mensaje de bienvenida
 
@@ -104,11 +103,11 @@ modo_protegido:
     ; Inicializar el scheduler
 
     ; Inicializar la IDT
-    ; xchg bx, bx
-
     call idt_inicializar
     ; Cargar IDT
     lidt [IDT_DESC]
+
+    xchg bx, bx
 
     mov edx,0
     mov ecx,0

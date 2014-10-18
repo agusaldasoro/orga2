@@ -28,17 +28,7 @@ global _isr%1
 _isr%1:
     ; xchg bx, bx
     mov eax, %1
-    ; mov edi,0xb800
-    ; mov byte [edi],71
-    ; inc edi
-    ; mov byte [edi],71
-    ; inc edi
-    ; mov byte [edi],71
-    ; inc edi
-    ; mov byte [edi],71
-    ; inc edi
-    ; mov byte [edi],71
-
+    mov dword [0xb8000],0x71717171    
     jmp $
 
 %endmacro
