@@ -7,6 +7,8 @@
 
 #include "screen.h"
 
+
+
 void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
     int i;
@@ -40,3 +42,30 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
     }
 }
 
+
+// ;;  Color:
+// ;;      * Bit #: 7 6 5 4 3 2 1 0
+// ;;               | | | | | | | |
+// ;;               | | | | | ^-^-^-- Fore color
+// ;;               | | | | ^-------- Fore color bright bit
+// ;;               | ^-^-^---------- Back color
+// ;;               ^---------------- Back color bright bit OR enables blinking text
+unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned char back_color, char blink) {
+    return fore_color & fore_bright & back_color & blink; 
+}
+
+void clear_screen() {
+    int size = VIDEO_COLS * VIDEO_FILS * 2 - 6;    
+    unsigned char (*p) = (unsigned char (*)) VIDEO; // magia
+    int i = 0;
+    unsigned char nullchar = 0;
+    // unsigned char format = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0); 
+    while(i < size) {
+        p[i] = nullchar;
+        i++;
+    }
+}
+
+void print_map() {
+
+}

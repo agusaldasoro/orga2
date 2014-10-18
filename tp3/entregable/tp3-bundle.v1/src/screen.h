@@ -12,6 +12,8 @@
 #define VIDEO_FILS 50
 #define VIDEO_COLS 80
 
+
+
 #include "colors.h"
 #include "defines.h"
 /* Estructura de para acceder a memoria de video */
@@ -24,5 +26,8 @@ void print(const char * text, unsigned int x, unsigned int y, unsigned short att
 
 void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr);
 
+void clear_screen();
+
+void print_map();
 
 #endif  /* !__SCREEN_H__ */

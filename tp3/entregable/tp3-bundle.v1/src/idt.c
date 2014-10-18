@@ -43,8 +43,6 @@ idt_descriptor IDT_DESC = {
 
 // attr = 1 00 01110 000 00000
 
-// attr = 0001 1110 000 00000
-
 void idt_inicializar() {
     IDT_ENTRY(0);
     IDT_ENTRY(1);

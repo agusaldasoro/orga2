@@ -11,6 +11,7 @@ extern IDT_DESC
 
 extern idt_inicializar
 
+extern clear_screen
 
 ;; Saltear seccion de datos
 jmp start
@@ -87,7 +88,7 @@ modo_protegido:
 
 
     ; Inicializar pantalla
-    
+    call clear_screen
     ; Inicializar el manejador de memoria
  
     ; Inicializar el directorio de paginas
@@ -107,12 +108,12 @@ modo_protegido:
     ; Cargar IDT
     lidt [IDT_DESC]
 
-    xchg bx, bx
+    ; xchg bx, bx
 
-    mov edx,0
-    mov ecx,0
-    mov eax,3
-    div ecx
+    ; mov edx,0
+    ; mov ecx,0
+    ; mov eax,3
+    ; div ecx
  
     ; Configurar controlador de interrupciones
 
