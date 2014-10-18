@@ -12,7 +12,7 @@ extern IDT_DESC
 extern idt_inicializar
 
 extern clear_screen
-
+extern print_map
 ;; Saltear seccion de datos
 jmp start
 
@@ -89,8 +89,10 @@ modo_protegido:
 
     ; Inicializar pantalla
     call clear_screen
+
+    call print_map
     ; Inicializar el manejador de memoria
- 
+    
     ; Inicializar el directorio de paginas
     
     ; Cargar directorio de paginas

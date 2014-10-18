@@ -51,21 +51,60 @@ void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, un
 // ;;               | ^-^-^---------- Back color
 // ;;               ^---------------- Back color bright bit OR enables blinking text
 unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned char back_color, char blink) {
-    return fore_color & fore_bright & back_color & blink; 
+    return fore_color | fore_bright | back_color | blink; 
 }
 
 void clear_screen() {
-    int size = VIDEO_COLS * VIDEO_FILS * 2 - 6;    
-    unsigned char (*p) = (unsigned char (*)) VIDEO; // magia
+    int size = VIDEO_COLS * VIDEO_FILS;    
+    ca (*p) = (ca (*)) VIDEO; // magia
     int i = 0;
-    unsigned char nullchar = 0;
-    // unsigned char format = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0); 
+    ca empty;
+    empty.c = 71;
+    empty.a = 71; //getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
     while(i < size) {
-        p[i] = nullchar;
+        p[i] = empty;
         i++;
     }
 }
 
 void print_map() {
+    int cols = VIDEO_COLS;
+    int rows = VIDEO_FILS;
+
+    ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+
+    ca red;
+    red.c = 0;
+    red.a = getFormat(C_FG_RED, 0, C_BG_RED, 0);
+    ca blue;
+    blue.c = 0;
+    blue.a = getFormat(C_FG_BLUE, 0, C_BG_BLUE, 0);
+    ca green;
+    green.c = 0;
+    green.a = getFormat(C_FG_GREEN, 0, C_BG_GREEN, 0);
+    ca black;
+    black.c = 0;
+    black.a = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
+
+    int y,x;
+    
+    for(y = 0; y < rows; y++) {
+        for(x = 0; x < cols; x++) {
+            if (y >= rows-5) {
+                screen[y][x] = black;
+            } else if (x == cols-1) {
+                screen[y][x] = blue;
+            } else if (x == 0) {
+                screen[y][x] = red;
+            } else {
+                screen[y][x] = green;
+            }
+        }
+    }
+    for(y = rows-5; y < rows; y++) {
+        for(x = 0; x < cols; x++) {
+        }
+    }
+
 
 }

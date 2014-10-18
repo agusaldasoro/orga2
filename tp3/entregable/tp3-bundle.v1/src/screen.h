@@ -30,4 +30,12 @@ void clear_screen();
 
 void print_map();
 
+typedef struct t_schar {
+    char ch;
+    unsigned char fg_color:4;
+	unsigned char bright:1;
+	unsigned char bg_color:3;
+	unsigned char blink:1;
+} __attribute__((__packed__)) t_schar;
+
 #endif  /* !__SCREEN_H__ */

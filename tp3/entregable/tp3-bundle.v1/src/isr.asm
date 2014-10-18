@@ -26,7 +26,7 @@ extern sched_proximo_indice
 global _isr%1 
 
 _isr%1:
-    ; xchg bx, bx
+    xchg bx, bx
     mov eax, %1
     mov dword [0xb8000],0x71717171    
     jmp $
