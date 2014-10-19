@@ -6,6 +6,7 @@
 */
 
 #include "screen.h"
+#include "util.h"
 
 // http://en.wikipedia.org/wiki/Interrupt_descriptor_table
 static char *exceptions[] = {
@@ -42,9 +43,9 @@ unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned cha
     return fore_color | fore_bright | back_color | blink; 
 }
 
-void print(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
+void print_string(const char * text, unsigned int x, unsigned int y, unsigned short attr) {
 
-    // void black print error
+    // avoid black print bug
     unsigned char a = (unsigned char) attr;
     if (a == 0) {
         a = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
@@ -64,6 +65,13 @@ void print(const char * text, unsigned int x, unsigned int y, unsigned short att
 }
 
 void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
+
+    // avoid black print bug
+    unsigned char a = (unsigned char) attr;
+    if (a == 0) {
+        a = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
+    }
+
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO; // magia
     int i;
     char hexa[8];
@@ -140,7 +148,32 @@ void print_map() {
 
 void print_exception(int number) {
     clear_screen();
+
     char * str = exceptions[number];
-    print(str, 5, 5, 0);
+
+    // Imprimir stacktrace
+    // Imprimir registros
+    // Imprimir magia y colores
+    // Imprimir unos Doritos
+    // 8====D
+    unsigned int row = 5;
+    unsigned int col = 15;
+    print_string(str, col, row, 0);
+    row++;
+    putc(7*16+1, col, row); // deberia imprimir "q"
+    row++;
+    print_int(51, col, row); // deberia imprimir "51"
+    row++;
+    putc(48, col, row); // deberia ser una "0"
+    putc(120, col+1, row); // deberia ser una "x"
+    print_hex(100, 4, col+2, row, 0); // deberia imprimir "64"
+    row++;
+    putc(48, col, row); // deberia ser una "0"
+    putc(120, col+1, row); // deberia ser una "x"
+    print_hex((unsigned int) exceptions, 4, col+2, row, 0);
+    row++;
+    char * test = "queso";
+    printf(row, col, "<%s> es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
 
 }
+
