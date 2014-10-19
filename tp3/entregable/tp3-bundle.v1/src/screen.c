@@ -178,7 +178,10 @@ void print_exception(int number) {
     print_hex((unsigned int) exceptions, col+2, row, 0);
     row++;
     char * test = "queso";
-    printf(row, col, "<%s> es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
+    printf(col, row, "'%s' es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
+    row++;
+    test = 0;
+    printf(col, row, "'%s' es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
 
 }
 
