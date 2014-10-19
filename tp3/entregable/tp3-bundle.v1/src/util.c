@@ -90,10 +90,14 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
                     col += digits(n) + 2;
                     break;
                 case 's':
-                    // check null pointer and print "(null)"
                     s = va_arg(args, char*);
-                    print_string(s, col, row, 0);
-                    col += strlen(s);
+                    if (s == 0) {
+                        print_string("(null)", col, row, 0);
+                        col += 6;
+                    } else {
+                        print_string(s, col, row, 0);
+                        col += strlen(s);
+                    }
                     break;
                 default:
                     print_string("Unknown format!", col, row, 0);
