@@ -43,11 +43,11 @@ void print_intb(int n, int base, unsigned int col, unsigned int row) {
     // check base <= 16
     char numbers[16] = "0123456789ABCDEF";
     int d = digits(n, base);
-    while(n > 0) {
+    do {
         putc(numbers[n % base], col+d-1, row);
         n /= base;
         d--;
-    }
+    } while (n > 0);
 }
 
 void print_int(int n, unsigned int col, unsigned int row) {
@@ -55,7 +55,7 @@ void print_int(int n, unsigned int col, unsigned int row) {
 }
 
 
-// Solo voy a imprimir ints y strings.
+// printf only supports %d, %h, %p and %s.
 void printf(unsigned int col, unsigned int row, const char *format, ...) {
     // unsigned char attr = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
     
@@ -65,7 +65,6 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
     col--;
     int nextArg = 0;
     int n;
-    // unsigned int* p;
     char *s;
     while(*format != 0) {
         if (nextArg == 0) {
@@ -120,6 +119,5 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
         format++;
     }
     va_end(args);
-
-
 }
+
