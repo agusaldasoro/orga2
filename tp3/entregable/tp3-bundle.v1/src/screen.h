@@ -24,7 +24,7 @@ typedef struct ca_s {
 
 void print_string(const char * text, unsigned int x, unsigned int y, unsigned short attr);
 
-void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr);
+void print_hex(unsigned int numero, unsigned int x, unsigned int y, unsigned short attr);
 
 unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned char back_color, char blink);
 

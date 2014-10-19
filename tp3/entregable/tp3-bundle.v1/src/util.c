@@ -29,25 +29,31 @@ void putc(char c, unsigned int col, unsigned int row) {
 
 }
 
-int digits(unsigned int n) {
+int digits(unsigned int n, int base) {
     int digits = 0;
-    while(n >= 10) {
-        n = n / 10;
+    while(n >= base) {
+        n = n / 16;
         digits++;
     }
 
     return digits + 1;
 } 
 
-void print_int(int n, unsigned int col, unsigned int row) {
-    char numbers[10] = "0123456789";
-    int d = digits(n);
+void print_intb(int n, int base, unsigned int col, unsigned int row) {
+    // check base <= 16
+    char numbers[16] = "0123456789ABCDEF";
+    int d = digits(n, base);
     while(n > 0) {
-        putc(numbers[n % 10], col+d-1, row);
-        n /= 10;
+        putc(numbers[n % base], col+d-1, row);
+        n /= base;
         d--;
     }
 }
+
+void print_int(int n, unsigned int col, unsigned int row) {
+    print_intb(n, 10, col, row);
+}
+
 
 // Solo voy a imprimir ints y strings.
 void printf(unsigned int col, unsigned int row, const char *format, ...) {
@@ -75,19 +81,19 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
                 case 'd':
                     n = va_arg(args,int);
                     print_int(n, col, row);
-                    col += digits(n);
+                    col += digits(n, 10);
                     break;
                 case 'h':
                     n = va_arg(args,int);
                     print_string("0x", col, row, 0);
-                    print_hex(n, 8, col+2, row, 0);
-                    col += digits(n) + 2;
+                    print_hex(n, col+2, row, 0);
+                    col += digits(n, 16) + 2;
                     break;
                 case 'p':
                     n = va_arg(args, unsigned int);
                     print_string("0x",col, row,0);
-                    print_hex(n, 8, col+2, row, 0);
-                    col += digits(n) + 2;
+                    print_hex(n, col+2, row, 0);
+                    col += digits(n, 16) + 2;
                     break;
                 case 's':
                     s = va_arg(args, char*);

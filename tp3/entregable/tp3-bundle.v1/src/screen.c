@@ -64,31 +64,36 @@ void print_string(const char * text, unsigned int x, unsigned int y, unsigned sh
     }
 }
 
-void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
-
-    // avoid black print bug
-    unsigned char a = (unsigned char) attr;
-    if (a == 0) {
-        a = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
-    }
-
-    ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO; // magia
-    int i;
-    char hexa[8];
-    char letras[16] = "0123456789ABCDEF";
-    hexa[0] = letras[ ( numero & 0x0000000F ) >> 0  ];
-    hexa[1] = letras[ ( numero & 0x000000F0 ) >> 4  ];
-    hexa[2] = letras[ ( numero & 0x00000F00 ) >> 8  ];
-    hexa[3] = letras[ ( numero & 0x0000F000 ) >> 12 ];
-    hexa[4] = letras[ ( numero & 0x000F0000 ) >> 16 ];
-    hexa[5] = letras[ ( numero & 0x00F00000 ) >> 20 ];
-    hexa[6] = letras[ ( numero & 0x0F000000 ) >> 24 ];
-    hexa[7] = letras[ ( numero & 0xF0000000 ) >> 28 ];
-    for(i = 0; i < size; i++) {
-        p[y][x + size - i - 1].c = hexa[i];
-        p[y][x + size - i - 1].a = attr;
-    }
+void print_hex(unsigned int numero, unsigned int x, unsigned int y, unsigned short attr) {
+    print_intb(numero, 16, x, y);
 }
+
+
+// void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
+
+//     // avoid black print bug
+//     unsigned char a = (unsigned char) attr;
+//     if (a == 0) {
+//         a = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
+//     }
+
+//     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO; // magia
+//     int i;
+//     char hexa[8];
+//     char letras[16] = "0123456789ABCDEF";
+//     hexa[0] = letras[ ( numero & 0x0000000F ) >> 0  ];
+//     hexa[1] = letras[ ( numero & 0x000000F0 ) >> 4  ];
+//     hexa[2] = letras[ ( numero & 0x00000F00 ) >> 8  ];
+//     hexa[3] = letras[ ( numero & 0x0000F000 ) >> 12 ];
+//     hexa[4] = letras[ ( numero & 0x000F0000 ) >> 16 ];
+//     hexa[5] = letras[ ( numero & 0x00F00000 ) >> 20 ];
+//     hexa[6] = letras[ ( numero & 0x0F000000 ) >> 24 ];
+//     hexa[7] = letras[ ( numero & 0xF0000000 ) >> 28 ];
+//     for(i = 0; i < size; i++) {
+//         p[y][x + size - i - 1].c = hexa[i];
+//         p[y][x + size - i - 1].a = attr;
+//     }
+// }
 
 
 
@@ -166,11 +171,11 @@ void print_exception(int number) {
     row++;
     putc(48, col, row); // deberia ser una "0"
     putc(120, col+1, row); // deberia ser una "x"
-    print_hex(100, 4, col+2, row, 0); // deberia imprimir "64"
+    print_hex(100, col+2, row, 0); // deberia imprimir "64"
     row++;
     putc(48, col, row); // deberia ser una "0"
     putc(120, col+1, row); // deberia ser una "x"
-    print_hex((unsigned int) exceptions, 4, col+2, row, 0);
+    print_hex((unsigned int) exceptions, col+2, row, 0);
     row++;
     char * test = "queso";
     printf(row, col, "<%s> es un string de %d caracters y esta en memoria %p", test, strlen(test), test);

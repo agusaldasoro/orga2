@@ -28,7 +28,7 @@ extern print_exception
 global _isr%1 
 
 _isr%1:
-    xchg bx, bx
+    ; xchg bx, bx
     mov eax, %1
     push eax
     call print_exception
