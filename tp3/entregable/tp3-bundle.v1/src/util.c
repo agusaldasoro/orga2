@@ -56,11 +56,10 @@ void print_int(unsigned int n, unsigned int col, unsigned int row) {
 }
 
 
-void pprintf(unsigned int col, unsigned int row, const char *format, va_list args) {
+void printf(unsigned int col, unsigned int row, const char *format, ...) {
 
-    // unsigned int col, row;
-    // col = *pcol;
-    // row = *prow;
+    va_list args;
+    va_start(args, format);
 
     // col--;
     int nextArg = 0; // find a better name for this.
@@ -72,12 +71,12 @@ void pprintf(unsigned int col, unsigned int row, const char *format, va_list arg
                 nextArg = 1;
                 format++;
                 continue;
-            } else if (*format = '\\') {
+            } else if (*format == '\\') {
                 nextArg = 2;
             }
             putc(*format, col, row);
             col++;
-        } else if (nextArg = 2) {
+        } else if (nextArg == 2) {
             switch(*format) {
                 case 'n':
                     row++;
@@ -125,23 +124,10 @@ void pprintf(unsigned int col, unsigned int row, const char *format, va_list arg
         }
         nextArg = 0;
         format++;
-
-    cursor.x = col;
-    cursor.y = row;
-    // *prow = row;
-    // *pcol = col;
-
-}
-
-
-// printf only supports %d, %h, %p and %s.
-// TODO : asd
-void printf( const char *format, ...) {
-    va_list args;
-    va_start(args, format);
-    pprintf(&cursor.x, &cursor.y, format, args)
+    }
     va_end(args);
 }
+
 
 
 // just for fun

@@ -102,11 +102,11 @@ void print_map() {
     ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
 
     ca red;
-    red.c = 0;
-    red.a = getFormat(C_FG_RED, 0, C_BG_RED, 0);
+    red.c = 71;
+    red.a = getFormat(C_FG_RED, 0, C_BG_BLUE, 0);
     ca blue;
     blue.c = 0;
-    blue.a = getFormat(C_FG_BLUE, 0, C_BG_BLUE, 0);
+    blue.a = getFormat(C_FG_RED, 0, C_BG_BLUE, 0);
     ca green;
     green.c = 0;
     green.a = getFormat(C_FG_GREEN, 0, C_BG_GREEN, 0);
@@ -130,7 +130,14 @@ void print_map() {
         }
     }
     for(y = rows-5; y < rows; y++) {
-        for(x = 0; x < cols; x++) {
+        for(x = 35; x < 40; x++) {
+            screen[y][x] = red;
+        }
+    }
+
+    for(y = rows-5; y < rows; y++) {
+        for(x = 40; x < 45; x++) {
+            screen[y][x] = blue;
         }
     }
 }
@@ -146,29 +153,31 @@ void print_exception(int number) {
 
     print_backtrace(5, 8);
 
+
     GET_REGISTER("eax", tmp);
-    printf(45, 8, "%s: %h", "eax", tmp);
+    printf(45, 8, "%s: %h\n", "eax", tmp);
 
     GET_REGISTER("ebx", tmp);
-    printf(45, 9, "%s: %h", "ebx", tmp);
+    printf(45, 9, "%s: %h\n", "ebx", tmp);
 
     GET_REGISTER("ecx", tmp);
-    printf(45, 10, "%s: %h", "ecx", tmp);
+    printf(45, 10, "%s: %h\n", "ecx", tmp);
 
     GET_REGISTER("edx", tmp);
-    printf(45, 11, "%s: %h", "edx", tmp);
+    printf(45, 11, "%s: %h\n", "edx", tmp);
 
     GET_REGISTER("edi", tmp);
-    printf(45, 12, "%s: %h", "edi", tmp);
+    printf(45, 12, "%s: %h\n", "edi", tmp);
 
     GET_REGISTER("esi", tmp);
-    printf(45, 13, "%s: %h", "esi", tmp);
+    printf(45, 13, "%s: %h\n", "esi", tmp);
 
     GET_REGISTER("ebp", tmp);
-    printf(45, 14, "%s: %h", "ebp", tmp);
+    printf(45, 14, "%s: %h\n", "ebp", tmp);
 
     GET_REGISTER("esp", tmp);
     printf(45, 15, "%s: %h", "esp", tmp);
+
 
 
     // imprir stack!
