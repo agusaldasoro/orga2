@@ -39,9 +39,12 @@ int digits(unsigned int n, int base) {
     return digits + 1;
 } 
 
-void print_intb(int n, int base, unsigned int col, unsigned int row) {
+void print_intb(unsigned int n, int base, unsigned int col, unsigned int row) {
     // check base <= 16
     char numbers[16] = "0123456789ABCDEF";
+    if (n > 0) {
+        print_string("asd", col+30,row,0);
+    }
     int d = digits(n, base);
     do {
         putc(numbers[n % base], col+d-1, row);
@@ -50,7 +53,7 @@ void print_intb(int n, int base, unsigned int col, unsigned int row) {
     } while (n > 0);
 }
 
-void print_int(int n, unsigned int col, unsigned int row) {
+void print_int(unsigned int n, unsigned int col, unsigned int row) {
     print_intb(n, 10, col, row);
 }
 
@@ -119,5 +122,22 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
         format++;
     }
     va_end(args);
+}
+
+
+// just for fun
+void print_backtrace(unsigned int col, unsigned int row) {
+
+    int i;
+    int ebp; // de alguna forma consigo ebp
+
+    asm("movl %%ebp, %0;" :"=r"(ebp));
+    for(i = 0; i < 10 && ebp != 0; i++) {
+        print_string("Call 9: 0x", col, row, 0);
+        print_int(i,col+5,row);
+        print_int(ebp,col+10,row);
+        asm("movl (%%ebp), %0;" :"=r"(ebp));
+        row++;
+    }
 }
 

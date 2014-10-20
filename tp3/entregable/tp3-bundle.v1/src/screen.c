@@ -32,6 +32,18 @@ static char *exceptions[] = {
     "SIMD Floating-Point Exception"
 };
 
+static char *registers[] = {
+    "eax",
+    "ebx",
+    "ecx",
+    "edx",
+    "edi",
+    "esi",
+    "esp",
+    "ebp"
+};
+
+
 // ;;  Color:
 // ;;      * Bit #: 7 6 5 4 3 2 1 0
 // ;;               | | | | | | | |
@@ -152,8 +164,21 @@ void print_map() {
 }
 
 void print_exception(int number) {
-    clear_screen();
 
+    // clear_screen();
+    // print_backtrace(0,0);
+
+    unsigned int row = 5;
+    unsigned int col = 15;
+
+    int tmp, i;
+    for(i = 0; i < 8; i++) {
+        get_register(registers[i], tmp);
+        printf("%s: %d", registers[i], tmp), col, row);
+        row++;
+    }
+
+    return;
     char * str = exceptions[number];
 
     // Imprimir stacktrace
@@ -161,8 +186,7 @@ void print_exception(int number) {
     // Imprimir magia y colores
     // Imprimir unos Doritos
     // 8====D
-    unsigned int row = 5;
-    unsigned int col = 15;
+
     print_string(str, col, row, 0);
     row++;
     putc(7*16+1, col, row); // deberia imprimir "q"

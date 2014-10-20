@@ -24,11 +24,20 @@ extern print_exception
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
+
+; %macro REGISTER r o
+; global _%1
+
+; _%1:
+;     asm("movl (%%%r), %0;" :"=r"(%o));
+
+; %endmacro
+
 %macro ISR 1
 global _isr%1 
 
 _isr%1:
-    ; xchg bx, bx
+    xchg bx, bx
     mov eax, %1
     push eax
     call print_exception
