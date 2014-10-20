@@ -56,16 +56,14 @@ void print_int(unsigned int n, unsigned int col, unsigned int row) {
 }
 
 
-// printf only supports %d, %h, %p and %s.
-// TODO : asd
-void printf(unsigned int col, unsigned int row, const char *format, ...) {
-    // unsigned char attr = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
-    
-    va_list args;
-    va_start(args, format);
+void pprintf(unsigned int col, unsigned int row, const char *format, va_list args) {
 
-    col--;
-    int nextArg = 0;
+    // unsigned int col, row;
+    // col = *pcol;
+    // row = *prow;
+
+    // col--;
+    int nextArg = 0; // find a better name for this.
     int n;
     char *s;
     while(*format != 0) {
@@ -74,9 +72,17 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
                 nextArg = 1;
                 format++;
                 continue;
+            } else if (*format = '\\') {
+                nextArg = 2;
             }
             putc(*format, col, row);
             col++;
+        } else if (nextArg = 2) {
+            switch(*format) {
+                case 'n':
+                    row++;
+                    break;
+            }
         } else {
             switch(*format) {
                 case 'd':
@@ -119,7 +125,21 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
         }
         nextArg = 0;
         format++;
-    }
+
+    cursor.x = col;
+    cursor.y = row;
+    // *prow = row;
+    // *pcol = col;
+
+}
+
+
+// printf only supports %d, %h, %p and %s.
+// TODO : asd
+void printf( const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+    pprintf(&cursor.x, &cursor.y, format, args)
     va_end(args);
 }
 

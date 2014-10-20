@@ -6,7 +6,8 @@
 int digits(unsigned int n, int base);
 
 unsigned int strlen(const char *s);
-void printf(unsigned int col, unsigned int row, const char *format, ...);
+void printf(const char *format, ...);
+void pprintf(unsigned int col, unsigned int row, const char *format, va_list args);
 void putc(char c, unsigned int col, unsigned int row);
 void print_int(unsigned int number, unsigned int col, unsigned int row);
 void print_intb(unsigned int n, int base, unsigned int col, unsigned int row);
