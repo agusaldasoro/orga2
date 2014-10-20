@@ -14,6 +14,11 @@ void print_intb(unsigned int n, int base, unsigned int col, unsigned int row);
 void print_stacktrace(unsigned int col, unsigned int row);
 void print_backtrace(unsigned int col, unsigned int row);
 
-#define get_register(register, output) __asm __volatile("movl (%%"register"), %0;" :"=r"(output));
+#define GET_REGISTER(register, output) __asm __volatile("movl %%"register", %0;" :"=r"(output));
+
+typedef struct cursor {
+    unsigned int  x;
+    unsigned int  y;
+} __attribute__((__packed__)) cursor;
 
 #endif  /* !__UTIL_H__ */

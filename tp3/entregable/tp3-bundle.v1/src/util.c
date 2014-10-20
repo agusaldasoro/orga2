@@ -42,9 +42,7 @@ int digits(unsigned int n, int base) {
 void print_intb(unsigned int n, int base, unsigned int col, unsigned int row) {
     // check base <= 16
     char numbers[16] = "0123456789ABCDEF";
-    if (n > 0) {
-        print_string("asd", col+30,row,0);
-    }
+
     int d = digits(n, base);
     do {
         putc(numbers[n % base], col+d-1, row);
@@ -59,6 +57,7 @@ void print_int(unsigned int n, unsigned int col, unsigned int row) {
 
 
 // printf only supports %d, %h, %p and %s.
+// TODO : asd
 void printf(unsigned int col, unsigned int row, const char *format, ...) {
     // unsigned char attr = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
     
@@ -128,14 +127,11 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
 // just for fun
 void print_backtrace(unsigned int col, unsigned int row) {
 
-    int i;
-    int ebp; // de alguna forma consigo ebp
+    int i,ebp;
 
     asm("movl %%ebp, %0;" :"=r"(ebp));
     for(i = 0; i < 10 && ebp != 0; i++) {
-        print_string("Call 9: 0x", col, row, 0);
-        print_int(i,col+5,row);
-        print_int(ebp,col+10,row);
+        printf(col, row, "Call %d: 0x%d", i, ebp);
         asm("movl (%%ebp), %0;" :"=r"(ebp));
         row++;
     }

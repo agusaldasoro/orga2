@@ -32,16 +32,16 @@ static char *exceptions[] = {
     "SIMD Floating-Point Exception"
 };
 
-static char *registers[] = {
-    "eax",
-    "ebx",
-    "ecx",
-    "edx",
-    "edi",
-    "esi",
-    "esp",
-    "ebp"
-};
+// static char *registers[] = {
+//     "eax",
+//     "ebx",
+//     "ecx",
+//     "edx",
+//     "edi",
+//     "esi",
+//     "esp",
+//     "ebp"
+// };
 
 
 // ;;  Color:
@@ -79,34 +79,6 @@ void print_string(const char * text, unsigned int x, unsigned int y, unsigned sh
 void print_hex(unsigned int numero, unsigned int x, unsigned int y, unsigned short attr) {
     print_intb(numero, 16, x, y);
 }
-
-
-// void print_hex(unsigned int numero, int size, unsigned int x, unsigned int y, unsigned short attr) {
-
-//     // avoid black print bug
-//     unsigned char a = (unsigned char) attr;
-//     if (a == 0) {
-//         a = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
-//     }
-
-//     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO; // magia
-//     int i;
-//     char hexa[8];
-//     char letras[16] = "0123456789ABCDEF";
-//     hexa[0] = letras[ ( numero & 0x0000000F ) >> 0  ];
-//     hexa[1] = letras[ ( numero & 0x000000F0 ) >> 4  ];
-//     hexa[2] = letras[ ( numero & 0x00000F00 ) >> 8  ];
-//     hexa[3] = letras[ ( numero & 0x0000F000 ) >> 12 ];
-//     hexa[4] = letras[ ( numero & 0x000F0000 ) >> 16 ];
-//     hexa[5] = letras[ ( numero & 0x00F00000 ) >> 20 ];
-//     hexa[6] = letras[ ( numero & 0x0F000000 ) >> 24 ];
-//     hexa[7] = letras[ ( numero & 0xF0000000 ) >> 28 ];
-//     for(i = 0; i < size; i++) {
-//         p[y][x + size - i - 1].c = hexa[i];
-//         p[y][x + size - i - 1].a = attr;
-//     }
-// }
-
 
 
 
@@ -165,47 +137,62 @@ void print_map() {
 
 void print_exception(int number) {
 
-    // clear_screen();
-    // print_backtrace(0,0);
+    clear_screen();
 
-    unsigned int row = 5;
-    unsigned int col = 15;
-
-    int tmp, i;
-    for(i = 0; i < 8; i++) {
-        get_register(registers[i], tmp);
-        printf("%s: %d", registers[i], tmp), col, row);
-        row++;
-    }
-
-    return;
     char * str = exceptions[number];
+    int tmp;
 
-    // Imprimir stacktrace
-    // Imprimir registros
-    // Imprimir magia y colores
-    // Imprimir unos Doritos
-    // 8====D
+    print_string(str, 5, 5, 0);
 
-    print_string(str, col, row, 0);
-    row++;
-    putc(7*16+1, col, row); // deberia imprimir "q"
-    row++;
-    print_int(51, col, row); // deberia imprimir "51"
-    row++;
-    putc(48, col, row); // deberia ser una "0"
-    putc(120, col+1, row); // deberia ser una "x"
-    print_hex(100, col+2, row, 0); // deberia imprimir "64"
-    row++;
-    putc(48, col, row); // deberia ser una "0"
-    putc(120, col+1, row); // deberia ser una "x"
-    print_hex((unsigned int) exceptions, col+2, row, 0);
-    row++;
-    char * test = "queso";
-    printf(col, row, "'%s' es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
-    row++;
-    test = 0;
-    printf(col, row, "'%s' es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
+    print_backtrace(5, 8);
+
+    GET_REGISTER("eax", tmp);
+    printf(45, 8, "%s: %h", "eax", tmp);
+
+    GET_REGISTER("ebx", tmp);
+    printf(45, 9, "%s: %h", "ebx", tmp);
+
+    GET_REGISTER("ecx", tmp);
+    printf(45, 10, "%s: %h", "ecx", tmp);
+
+    GET_REGISTER("edx", tmp);
+    printf(45, 11, "%s: %h", "edx", tmp);
+
+    GET_REGISTER("edi", tmp);
+    printf(45, 12, "%s: %h", "edi", tmp);
+
+    GET_REGISTER("esi", tmp);
+    printf(45, 13, "%s: %h", "esi", tmp);
+
+    GET_REGISTER("ebp", tmp);
+    printf(45, 14, "%s: %h", "ebp", tmp);
+
+    GET_REGISTER("esp", tmp);
+    printf(45, 15, "%s: %h", "esp", tmp);
+
+
+    // imprir stack!
+
+
+    // testing.
+    // row++;
+    // putc(7*16+1, col, row); // deberia imprimir "q"
+    // row++;
+    // print_int(51, col, row); // deberia imprimir "51"
+    // row++;
+    // putc(48, col, row); // deberia ser una "0"
+    // putc(120, col+1, row); // deberia ser una "x"
+    // print_hex(100, col+2, row, 0); // deberia imprimir "64"
+    // row++;
+    // putc(48, col, row); // deberia ser una "0"
+    // putc(120, col+1, row); // deberia ser una "x"
+    // print_hex((unsigned int) exceptions, col+2, row, 0);
+    // row++;
+    // char * test = "queso";
+    // printf(col, row, "'%s' es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
+    // row++;
+    // test = 0;
+    // printf(col, row, "'%s' es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
 
 }
 
