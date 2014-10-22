@@ -88,7 +88,7 @@ void clear_screen() {
     int i = 0;
     ca empty;
     empty.c = 0;
-    empty.a = 0; //getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
+    empty.a = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
     while(i < size) {
         p[i] = empty;
         i++;
@@ -102,11 +102,11 @@ void print_map() {
     ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
 
     ca red;
-    red.c = 71;
-    red.a = getFormat(C_FG_RED, 0, C_BG_BLUE, 0);
+    red.c = 0;
+    red.a = getFormat(C_FG_RED, 0, C_BG_RED, 0);
     ca blue;
     blue.c = 0;
-    blue.a = getFormat(C_FG_RED, 0, C_BG_BLUE, 0);
+    blue.a = getFormat(C_FG_BLUE, 0, C_BG_BLUE, 0);
     ca green;
     green.c = 0;
     green.a = getFormat(C_FG_GREEN, 0, C_BG_GREEN, 0);
@@ -115,6 +115,8 @@ void print_map() {
     black.a = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
 
     int y,x;
+
+    clear_screen();
     
     for(y = 0; y < rows; y++) {
         for(x = 0; x < cols; x++) {
@@ -149,31 +151,31 @@ void print_exception(int number) {
     char * str = exceptions[number];
     int tmp;
 
+
     print_string(str, 5, 5, 0);
 
     print_backtrace(5, 8);
 
-
     GET_REGISTER("eax", tmp);
-    printf(45, 8, "%s: %h\n", "eax", tmp);
+    printf(45, 8, "%s: %h", "eax", tmp);
 
     GET_REGISTER("ebx", tmp);
-    printf(45, 9, "%s: %h\n", "ebx", tmp);
+    printf(45, 9, "%s: %h", "ebx", tmp);
 
     GET_REGISTER("ecx", tmp);
-    printf(45, 10, "%s: %h\n", "ecx", tmp);
+    printf(45, 10, "%s: %h", "ecx", tmp);
 
     GET_REGISTER("edx", tmp);
-    printf(45, 11, "%s: %h\n", "edx", tmp);
+    printf(45, 11, "%s: %h", "edx", tmp);
 
     GET_REGISTER("edi", tmp);
-    printf(45, 12, "%s: %h\n", "edi", tmp);
+    printf(45, 12, "%s: %h", "edi", tmp);
 
     GET_REGISTER("esi", tmp);
-    printf(45, 13, "%s: %h\n", "esi", tmp);
+    printf(45, 13, "%s: %h", "esi", tmp);
 
     GET_REGISTER("ebp", tmp);
-    printf(45, 14, "%s: %h\n", "ebp", tmp);
+    printf(45, 14, "%s: %h", "ebp", tmp);
 
     GET_REGISTER("esp", tmp);
     printf(45, 15, "%s: %h", "esp", tmp);
@@ -181,6 +183,7 @@ void print_exception(int number) {
 
 
     // imprir stack!
+
 
 
     // testing.

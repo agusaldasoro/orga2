@@ -10,7 +10,6 @@ BITS 32
 
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
-errorDiv: db "e r r o r   e n   d i v i s i o n",10,0
 
 ;; PIC
 extern fin_intr_pic1
@@ -20,18 +19,9 @@ extern sched_proximo_indice
 
 extern print_exception
 
-;extern printf
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
-
-; %macro REGISTER r o
-; global _%1
-
-; _%1:
-;     asm("movl (%%%r), %0;" :"=r"(%o));
-
-; %endmacro
 
 %macro ISR 1
 global _isr%1 

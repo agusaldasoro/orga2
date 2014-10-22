@@ -61,7 +61,6 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
     va_list args;
     va_start(args, format);
 
-    // col--;
     int nextArg = 0; // find a better name for this.
     int n;
     char *s;
@@ -79,6 +78,7 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
         } else if (nextArg == 2) {
             switch(*format) {
                 case 'n':
+                    col = 0;
                     row++;
                     break;
             }
@@ -113,11 +113,9 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
                     break;
                 default:
                     print_string("Unknown format!", col, row, 0);
-                    // print_string("Unknown format! Stay calm, it's just a bug. AAAAAAA WE ALL GONNA DIE!!!", row, col, 0);
             }
         }
         
-        // use defines!
         if (col == 80) {
             col = 0;
             row++;
@@ -129,11 +127,8 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
 }
 
 
-
-// just for fun
 void print_backtrace(unsigned int col, unsigned int row) {
-
-    int i,ebp;
+    int i, ebp;
 
     asm("movl %%ebp, %0;" :"=r"(ebp));
     for(i = 0; i < 10 && ebp != 0; i++) {
