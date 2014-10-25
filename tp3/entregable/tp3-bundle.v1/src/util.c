@@ -23,6 +23,8 @@ void putc(char c, unsigned int col, unsigned int row) {
     // avoid black print bug
     unsigned char attr = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
 
+    if (c == '\n') putc('\r', col, row);
+
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
     p[row][col].c = c;
     p[row][col].a = attr;
@@ -65,23 +67,13 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
     int n;
     char *s;
     while(*format != 0) {
-        if (nextArg == 0) {
-            if (*format == '%') {
+        if (*format == '%') {
                 nextArg = 1;
                 format++;
                 continue;
-            } else if (*format == '\\') {
-                nextArg = 2;
             }
             putc(*format, col, row);
             col++;
-        } else if (nextArg == 2) {
-            switch(*format) {
-                case 'n':
-                    col = 0;
-                    row++;
-                    break;
-            }
         } else {
             switch(*format) {
                 case 'd':

@@ -10,10 +10,15 @@ extern GDT_DESC
 extern IDT_DESC
 
 extern idt_inicializar
+extern mmu_inicializar_dir_kernel
+extern mmu_inicializar
 
 extern clear_screen
 extern print_map
+
 ;; Saltear seccion de datos
+
+
 jmp start
 
 ;;
@@ -91,14 +96,22 @@ modo_protegido:
     call clear_screen
 
     call print_map
-    ; Inicializar el manejador de memoria
-    
-    ; Inicializar el directorio de paginas
-    
-    ; Cargar directorio de paginas
 
+    ; Inicializar el manejador de memoria
+    ; Inicializar el directorio de paginas
+    ; Cargar directorio de paginas
+    call mmu_inicializar_dir_kernel
+        
     ; Habilitar paginacion
-    
+    ;xchg bx, bx
+
+    mov eax,0x27000
+    mov cr3,eax
+
+    mov eax,cr0
+    or eax,0x80000000
+    mov cr0,eax
+
     ; Inicializar tss
 
     ; Inicializar tss de la tarea Idle
@@ -106,15 +119,19 @@ modo_protegido:
     ; Inicializar el scheduler
 
     ; Inicializar la IDT
+
+
+
     call idt_inicializar
     ; Cargar IDT
     lidt [IDT_DESC]
 
-    ; test para que salte la divide by 0 exception (0)
-    mov edx,0
-    mov ecx,0
-    mov eax,3
-    div ecx
+
+    ; ; test para que salte la divide by 0 exception (0)
+    ; mov edx,0
+    ; mov ecx,0
+    ; mov eax,3
+    ; div ecx
  
     ; Configurar controlador de interrupciones
 
