@@ -47,7 +47,7 @@ void mmu_inicializar() {
 
 page_directory* dame_pd() {
 	page_directory* pd = (page_directory*) PAGES;
-	pd += paginas*4096;
+	pd += paginas * 4096;
 	int i;
 	for (i = 0; i < 1024; i++) {
 		pd[i] = (page_directory) {};		
@@ -94,81 +94,61 @@ unsigned int get_physical_address(unsigned int x, unsigned int y) {
 	return ret;
 }
 
-void mmu_mapear_pagina(unsigned int virtual, unsigned int cr3, unsigned int fisica) {
-    page_directory *pd = (page_directory *) cr3;
-    page_table* pt;
+void mmu_mapear_pagina(unsigned int virtual, unsigned int fisica, page_directory* pd, unsigned char rw, unsigned char us) {
 
-    unsigned int offset_dir = virtual >> 12;
-    unsigned int offset_table = (virtual >> 12) - offset_dir;
-    offset_dir = offset_dir >> 10;
 
-    unsigned int segmento_fisica = fisica >> 12;
+    unsigned int directory = (virtual >> 22);
+    unsigned int table     = (virtual & 0x003FF000) >> 12;
 
-    if (pd[offset_dir].p == 0){
-        pd[offset_dir].base = ((unsigned int) dame_pt()) >> 12;
-        pd[offset_dir].rw = 1;
-        pd[offset_dir].p = 1;
+    page_table* pt = (page_table*) (pd[directory].base << 12);
+
+    if (pd[directory].p == 0){
+        pd[directory].base = ((unsigned int) dame_pt()) >> 12;
+        pd[directory].rw = rw;
+	    pd[directory].us = us;
+        pd[directory].p = 1;
     }
 
-    pt = (page_table*) (pd[offset_dir].base << 12);
-    pt[offset_table].base = segmento_fisica;
-    pt[offset_table].rw = 1;
-    pt[offset_table].p = 1;
+    pt = (page_table*) (pd[directory].base << 12);
+    pt[table].base = fisica >> 12;
+    pt[table].rw = rw;
+    pt[table].us = us;
+    pt[table].p = 1;
+
     tlbflush();
 }
 
 void mmu_inicializar_dir_zombie(unsigned int player, unsigned int y) {
 
-	unsigned int pd = (unsigned int) dame_pd();
+	page_directory* pd = dame_pd();
 
 	unsigned int x = (player ? 79 : 2);
 // player = 0 es A
 // player = 1 es B
 	if (player) {
 		//player B
-		mmu_mapear_pagina(0x8000000, pd, get_physical_address(x, y));
-		mmu_mapear_pagina(0x8001000, pd, get_physical_address(x-1, y));
-		mmu_mapear_pagina(0x8002000, pd, get_physical_address(x-1, y-1));
-		mmu_mapear_pagina(0x8003000, pd, get_physical_address(x-1, y+1));
-		mmu_mapear_pagina(0x8004000, pd, get_physical_address(x, y-1));
-		mmu_mapear_pagina(0x8005000, pd, get_physical_address(x, y+1));
-		mmu_mapear_pagina(0x8006000, pd, get_physical_address(x+1, y));
-		mmu_mapear_pagina(0x8007000, pd, get_physical_address(x+1, y+1));
-		mmu_mapear_pagina(0x8008000, pd, get_physical_address(x+1, y-1));
+		mmu_mapear_pagina(0x8000000, pd, get_physical_address(x, y), 1, 0);
+		mmu_mapear_pagina(0x8001000, pd, get_physical_address(x-1, y), 1, 0);
+		mmu_mapear_pagina(0x8002000, pd, get_physical_address(x-1, y-1), 1, 0);
+		mmu_mapear_pagina(0x8003000, pd, get_physical_address(x-1, y+1), 1, 0);
+		mmu_mapear_pagina(0x8004000, pd, get_physical_address(x, y-1), 1, 0);
+		mmu_mapear_pagina(0x8005000, pd, get_physical_address(x, y+1), 1, 0);
+		mmu_mapear_pagina(0x8006000, pd, get_physical_address(x+1, y), 1, 0);
+		mmu_mapear_pagina(0x8007000, pd, get_physical_address(x+1, y+1), 1, 0);
+		mmu_mapear_pagina(0x8008000, pd, get_physical_address(x+1, y-1), 1, 0);
 	} else {
 		//player A
-		mmu_mapear_pagina(0x8000000, pd, get_physical_address(x, y));
-		mmu_mapear_pagina(0x8001000, pd, get_physical_address(x+1, y));
-		mmu_mapear_pagina(0x8002000, pd, get_physical_address(x+1, y+1));
-		mmu_mapear_pagina(0x8003000, pd, get_physical_address(x+1,y -1));
-		mmu_mapear_pagina(0x8004000, pd, get_physical_address(x, y+1));
-		mmu_mapear_pagina(0x8005000, pd, get_physical_address(x, y-1));
-		mmu_mapear_pagina(0x8006000, pd, get_physical_address(x-1, y));
-		mmu_mapear_pagina(0x8007000, pd, get_physical_address(x-1, y-1));
-		mmu_mapear_pagina(0x8008000, pd, get_physical_address(x-1, y+1));
+		mmu_mapear_pagina(0x8000000, pd, get_physical_address(x, y), 1, 0);
+		mmu_mapear_pagina(0x8001000, pd, get_physical_address(x+1, y), 1, 0);
+		mmu_mapear_pagina(0x8002000, pd, get_physical_address(x+1, y+1), 1, 0);
+		mmu_mapear_pagina(0x8003000, pd, get_physical_address(x+1,y -1), 1, 0);
+		mmu_mapear_pagina(0x8004000, pd, get_physical_address(x, y+1), 1, 0);
+		mmu_mapear_pagina(0x8005000, pd, get_physical_address(x, y-1), 1, 0);
+		mmu_mapear_pagina(0x8006000, pd, get_physical_address(x-1, y), 1, 0);
+		mmu_mapear_pagina(0x8007000, pd, get_physical_address(x-1, y-1), 1, 0);
+		mmu_mapear_pagina(0x8008000, pd, get_physical_address(x-1, y+1), 1, 0);
 
 	}
-
-
-// 	if (player == 1) {
-// //		pd = (page_directory *) PAGE_DIRECTORY_ADDRESS_A;
-// 	} else {
-// //		pd = (page_directory *) PAGE_DIRECTORY_ADDRESS_B;
-		
-// 	}
-
-// 	int i;
-
-// 	/// Creo 1024 entradas en page_directory con todo cero.
-// 	for (i = 0; i < 1024; i++) {
-// 		pd[i] = (page_directory) {};		
-// 	}
-// 	pd[0] = (page_directory) {
-// 		.base = 0x28 + i,
-// 		.rw = 0x1,
-// 		.p = 1,
-// 	};
-
 }
 
 
