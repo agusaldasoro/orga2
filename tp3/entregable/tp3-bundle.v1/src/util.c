@@ -67,7 +67,8 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
     int n;
     char *s;
     while(*format != 0) {
-        if (*format == '%') {
+        if (nextArg == 0) {
+            if (*format == '%') {
                 nextArg = 1;
                 format++;
                 continue;

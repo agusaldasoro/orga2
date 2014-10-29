@@ -44,8 +44,16 @@ typedef struct page_table {
 
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
+void mmu_inicializar_dir_zombie(unsigned int player, unsigned int y);
 
+unsigned int paginas; 
 
+#define PAGES 0x100000
+
+ #define PAGE_DIRECTORY_ADDRESS_A 0x100000
+ #define PAGE_DIRECTORY_ADDRESS_B 0x120000
+ #define TABLE_PAGE_ADDRESS_A     0x140000
+ #define TABLE_PAGE_ADDRESS_B     0x160000
 
 #endif	/* !__MMU_H__ */
 

@@ -100,7 +100,9 @@ modo_protegido:
     ; Inicializar el manejador de memoria
     ; Inicializar el directorio de paginas
     ; Cargar directorio de paginas
-    call mmu_inicializar_dir_kernel
+    xchg bx, bx
+
+    call mmu_inicializar
         
     ; Habilitar paginacion
     ;xchg bx, bx
@@ -111,6 +113,15 @@ modo_protegido:
     mov eax,cr0
     or eax,0x80000000
     mov cr0,eax
+
+    xchg bx, bx
+
+
+    mov eax,0x100000
+    mov cr3,eax
+
+    xchg bx, bx
+
 
     ; Inicializar tss
 
