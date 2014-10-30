@@ -15,12 +15,12 @@ void mmu_inicializar_dir_kernel() {
 
 	/// Creo 1024 entradas en page_directory con todo cero.
 	for (i = 0; i < 1024; i++) {
-		pd[i] = (page_directory) {};		
+		pd[i] = (page_directory) {};
 	}
 
 
 	// Mapeo las primeras 4 (0,1,2,3) entradas del page direcotry
-	// con el base y permisos correspondientes. 
+	// con el base y permisos correspondientes.
 	for(i = 0; i < 4; i++) {
 		pd[i] = (page_directory) {
 			.base = 0x28 + i,
@@ -50,7 +50,7 @@ page_directory* dame_pd() {
 	pd += paginas * 4096;
 	int i;
 	for (i = 0; i < 1024; i++) {
-		pd[i] = (page_directory) {};		
+		pd[i] = (page_directory) {};
 	}
 
 	pd[0] = (page_directory) {
@@ -70,11 +70,11 @@ page_table* dame_pt() {
 	pd += paginas * 0x1000;
 	int i;
 	for (i = 0; i < 1024; i++) {
-		pd[i] = (page_table) {};		
+		pd[i] = (page_table) {};
 	}
 
 	paginas++;
-	
+
 	return pd;
 }
 
@@ -94,7 +94,7 @@ unsigned int get_physical_address(unsigned int x, unsigned int y) {
 	return ret;
 }
 
-void mmu_mapear_pagina(unsigned int virtual, unsigned int fisica, page_directory* pd, unsigned char rw, unsigned char us) {
+void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fisica, unsigned char rw, unsigned char us) {
 
 
     unsigned int directory = (virtual >> 22);
@@ -149,6 +149,30 @@ void mmu_inicializar_dir_zombie(unsigned int player, unsigned int y) {
 		mmu_mapear_pagina(0x8008000, pd, get_physical_address(x-1, y+1), 1, 0);
 
 	}
+}
+
+unsigned int recuperar_fisica(unsigned int virtual, unsigned int cr3){
+    page_directory* pd = (page_directory*) cr3;
+    page_table* pt = (page_table*) (pd[virtual >> 22].base << 12);
+    unsigned int table  = (virtual & 0x003FF000) >> 12;
+    unsigned int res = (unsigned int) (pt[table].base << 12);
+    return res;
+}
+
+void desplazar_fisica(unsigned int virtual, unsigned int cr3, int x, int y){
+    page_directory* pd = (page_directory*) cr3;
+    page_table* pt = (page_table*) (pd[virtual >> 22].base << 12);
+    unsigned int table  = (virtual & 0x003FF000) >> 12;
+    pt[table].base += x;
+    pt[table].base += y*50;
+}
+
+void mover_soldado(int x, int y,unsigned int cr3){
+    int i = 0;
+    while(i<9){
+        desplazar_fisica(0x8000000+i*0x1000,cr3,x,y);
+        i++;
+    }
 }
 
 
