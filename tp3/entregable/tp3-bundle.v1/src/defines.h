@@ -33,10 +33,11 @@
 
 #define GDT_IDX_DATA_0         8
 #define GDT_IDX_DATA_3         9
-#define GDT_IDX_CODE_0         0xa
-#define GDT_IDX_CODE_3         0xb
-#define GDT_IDX_VIDEO          0xc
-
+#define GDT_IDX_CODE_0         0xA
+#define GDT_IDX_CODE_3         0xB
+#define GDT_IDX_VIDEO          0xC
+#define TSS_INICIAL            0xD
+#define TSS_IDLE               0xE
     
 
 /* Offsets en la gdt */
