@@ -103,6 +103,36 @@ gdt_entry gdt[GDT_COUNT] = {
         (unsigned char)     0x00,           /* g            */
         (unsigned char)     0x00,           /* base[31:24]  */
     },
+    [TSS_INICIAL] = (gdt_entry) {
+        (unsigned short)    0x67,         /* limit[0:15]  */
+        (unsigned short)    (&tss_inicial) & (0x0000FFFF),         /* base[0:15]   */
+        (unsigned char)     ((&tss_inicial) & (0x00FF0000)) >> 16,           /* base[23:16]  */
+        (unsigned char)     0x09,           /* type         */
+        (unsigned char)     0x00,           /* s            */
+        (unsigned char)     0x00,           /* dpl          */
+        (unsigned char)     0x01,           /* p            */
+        (unsigned char)     0x00,           /* limit[16:19] */
+        (unsigned char)     0x00,           /* avl          */
+        (unsigned char)     0x00,           /* l            */
+        (unsigned char)     0x00,           /* db           */
+        (unsigned char)     0x00,           /* g            */
+        (unsigned char)     ((&tss_inicial) & (0xFF000000)) >> 24,           /* base[31:24]  */
+    },
+    [TSS_IDLE] = (gdt_entry) {
+        (unsigned short)    0x67,         /* limit[0:15]  */
+        (unsigned short)    (&tss_idle) & (0x0000FFFF),         /* base[0:15]   */
+        (unsigned char)     ((&tss_idle) & (0x00FF0000)) >> 16,           /* base[23:16]  */
+        (unsigned char)     0x09,           /* type         */
+        (unsigned char)     0x00,           /* s            */
+        (unsigned char)     0x00,           /* dpl          */
+        (unsigned char)     0x01,           /* p            */
+        (unsigned char)     0x00,           /* limit[16:19] */
+        (unsigned char)     0x00,           /* avl          */
+        (unsigned char)     0x00,           /* l            */
+        (unsigned char)     0x00,           /* db           */
+        (unsigned char)     0x00,           /* g            */
+        (unsigned char)     ((&tss_idle) & (0xFF000000)) >> 24,           /* base[31:24]  */
+    },
 };
 
 gdt_descriptor GDT_DESC = {
