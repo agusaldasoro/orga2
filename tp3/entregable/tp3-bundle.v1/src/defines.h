@@ -37,7 +37,9 @@
 #define GDT_IDX_CODE_3         0xb
 #define GDT_IDX_VIDEO          0xc
 
-    
+typedef unsigned int u32;
+typedef unsigned short u16;
+typedef unsigned char u8;
 
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
@@ -46,5 +48,7 @@
 /* Direcciones de memoria */
 /* -------------------------------------------------------------------------- */
 #define VIDEO                   0x000B8000 /* direccion fisica del buffer de video */
+
+
 
 #endif  /* !__DEFINES_H__ */

@@ -127,7 +127,7 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
 	Mago = 1
 	Clerigo = 2
 */
-void mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y) {
+page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y) {
 
 	page_directory* pd = get_page_directory();
 
@@ -180,6 +180,8 @@ void mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsign
 	while (i++ < 0x1000) {
 		code[i] = paddress[i];
 	}
+
+	return pd;
 }
 
 unsigned int recuperar_fisica(unsigned int virtual, page_directory* pd) {

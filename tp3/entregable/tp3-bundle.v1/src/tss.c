@@ -42,3 +42,27 @@ void tss_inicializar_tarea_idle() {
 
 	tss_idle.eflags = 0x202;
 }
+
+
+void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags) {
+	tss = (tss) {};
+
+	tss.cr3 = cr3;
+	tss.eip = cr3;
+	
+	tss.ebp = stack;
+	tss.esp = stack;
+
+
+	tss.ds = ds;
+	tss.es = ds;
+	tss.ss = ds;
+	tss.gs = ds;
+
+	tss.cs = cs;
+
+	
+	tss.eflags = eflags;
+	tss.cr3 = cr3;
+
+}

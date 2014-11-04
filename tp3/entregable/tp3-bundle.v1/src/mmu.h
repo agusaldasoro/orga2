@@ -44,7 +44,7 @@ typedef struct page_table {
 
 void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
-void mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y);
+page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y);
 void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fisica, unsigned char rw, unsigned char us);
 
 

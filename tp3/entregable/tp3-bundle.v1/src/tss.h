@@ -56,4 +56,8 @@ typedef struct str_tss {
 
 void tss_inicializar();
 void tss_inicializar_tarea_idle();
+void init_tss(tss* tss);
+
 #endif  /* !__TSS_H__ */
+
+
