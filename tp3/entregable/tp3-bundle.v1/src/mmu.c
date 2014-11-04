@@ -134,6 +134,19 @@ void mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsign
 	unsigned int x = (player ? 79 : 2);
 // player = 0 es A
 // player = 1 es B
+
+	unsigned int[9] offsets_x = {0, -1, -1, -1, 0, 0, 1, 1, 1};
+	unsigned int[9] offsets_y = {0, 0, -1, 1, -1, 1, 0, 1, -1};
+
+	int i,x,y;
+	for(i = 0; i < 9; i++) {
+		x = offset_x[i] * (player ? 1 : -1);
+		y = offset_y[i] * (player ? 1 : -1);
+
+		// TODO : No debería tener permisos de usuario?
+		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(x, y), 1, 0);		
+	}
+/*
 	if (player) {
 		//player B
 		// TODO : No debería tener permisos de usuario?
@@ -154,16 +167,13 @@ void mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsign
 		mmu_mapear_pagina(0x8003000, pd, get_physical_address(x+1,y -1), 1, 0);
 		mmu_mapear_pagina(0x8004000, pd, get_physical_address(x, y+1), 1, 0);
 		mmu_mapear_pagina(0x8005000, pd, get_physical_address(x, y-1), 1, 0);
-		mmu_mapear_pagina(0x8006000, pd, get_physical_address(x-1, y), 1, 0);
+		mmu_mapear_pagina(0x8006000, pd, get_physicalmmu_inicializar_dir_tarea_address(x-1, y), 1, 0);
 		mmu_mapear_pagina(0x8007000, pd, get_physical_address(x-1, y-1), 1, 0);
 		mmu_mapear_pagina(0x8008000, pd, get_physical_address(x-1, y+1), 1, 0);
 	}
+*/
 
-
- 	// TODO : hacer memcopy
-	int i, address;
-
-	address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
+	int address = address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
 	i = 0;
 	unsigned char *code = (unsigned char *) 0x8000000;
 	unsigned char * paddress = (unsigned char*) address;
