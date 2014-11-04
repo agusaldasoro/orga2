@@ -44,25 +44,22 @@ void tss_inicializar_tarea_idle() {
 }
 
 
-void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags) {
-	tss = (tss) {};
+void init_tss(tss* ptss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags) {
+	// TODO : Hay que ponerlo en 0, Implement memset
+	ptss = (tss*) {0};
 
-	tss.cr3 = cr3;
-	tss.eip = cr3;
+	ptss->cr3 = cr3;
+	ptss->eip = cr3;
 	
-	tss.ebp = stack;
-	tss.esp = stack;
+	ptss->ebp = stack;
+	ptss->esp = stack;
 
 
-	tss.ds = ds;
-	tss.es = ds;
-	tss.ss = ds;
-	tss.gs = ds;
-
-	tss.cs = cs;
-
+	ptss->ds = ds;
+	ptss->es = ds;
+	ptss->ss = ds;
+	ptss->gs = ds;
+	ptss->cs = cs;
 	
-	tss.eflags = eflags;
-	tss.cr3 = cr3;
-
+	ptss->eflags = eflags;
 }
