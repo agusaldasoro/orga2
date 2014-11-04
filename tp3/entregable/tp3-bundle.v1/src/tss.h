@@ -11,6 +11,7 @@
 #include "defines.h"
 #include "i386.h"
 #include "gdt.h"
+#include "util.h"
 
 typedef struct str_tss {
     unsigned short  ptl;
@@ -54,5 +55,9 @@ typedef struct str_tss {
 } __attribute__((__packed__, aligned (8))) tss;
 
 void tss_inicializar();
+void tss_inicializar_tarea_idle();
+void init_tss(tss* ptss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags);
 
 #endif  /* !__TSS_H__ */
+
+

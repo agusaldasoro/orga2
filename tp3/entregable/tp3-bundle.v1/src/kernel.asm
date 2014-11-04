@@ -16,6 +16,9 @@ extern mmu_inicializar
 extern clear_screen
 extern print_map
 
+extern habilitar_pic
+extern resetear_pic
+
 ;; Saltear seccion de datos
 
 
@@ -100,7 +103,6 @@ modo_protegido:
     ; Inicializar el manejador de memoria
     ; Inicializar el directorio de paginas
     ; Cargar directorio de paginas
-    xchg bx, bx
 
     call mmu_inicializar
         
@@ -114,13 +116,9 @@ modo_protegido:
     or eax,0x80000000
     mov cr0,eax
 
-    xchg bx, bx
-
 
     mov eax,0x100000
     mov cr3,eax
-
-    xchg bx, bx
 
 
     ; Inicializar tss
@@ -145,11 +143,13 @@ modo_protegido:
     ; div ecx
  
     ; Configurar controlador de interrupciones
-
+    call resetear_pic
+    call habilitar_pic
     ; Cargar tarea inicial
 
+    xchg bx, bx
     ; Habilitar interrupciones
-
+    sti
     ; Saltar a la primera tarea: Idle
 
     ; Ciclar infinitamente (por si algo sale mal...)

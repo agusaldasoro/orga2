@@ -131,3 +131,14 @@ void print_backtrace(unsigned int col, unsigned int row) {
     }
 }
 
+void* memcpy(void* src, void* dst, int length) {
+
+    char* psrc = (char*) src;
+    char* pdst = (char*) dst;
+
+    while(length--) {
+        *pdst++ = *psrc++;
+    }
+
+    return dst;
+}
