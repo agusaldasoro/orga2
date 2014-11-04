@@ -36,5 +36,10 @@ typedef struct str_gdt_entry {
 extern gdt_entry gdt[];
 extern gdt_descriptor GDT_DESC;
 
+void add_indexed_entry(unsigned int base, unsigned short limit, unsigned char type,
+        unsigned char present, unsigned char dpl, unsigned int index);
+
+void add_entry(unsigned int base, unsigned short limit, unsigned char type,
+        unsigned char present, unsigned char dpl);
 
 #endif  /* !__GDT_H__ */
