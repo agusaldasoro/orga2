@@ -146,32 +146,7 @@ page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char cl
 		// TODO : No debería tener permisos de usuario?
 		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 0);		
 	}
-/*
-	if (player) {
-		//player B
-		// TODO : No debería tener permisos de usuario?
-		mmu_mapear_pagina(0x8000000, pd, get_physical_address(x, y), 1, 0);
-		mmu_mapear_pagina(0x8001000, pd, get_physical_address(x-1, y), 1, 0);
-		mmu_mapear_pagina(0x8002000, pd, get_physical_address(x-1, y-1), 1, 0);
-		mmu_mapear_pagina(0x8003000, pd, get_physical_address(x-1, y+1), 1, 0);
-		mmu_mapear_pagina(0x8004000, pd, get_physical_address(x, y-1), 1, 0);
-		mmu_mapear_pagina(0x8005000, pd, get_physical_address(x, y+1), 1, 0);
-		mmu_mapear_pagina(0x8006000, pd, get_physical_address(x+1, y), 1, 0);
-		mmu_mapear_pagina(0x8007000, pd, get_physical_address(x+1, y+1), 1, 0);
-		mmu_mapear_pagina(0x8008000, pd, get_physical_address(x+1, y-1), 1, 0);
-	} else {
-		//player A
-		mmu_mapear_pagina(0x8000000, pd, get_physical_address(x, y), 1, 0);
-		mmu_mapear_pagina(0x8001000, pd, get_physical_address(x+1, y), 1, 0);
-		mmu_mapear_pagina(0x8002000, pd, get_physical_address(x+1, y+1), 1, 0);
-		mmu_mapear_pagina(0x8003000, pd, get_physical_address(x+1,y -1), 1, 0);
-		mmu_mapear_pagina(0x8004000, pd, get_physical_address(x, y+1), 1, 0);
-		mmu_mapear_pagina(0x8005000, pd, get_physical_address(x, y-1), 1, 0);
-		mmu_mapear_pagina(0x8006000, pd, get_physicalmmu_inicializar_dir_tarea_address(x-1, y), 1, 0);
-		mmu_mapear_pagina(0x8007000, pd, get_physical_address(x-1, y-1), 1, 0);
-		mmu_mapear_pagina(0x8008000, pd, get_physical_address(x-1, y+1), 1, 0);
-	}
-*/
+
 
 	int address = address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
 	i = 0;
@@ -180,6 +155,7 @@ page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char cl
 	while (i++ < 0x1000) {
 		code[i] = paddress[i];
 	}
+	// memcpy()
 
 	return pd;
 }
@@ -203,6 +179,12 @@ void mover_soldado(int x, int y, page_directory* pd) {
         desplazar_fisica(0x8000000+i*0x1000, pd, x, y);
         i++;
     }
+}
+
+void copy_code(u32 fisica, page_directory* cr3, u8 class, u8 player) {
+	mmu_mapear_pagina(0x400000, cr3, fisica, 1, 0);
+	memcpy((void*) 0x10000 + ((player ? 0 : 1)  * 0x3000 + class * 0x1000), (void*) 0x400000, 0x1000);
+	// TODO : Implementar mmu_unmapear. mmu unmapear pagina(0x400000, cr3)
 }
 
 

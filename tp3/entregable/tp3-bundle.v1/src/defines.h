@@ -43,6 +43,9 @@ typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
 
+#define ZOMBIE_VIRTUAL         0x8000000
+#define PAGE_SIZE              0x1000
+
 /* Offsets en la gdt */
 /* -------------------------------------------------------------------------- */
 #define GDT_OFF_NULL_DESC           (GDT_IDX_NULL_DESC      << 3)

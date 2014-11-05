@@ -12,6 +12,7 @@
 #include "i386.h"
 #include "tss.h"
 #include "game.h"
+#include "util.h"
 
 typedef struct page_directory {
    unsigned char   p:1;
@@ -46,7 +47,7 @@ void mmu_inicializar();
 void mmu_inicializar_dir_kernel();
 page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y);
 void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fisica, unsigned char rw, unsigned char us);
-
+void copy_code(u32 fisica, page_directory* cr3, u8 class, u8 player);
 
 
 unsigned int paginas; 

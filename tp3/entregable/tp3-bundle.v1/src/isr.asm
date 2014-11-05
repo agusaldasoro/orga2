@@ -91,10 +91,10 @@ _isr33:
     ; call proximo_reloj
     xor eax,eax
     in al, 0x60
-    mov dword [esp+4], 5
-    mov dword [esp+8], 5
-    mov dword [esp+12], eax
-    call print_int
+    ; mov dword [esp+4], 5
+    ; mov dword [esp+8], 5
+    ; mov dword [esp+12], eax
+    ; call print_int
     call fin_intr_pic1
     popad
     iret

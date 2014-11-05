@@ -56,7 +56,8 @@ typedef struct str_tss {
 
 void tss_inicializar();
 void tss_inicializar_tarea_idle();
-void init_tss(tss* ptss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags);
+void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags);
+tss* get_next_tss(u8 player);
 
 #endif  /* !__TSS_H__ */
 
