@@ -9,7 +9,7 @@
 #define __GDT_H__
 
 #include "defines.h"
-
+#include "tss.h"
 
 typedef struct str_gdt_descriptor {
     unsigned short  gdt_length;
@@ -41,5 +41,6 @@ void add_indexed_entry(unsigned int base, unsigned short limit, unsigned char ty
 
 void add_entry(unsigned int base, unsigned short limit, unsigned char type,
         unsigned char present, unsigned char dpl);
+
 
 #endif  /* !__GDT_H__ */
