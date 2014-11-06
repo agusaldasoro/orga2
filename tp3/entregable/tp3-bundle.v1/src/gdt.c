@@ -105,7 +105,7 @@ gdt_entry gdt[GDT_COUNT] = {
     },
     [GDT_INITIAL_TSS] = (gdt_entry) {
         (unsigned short)    0x0067,         /* limit[0:15]  */
-        (unsigned short)    0x00,         /* base[0:15]   */
+        (unsigned short)    0x00,           /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
         (unsigned char)     0x09,           /* type         */
         (unsigned char)     0x00,           /* s            */
@@ -120,7 +120,7 @@ gdt_entry gdt[GDT_COUNT] = {
     },
     [GDT_CURRENT_TSS] = (gdt_entry) {
         (unsigned short)    0x0067,         /* limit[0:15]  */
-        (unsigned short)    0x00,         /* base[0:15]   */
+        (unsigned short)    0x00,           /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
         (unsigned char)     0x09,           /* type         */
         (unsigned char)     0x00,           /* s            */
@@ -135,7 +135,7 @@ gdt_entry gdt[GDT_COUNT] = {
     },
     [GDT_NEXT_TSS] = (gdt_entry) {
         (unsigned short)    0x0067,         /* limit[0:15]  */
-        (unsigned short)    0x00,         /* base[0:15]   */
+        (unsigned short)    0x00,           /* base[0:15]   */
         (unsigned char)     0x00,           /* base[23:16]  */
         (unsigned char)     0x09,           /* type         */
         (unsigned char)     0x00,           /* s            */

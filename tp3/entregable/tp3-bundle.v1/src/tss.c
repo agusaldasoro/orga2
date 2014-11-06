@@ -11,13 +11,13 @@
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
 
-u8 inUse[CANT_ZOMBIS*2] = {};
+u8 inUseA[CANT_ZOMBIS] = {};
+u8 inUseB[CANT_ZOMBIS] = {};
 
 int currentZombieA;
 int currentZombieB;
 
-
-
+u8 currentPlayer_rait_nau;
 
 void tss_inicializar() {
 
@@ -39,7 +39,6 @@ void tss_inicializar() {
 	gdt[GDT_NEXT_TSS].base_31_24 = ((u32) (&next_task) & 0xFF000000) >> 24;
 	gdt[GDT_NEXT_TSS].base_23_16 = ((u32) (&next_task) & 0x00FF0000) >> 16;
 	gdt[GDT_NEXT_TSS].base_0_15  = (u32) (&next_task) & 0x0000FFFF;
-
 
     // add_entry((unsigned int) &tss_inicial, 0x67, 0x9, 1, 0);
     // add_entry((unsigned int) &tss_idle, 0x67, 0x9, 1, 0);
@@ -65,16 +64,71 @@ void tss_inicializar_tarea_idle() {
 	tss_idle.iomap = 0xffff;
 }
 
-tss* get_next_tss(u8 player) {
-	int i = (player ? 0 : 8);
 
-	int j = 0;
+/**
+Lafunction maestra.
+**/
 
-	while(inUse[i+j] || j <= 8) {
-		j++;
+tss* _get_next_tss(u8 player) {
+	int i = 0;
+	tss* ret = 0;
+	if (player) {
+		do {
+		 	i++;
+			currentZombieB++;
+			currentZombieB = currentZombieB % 8;
+		} while(!inUseB[currentZombieB] && i < 8);
+
+		if (inUseB[currentZombieB]) ret = &tss_zombisB[currentZombieB];		
+
+	} else {
+
+		do {
+		 	i++;
+			currentZombieA++;
+			currentZombieA = currentZombieA % 8;
+		} while(!inUseA[currentZombieA] && i < 8);
+
+		ret = &tss_zombisA[currentZombieA];
+
+		if (inUseA[currentZombieA]) ret = &tss_zombisA[currentZombieA];		
+
 	}
 
-	return (player ? &tss_zombisB[i+j-8] : &tss_zombisA[i+j]);
+	return ret;
+}
+
+tss* get_next_tss() {
+
+	currentPlayer_rait_nau = !currentPlayer_rait_nau;
+
+	tss * ret = _get_next_tss(currentPlayer_rait_nau);
+
+	// No hay player en el otro jugador? No problem, agarramos el próximo tss del jugador actual.
+	if (!ret) {
+		currentPlayer_rait_nau = !currentPlayer_rait_nau;
+		ret = _get_next_tss(currentPlayer_rait_nau);
+	} 
+	if (!ret)  {
+		ret = &tss_idle;
+	}
+
+	return ret;
+}
+
+
+
+tss* get_free_tss(u8 player) {
+	int i = 0;
+
+	if (player) {
+		while(inUseB[i]) i++;
+	} else {
+		while(inUseA[i]) i++;
+
+	}
+
+	return (player ? &tss_zombisB[i] : &tss_zombisA[i]);
 
 }
 
