@@ -1,10 +1,15 @@
 \select@language {spanish}
-\contentsline {section}{\numberline {1}Objetivos generales}{4}
-\contentsline {section}{\numberline {2}Contexto}{4}
-\contentsline {section}{\numberline {3}Enunciado y solucion}{4}
-\contentsline {subsection}{\numberline {3.1}Mediciones}{4}
-\contentsline {subsection}{\numberline {3.2}Filtro \textit {cropflip}}{5}
-\contentsline {subsection}{\numberline {3.3}Filtro \textit {Sierpinski}}{10}
-\contentsline {subsection}{\numberline {3.4}Filtro \textit {Bandas}}{12}
-\contentsline {subsection}{\numberline {3.5}Filtro \textit {Motion Blur}}{14}
-\contentsline {section}{\numberline {4}Conclusiones y trabajo futuro}{15}
+\contentsline {section}{\numberline {1}Objetivos generales}{3}
+\contentsline {section}{\numberline {2}Contexto}{3}
+\contentsline {section}{\numberline {3}Implementaci\'on en Assembler}{4}
+\contentsline {subsection}{\numberline {3.1}Filtro CropFlip}{4}
+\contentsline {subsection}{\numberline {3.2}Filtro Sierpinsky}{6}
+\contentsline {subsection}{\numberline {3.3}Filtro Bandas}{7}
+\contentsline {subsection}{\numberline {3.4}Filtro Motion Blur}{8}
+\contentsline {section}{\numberline {4}Enunciado y soluci\'on}{9}
+\contentsline {subsection}{\numberline {4.1}Mediciones}{9}
+\contentsline {subsection}{\numberline {4.2}Filtro \textit {cropflip}}{9}
+\contentsline {subsection}{\numberline {4.3}Filtro \textit {Sierpinski}}{19}
+\contentsline {subsection}{\numberline {4.4}Filtro \textit {Bandas}}{22}
+\contentsline {subsection}{\numberline {4.5}Filtro \textit {Motion Blur}}{24}
+\contentsline {section}{\numberline {5}Conclusiones y trabajo futuro}{25}

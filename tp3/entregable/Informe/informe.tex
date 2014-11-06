@@ -1,0 +1,440 @@
+\documentclass[a4paper]{article}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{charter}   % tipografia
+\usepackage{graphicx}
+%\usepackage{makeidx}
+\usepackage{paralist} %itemize inline
+
+%\usepackage{float}
+%\usepackage{amsmath, amsthm, amssymb}
+%\usepackage{amsfonts}
+%\usepackage{sectsty}
+%\usepackage{charter}
+%\usepackage{wrapfig}
+%\usepackage{listings}
+%\lstset{language=C}
+
+
+\input{codesnippet}
+\input{page.layout}
+% \setcounter{secnumdepth}{2}
+\usepackage{underscore}
+\usepackage{caratula}
+\usepackage{url}
+
+
+% ******************************************************** %
+%              TEMPLATE DE INFORME ORGA2 v0.1              %
+% ******************************************************** %
+% ******************************************************** %
+%                                                          %
+% ALGUNOS PAQUETES REQUERIDOS (EN UBUNTU):                 %
+% ========================================
+%                                                          %
+% texlive-latex-base                                       %
+% texlive-latex-recommended                                %
+% texlive-fonts-recommended                                %
+% texlive-latex-extra?                                     %
+% texlive-lang-spanish (en ubuntu 13.10)                   %
+% ******************************************************** %
+
+
+
+\begin{document}
+
+
+\thispagestyle{empty}
+\materia{Organización del Computador II}
+\submateria{Segundo Cuatrimestre de 2014}
+\titulo{Trabajo Práctico III}
+\subtitulo{System Programming - Zombi defense}
+\integrante{Aldasoro Agustina}{86/13}{agusaldasoro@gmail.com}
+\integrante{Rey Maximiliano}{XXX/XX}{mail}
+\integrante{Tirabasso Ignacio}{XXX/XX}{mail}
+
+
+\maketitle
+\newpage
+
+%\thispagestyle{empty}
+%\vfill
+%\begin{abstract}
+%En el presente trabajo se describe la problemática de ...
+%\end{abstract}
+
+%\thispagestyle{empty}
+%\vspace{3cm}
+%\tableofcontents
+\newpage
+
+
+%\normalsize
+\newpage
+\section{Ejercio 1}
+{\large a)} Armamos los cuatro segmentos de la GDT, llam\'andolos: 
+\begin{codesnippet}
+\begin{verbatim}
+    [GDT_IDX_CODE_0] = (gdt_entry) ; 
+    [GDT_IDX_CODE_3] = (gdt_entry) ; 
+    [GDT_IDX_DATA_0] = (gdt_entry) ;  
+    [GDT_IDX_DATA_3] = (gdt_entry) ; 
+\end{verbatim}
+\end{codesnippet}
+    
+A los cuatro les seteamos el mismo \emph{l\'imite}: 0x26EFF = ... , y la misma \emph{base} en 0. El \emph{segment type} var\'ia depende el segmento: CODE_0: 0x0A= ... , CODE_3: 0x0F= ... , DATA_0 y DATA_3: 0x02= ... . El \emph{Descriptor type} va en todos para system, por lo tanto es 0. El \emph{Descriptor privilege level} coincide con el nombre del descriptor (0 para CODE_0 y DATA_0; 3 para CODE_3 y DATA_3). El bit de \emph{Present} va para todos en 1 y los bit de \emph{Available for use by system software} y \emph{l} van para todos en 0. El bit de \emph{Default operation size} va para todos en 1 porque es un c\'odigo de 32bits. El bit de \emph{Granularity} va para todos en 1.\\
+    
+
+
+{\large b)} Se adjunta el c\'odigo necesario para pasar a modo protegido y setear la pila del kernel en
+la direcci\'on 0x27000.
+
+
+\begin{codesnippet}
+\begin{verbatim}
+    ; Deshabilitar interrupciones
+    cli
+  
+    ; Habilitar A20
+    call habilitar_A20
+	
+    ; Cargar la GDT
+    lgdt [GDT_DESC]
+
+    ; Setear el bit PE del registro CR0
+    mov eax,cr0
+    or eax,1
+    mov cr0,eax
+
+    jmp 0x50:modo_protegido
+\end{verbatim}
+\end{codesnippet}
+\begin{codesnippet}
+\begin{verbatim}
+BITS 32
+modo_protegido:
+
+    ; Establecer selectores de segmentos
+    xor eax, eax
+    mov ax, 0x40
+     
+    mov es, ax
+    mov ds, ax
+    mov ss, ax    
+    mov gs, ax
+
+    mov ax, 0x60 
+    mov fs, ax
+    
+    ; Establecer la base de la pila
+    mov ebp, 0x27000
+\end{verbatim}
+\end{codesnippet}
+
+{\large c)} Segmento adicional que describe el \'area de la pantalla en memoria que puede
+ser utilizado solo por el kernel:
+\begin{codesnippet}
+\begin{verbatim}
+    ; Cambiar modo de video a 80 X 50
+    mov ax, 0003h
+    int 10h ; set mode 03h
+    xor bx, bx
+    mov ax, 1112h
+    int 10h ; load 8x8 font
+\end{verbatim}
+\end{codesnippet}
+
+
+{\large d)} La siguiente es la rutina que se encarga de limpiar la pantalla y pintar el \'area del mapa
+un fondo de color verde, junto con las dos barras laterales para cada uno de
+los jugadores (rojo y azul).
+\begin{codesnippet}
+\begin{verbatim}
+    ; Inicializar pantalla
+    call clear_screen
+    call print_map
+\end{verbatim}
+\end{codesnippet}
+\begin{codesnippet}
+\begin{verbatim}
+void clear_screen() {
+    int size = VIDEO_COLS * VIDEO_FILS;    
+    ca (*p) = (ca (*)) VIDEO; // magia
+    int i = 0;
+    ca empty;
+    empty.c = 0;
+    empty.a = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
+    while(i < size) {
+        p[i] = empty;
+        i++;
+    }
+}
+\end{verbatim}
+\end{codesnippet}
+
+\begin{codesnippet}
+\begin{verbatim}
+void print_map() {
+    int cols = VIDEO_COLS;
+    int rows = VIDEO_FILS;
+
+    ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+
+    ca red;
+    red.c = 0;
+    red.a = getFormat(C_FG_RED, 0, C_BG_RED, 0);
+    ca blue;
+    blue.c = 0;
+    blue.a = getFormat(C_FG_BLUE, 0, C_BG_BLUE, 0);
+    ca green;
+    green.c = 0;
+    green.a = getFormat(C_FG_GREEN, 0, C_BG_GREEN, 0);
+    ca black;
+    black.c = 0;
+    black.a = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
+
+    int y,x;
+
+    clear_screen();
+    
+    for(y = 0; y < rows; y++) {
+        for(x = 0; x < cols; x++) {
+            if (y >= rows-5) {
+                screen[y][x] = black;
+            } else if (x == cols-1) {
+                screen[y][x] = blue;
+            } else if (x == 0) {
+                screen[y][x] = red;
+            } else {
+                screen[y][x] = green;
+            }
+        }
+    }
+    for(y = rows-5; y < rows; y++) {
+        for(x = 35; x < 40; x++) {
+            screen[y][x] = red;
+        }
+    }
+
+    for(y = rows-5; y < rows; y++) {
+        for(x = 40; x < 45; x++) {
+            screen[y][x] = blue;
+        }
+    }
+}
+\end{verbatim}
+\end{codesnippet}
+
+\newpage
+\section{Ejercio 2}
+{\large a)} Completar las entradas necesarias en la IDT para asociar diferentes rutinas a todas las
+excepciones del procesador. Cada rutina de excepci\'on debe indicar en pantalla qu\'e problema
+se produjo e interrumpir la ejecuci\'on. Posteriormente se modificar\'an estas rutinas
+para que se continue la ejecuci\'on, resolviendo el problema y desalojando a la tarea que lo
+produjo.\\
+
+{\large b)} Hacer lo necesario para que el procesador utilice la IDT creada anteriormente. Generar
+una excepci\'on para probarla.
+
+\newpage
+\section{Ejercio 3}
+{\large a)} Escribir una rutina que se encargue de limpiar el buffer de video y pintarlo como indica
+la figura 9. Tener en cuenta que deben ser escritos de forma gen\'erica para posteriormente
+ser completados con informaci\'on del sistema. Adem\'as considerar estas im\'agenes como
+sugerencias, ya que pueden ser modificadas a gusto seg\'un cada grupo mostrando siempre
+la misma informaci\'on.\\
+
+{\large b)} Escribir las rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel
+(mmu inicializar dir kernel). Se debe generar un directorio de p\'aginas que mapee,
+usando identity mapping, las direcciones 0x00000000 a 0x003FFFFF, como ilustra la figura
+6. Adem\'as, esta funci\'on debe inicializar el directorio de p\'aginas en la direcci\'on 0x27000
+y las tablas de p\'aginas seg\'un muestra la figura 1.\\
+
+{\large c)} Completar el c\'odigo necesario para activar paginaci\'on.\\
+
+{\large d)} Escribir una rutina que imprima el nombre del grupo en pantalla. Debe estar ubicado en
+la primer l\'inea de la pantalla alineado a derecha.
+4.4.
+
+\newpage
+\section{Ejercio 4}
+{\large a)} Escribir una rutina (inicializar mmu) que se encargue de inicializar las estructuras necesarias
+para administrar la memoria en el area libre (un contador de paginas libres).\\
+
+{\large b)} Escribir una rutina (mmu inicializar dir zombi) encargada de inicializar un directorio
+de p\'aginas y tablas de p\'aginas para una tarea, respetando la figura 6. La rutina debe copiar
+el c\'odigo de la tarea a su \'area asignada, es decir la posici\'on indicada por el jugador dentro
+de el mapa y mapear dichas p\'aginas a partir de la direcci\'on virtual 0x08000000(128MB).
+Recordar que los zombis comienzan en la segunda columna de el mapa y en la fila correspondiente
+a la posici\'on donde esta el jugador. Sugerencia: agregar a esta funci\'on todos los
+par\'amentros que considere necesarios.\\
+
+{\large c)} Escribir dos rutinas encargadas de mapear y desmapear p\'aginas de memoria.
+
+I- mmu mapear p\'agina(unsigned int virtual, unsigned int cr3, unsigned int f\'isica)
+Permite mapear la p\'agina f\'isica correspondiente a f\'isica en la direcci\'on virtual
+virtual utilizando cr3.
+
+II- mmu unmapear pagina(unsigned int virtual, unsigned int cr3)
+Borra el mapeo creado en la direcci\'on virtual virtual utilizando cr3. \\
+
+{\large d)} Construir un mapa de memoria para tareas e intercambiarlo con el del kernel, luego cambiar
+el color del fondo del primer caracter de la pantalla y volver a la normalidad. Este item
+no debe estar implementado en la soluci\'on final.
+
+
+\newpage
+\section{Ejercio 5}
+
+{\large a)} Completar las entradas necesarias en la IDT para asociar una rutina a la interrupci\'on del
+reloj, otra a la interrupci\'on de teclado y por \'ultimo una a la interrupci\'on de software 0x66. \\
+
+{\large b)} Escribir la rutina asociada a la interrupci\'on del reloj, para que por cada tick llame a la
+funci\'on screen pr\'oximo reloj. La misma se encarga de mostrar cada vez que se llame, la
+animaci\'on de un cursor rotando en la esquina inferior derecha de la pantalla. La funci\'on
+pr\'oximo reloj est\'a definida en isr.asm. \\
+
+{\large c)} Escribir la rutina asociada a la interrupci\'on de teclado de forma que si se presiona cualquiera
+de las teclas a utilizar en el juego, se presente la misma en la esquina superior
+derecha de la pantalla. \\
+
+{\large d)} Escribir la rutina asociada a la interrupci\'on 0x66 para que modifique el valor de eax por
+0x42. Posteriormente este comportamiento va a ser modificado para atender el servicio del
+sistema.
+
+
+\newpage
+\section{Ejercio 6}
+{\large a)} Definir las entradas en la GDT que considere necesarias para ser usadas como descriptores
+de TSS. Minimamente, una para ser utilizada por la tarea inicial y otra para la tarea
+Idle.\\
+
+{\large b)} Completar la entrada de la TSS de la tarea Idle con la informaci\'on de la tarea Idle. Esta
+informaci\'on se encuentra en el archivo TSS.C. La tarea Idle se encuentra en la direcci\'on
+0x00016000. La pila se alojar\'a en la misma direcci\'on que la pila del kernel y ser\'a mapeada
+con identity mapping. Esta tarea ocupa 1 pagina de 4KB y debe ser mapeada con identity
+mapping. Adem\'as la misma debe compartir el mismo CR3 que el kernel. \\
+
+{\large c)} Construir una funci\'on que complete una TSS libre con los datos correspondientes a una
+tarea (zombi). El c\'odigo de las tareas se encuentra a partir de la direcci\'on 0x00010000
+ocupando una pagina de 4kb cada una seg\'un indica la figura 1. Para la direcci\'on de la
+pila se debe utilizar el mismo espacio de la tarea, la misma crecer\'a desde la base de la tarea. Para el mapa de memoria se debe construir uno nuevo utilizando la funci\'on
+mmu inicializar dir zombi. Adem\'as, tener en cuenta que cada tarea utilizar\'a una pila
+distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin. \\
+
+d) Completar la entrada de la GDT correspondiente a la tarea inicial.\\
+
+e) Completar la entrada de la GDT correspondiente a la tarea Idle.\\
+
+f) Escribir el c\'odigo necesario para ejecutar la tarea Idle, es decir, saltar intercambiando las
+TSS, entre la tarea inicial y la tarea Idle.
+
+
+\newpage
+\section{Ejercio 7}
+{\large a)} Construir una funci\'on para inicializar las estructuras de datos del scheduler.\\
+
+{\large b)} Crear la funci\'on sched pr\'oximo indice() que devuelve el \'indice en la GDT de la pr\'oxima
+tarea a ser ejecutada. Construir la rutina de forma devuelva una tarea de cada jugador
+por vez seg\'un se explica en la secci\'on 3.2\\
+
+{\large c)} Modificar la rutina de la interrupci\'on 0x66, para que implemente el servicio mover seg\'un
+se indica en la secci\'on 3.1.1.\\
+
+{\large d)} Modificar el c\'odigo necesario para que se realice el intercambio de tareas por cada ciclo de
+reloj. El intercambio se realizar\'a seg\'un indique la funci\'on sched proximo \'indice().\\
+
+{\large e)} Modificar las rutinas de excepciones del procesador para que desalojen a la tarea que
+estaba corriendo y corran la pr\'oxima.\\
+
+{\large f)} Implementar el mecanismo de debugging explicado en la secci\'on 3.4 que indicar\'a en pantalla
+la raz\'on del desalojo de una tarea.
+
+
+\newpage
+\section{Ejercio 8}
+{\large a)} Crear un conjunto de 3 tareas zombis (Guerrero, Mago y Clerigo). Los mismos deber\'an respetar
+las restricciones del trabajo pr\'actico, ya que de no hacerlo no podr\'an ser ejecutados
+en el sistema implementado por la c\'atedra.
+
+Deben cumplir:
+
+No ocupar m\'as de 4 kb cada uno (tener en cuenta la pila).
+
+Tener como punto de entrada la direcci\'on cero.
+
+Estar compilado para correr desde la direcci\'on 0x08000000.
+
+Utilizar el unico servicio del sistema (mover).
+
+Explicar en pocas palabras qu\'e estrategia utiliza cada uno de los zombis, o en su conjunto
+en t\'erminos de defensa y ataque.\\
+
+{\large b)} Si consideran que sus tareas pueden hacer algo mas que completar el primer item de este
+ejercicio, y tienen a un audaz campion que se atreva a enfrentarse en el campo de batalla
+zombi, entonces pueden enviar el binario de sus tareas a la lista de docentes indicando
+los siguientes datos:
+
+Nombre del campion (Alumno de la materia que se presente como jugador)
+
+Nombre de cada uno de las tareas zombi
+
+Estrategia de alimentaci\'on de los zombis (es decir, como se comer\'an los cerebros de
+las otras tareas)
+
+Se realizar\'a una competencia a fin de cuatrimestre con premios en/de chocolate para los
+primeros puestos. \\
+
+{\large c)} Pelicula y Video Juego favorito sobre Zombis.
+
+
+\newpage
+\section{Conclusiones y trabajo futuro}
+
+
+\end{document}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Objetivos generales}
+
+El objetivo de este Trabajo Práctico es ...
+
+
+\section{Contexto}
+
+\begin{figure}
+  \begin{center}
+	\includegraphics[scale=0.66]{imagenes/logouba.jpg}
+	\caption{Descripcion de la figura}
+	\label{nombreparareferenciar}
+  \end{center}
+\end{figure}
+
+
+\paragraph{\textbf{Titulo del parrafo} } Bla bla bla bla.
+Esto se muestra en la figura~\ref{nombreparareferenciar}.
+
+
+
+\begin{codesnippet}
+\begin{verbatim}
+
+struct Pepe {
+
+    ...
+
+};
+
+\end{verbatim}
+\end{codesnippet}
+
+
+%\section{Enunciado y solucion} 
+%\input{enunciado}

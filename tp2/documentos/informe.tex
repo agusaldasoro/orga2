@@ -62,7 +62,7 @@
 En el presente trabajo se describen los beneficios de la programaci\'on en Lenguaje Ensamblador bajo el modelo de programaci\'on SIMD mediante el uso de instrucciones SSE.
 \end{abstract}
 
-\newpage
+
 \thispagestyle{empty}
 \vspace{3cm}
 \tableofcontents
@@ -87,6 +87,8 @@ Abordando el objetivo de este trabajo, realizamos una experimentaci\'on enfocada
 \indent Diseñamos nuestros casos de testeo con el fin de observar para cada programa cu\'al es el factor que determina el tiempo de c\'omputo.\\
 \\
 \indent Nuestra experimentaci\'on se centra en la cantidad de ciclos de clock que transcurren desde el inicio hasta el final de la ejecuci\'on del programa. Se adjunta con la documentaci\'on los archivos *.py utilizados para calcular la esperanza y la varianza de cada una de las mediciones.\\
+\\
+\textcolor{red}{Si lo vamos a rearmar, habria que explicar un poquito mas que hace el codigo, cuantas iteraciones y que descarta los maximos y minimos}\\
 
 %\begin{figure}
 %  \begin{center}
@@ -109,14 +111,147 @@ Abordando el objetivo de este trabajo, realizamos una experimentaci\'on enfocada
 %};
 %\end{verbatim}
 %\end{codesnippet}
+\newpage
+\section{Implementaci\'on en Assembler}
 
+\subsection{Filtro CropFlip}
+%\begin{codesnippet}
+%\begin{verbatim}
+\indent Luego de pushear los cinco registros a utilizar, almacenamos: \\
+\begin{codesnippet}
+\begin{verbatim}
+Pushear la base de la pila y los registros a utilizar.
+Alinear la pila.
+mov r12d, [rbp+16] ;tamx
+mov r13d, [rbp+24] ;tamy
+mov r14d, [rbp+32] ;offsetx
+mov r15d, [rbp+40] ;offsety
+Limpiamos la parte alta de estos registros haciendo un mov rXd, rXd.
+\end{verbatim}
+\end{codesnippet}
 
-\section{Enunciado y solucion} 
+ \indent Utilizamos el registro \textbf{r10} como el \emph{y-actual} (fuente) y el registro \textbf{r11} como el \emph{x-actual} (fuente). Recorremos la imagen fuente desde arriba hacia abajo, de izquierda a derecha.\\
+ \begin{codesnippet}
+\begin{verbatim}
+	mov r10,r15 ; y
+	mov r11,r14 ; x
+\end{verbatim}
+\end{codesnippet}
+ \indent Utilizamos el registro \textbf{rcx} como el \emph{y$_2$-actual} (destino) y el registro \textbf{rdx} como el \emph{x$_2$-actual} (destino). Recorremos la imagen destino de abajo hacia arriba, de izquierda a derecha. Al registro rcx debemos decrementarlo en uno porque arranca inicializado en cero. \\
+ \begin{codesnippet}
+\begin{verbatim}
+mov rcx,r13 ; y2 = tamy
+dec rcx     ; y2 = tamy-1
+mov rdx,0   ; x2 = 0
+\end{verbatim}
+\end{codesnippet}
+
+\indent En \textbf{r13} almacenamos el l\'imite para r10, es decir tiene que recorrer el ciclo de y hasta que alcance su l\'imite en y (offsety+tamy). \\
+	  \begin{codesnippet}
+\begin{verbatim}
+	add r13,r15 ; r13 = offsety+tamy
+\end{verbatim}
+\end{codesnippet}
+\indent En \textbf{rbx} almacenamos el l\'imite para r11, es decir tiene que recorrer el ciclo de x hasta que alcance su l\'imite en x (offsetx+tamx)\\
+	  \begin{codesnippet}
+\begin{verbatim}
+mov rbx,r12  ; rbx = tamx
+	add rbx,r14  ; rbx = offsetx+tamx
+\end{verbatim}
+\end{codesnippet}
+
+\indent Ahora comienza el ciclo de iteraci\'on sobre la variable \emph{y}. Cada vez que se ejecuta se comprueba que el \emph{y-actual} (\textbf{r10}) sea menor que su l\'imite (\textbf{r13}). Y por cada iteraci\'on se reinician los valores de \emph{x} e \emph{x$_2$} a la primer columna que debemos trabajar (Para la imagen fuente es el offset inicial de la variable \emph{x}, para la imagen destino es el \emph{0}).
+	  \begin{codesnippet}
+\begin{verbatim}
+.loop_y:
+	cmp r10,r13     ; y < offsety+tamy
+	jge .endloop_y
+	mov r11,r14     ; x = offsetx
+	mov rdx,0       ; x2 = 0
+\end{verbatim}
+\end{codesnippet}
+
+\indent Por consiguiente, para cada valor que vaya tomando la variable, se debe ejecutar un ciclo para poder iterar sobre todas las columnas (Ciclo de x). Por cada iteraci\'on, se compara si el \emph{x-actual} (\textbf{r11}) es menor que su l\'imite (\textbf{rbx}). Si no lo es, se salta fuera del ciclo de x. \\
+\indent Luego, comienza a ejecutar el c\'odigo propio del ciclo. Es necesario tener en cuenta que: \\
+$\star$ En \textbf{r8} est\'a cargado el \textit{row_size} de la imagen fuente. \\
+$\star$ En \textbf{r9} est\'a cargado el \textit{row_size} de la imagen de destino. \\
+\indent Vamos a calcular en cada iteraci\'on la cantidad de posiciones en memoria (bytes) que se le deben sumar a la posici\'on de origen de la imagen para encontrarnos en la posici\'on actual. Esto se almacena en el registro \textbf{rax}. Primero copiamos el contenido de \textbf{r10} (\emph{y-actual}), lo multiplicamos por el largo de cada fila para as\'i posicionarnos en la fila actual y por \'ultimo le sumamos \textbf{r11} (que indica el n\'umero de fila actual) multiplicado por 4 porque cada Pixel tiene 4 bytes. De este modo, \textbf{rax} contiene el offset que debemos sumarle a la posici\'on en memoria de la imagen fuente para situarnos en la posici\'on actual.\\
+\indent Como nos encontramos utilizando registros Xmm, vamos a trabajar con 4 pixels a la vez, de modo que entran en un solo registro. Para levantar de memoria 4 pixels, utilizamos la intrucci\'on \textit{movdqu}. \\
+\indent Por \'ultimo, lo que tenemos que hacer es guardar esos 4 pixels levantados con el mismo orden en la posici\'on correspondiente de la imagen destino. Es decir, la misma columna \emph{x} pero sin su offset (por eso mismo se usan dos registros distintos, ya que el offset de la imagen de destino es 0) y la fila \emph{y$_2$} va a ser la diferencia entre la cantidad de filas e \emph{y}. \\
+\indent An\'alogamente a lo anterior, en \textbf{rax} se guarda el offset de la imagen destino, para acceder a memoria sum\'andoselo a la posici\'on donde esta almacenada la imagen. \\
+\indent Se suma 4 a las variables r11(\emph{x-actual}) y rdx(\emph{x$_2$-actual}), porque en este paso avanzamos 4 pixels. Y el jump se ejecuta siempre, ya que la comparaci\'on se produce al principio del ciclo.
+	  \begin{codesnippet}
+\begin{verbatim}
+.loop_x:
+
+	cmp r11,rbx      ; x < offsetx+tamx
+	jge .endloop_x
+
+	mov rax,r10
+	imul rax,r8
+	lea rax,[rax+r11*4]
+
+	movdqu xmm0,[rdi+rax]
+
+	mov rax,rcx
+	imul rax,r9
+	lea rax,[rax+rdx*4]
+
+	movdqu [rsi+rax],xmm0
+
+	add r11,4
+	add rdx,4
+	jmp .loop_x	
+\end{verbatim}
+\end{codesnippet}
+
+\indent Una vez copiada toda una fila, debemos avanzar hacia la siguiente. De este modo: incrementamos en uno r10(\emph{y-actual}) y rcx(\emph{y$_2$-actual}). \\
+\indent Se ejecuta siempre un jump hacia el comienzo del ciclo en y, porque la comparaci\'on de ver si ya copiamos todas las filas se ejecuta al principio.
+	  \begin{codesnippet}
+\begin{verbatim}
+.endloop_x:
+	inc r10
+	dec rcx
+	jmp .loop_y
+\end{verbatim}
+\end{codesnippet}
+
+\indent Una vez terminado el ciclo de y, s\'olo resta salir de la ejecuci\'on respetando la convenci\'on C.
+	  \begin{codesnippet}
+\begin{verbatim}
+.endloop_y:
+ Alinear la pila y popear todos los registros.
+ ret
+\end{verbatim}
+\end{codesnippet}
+
+\newpage
+\subsection{Filtro Sierpinsky}
+Hola
+\newpage
+\subsection{Filtro Bandas}
+Hola
+\newpage
+\subsection{Filtro Motion Blur}
+\indent Primero hacemos algunos define que vamos a necesitar luego:
+ \begin{codesnippet}
+\begin{verbatim}
+cerocomados  dd  0.2 , 0.2 , 0.2 , 0.2
+rgb_only     dd  0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF
+\end{verbatim}
+\end{codesnippet}
+\indent Salvamos la base de la pila y los registros a utilizar. Alineamos la pila. \\
+\\
+\indent 
+
+\newpage
+\section{Enunciado y soluci\'on} 
 
 \input{enunciado}
 
 \section{Conclusiones y trabajo futuro}
-Las conclusiones que sacamos son ...\\
+\indent\emph{ \textcolor{red}{Si bien un lenguaje ensamblador solo es utilizable en determinada gama de procesadores (ESTO HAY QUE SACARLO DIJO MATIAS)}}, los resultados de nuestras mediciones han demostrado que la implementación de los filtros en este lenguaje han logrado una performance que el gcc no logro conseguir. \\
+\indent Dada la popularidad de la arquitectura de 64 bits de intel, se puede concluir que la implementación del SIMD en assembler tiene un precio razonable frente a la perfomance alcanzada.\\
 
 
 \end{document}

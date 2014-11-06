@@ -55,7 +55,11 @@ Indicar
     \item Por qué cree que hay otras funciones además de \verb|cropflip_c|
     \item Cómo se manipulan las variables locales
     \item Si le parece que ese código generado podría optimizarse
-\end{inparaenum}
+\end{inparaenum}\\
+\\
+\indent Muchas de las funciones generadas se agregan al compilar usando parámetros de debugging.\\ 
+\indent El cambio que puede notarse a simple vista es que el tamaño del código generado con optimización es considerablemente menor al generado sin optimizaciones, un 34\% menor. Por otro lado, calcula una única vez la posición de la cual deberá leer el pixel a procesar, ya que es una operación que se realiza cuatro veces por cada lectura y escritura de un pixel. \\
+\indent El c\'odigo optimizado también disminuye el uso del stack para variables locales y en su lugar utiliza registros, por esa razón necesita armar el stackframe y pushear los registros que la convención C pide preservar. Esto no se da en el c\'odigo sin optimizar, todas las variables locales se guardar en el stack, se asignan a algún registro libre al momento de usarla y luego vuelve a ser guardada en el stack. Si bien la cantidad de accesos a memoria es sustencialmente mayor en el c\'odigo sin optimizar por el hecho de que se accede constantemente a las variables locales alojadas en el stack, también hay que considerar que al haber tantos accesos al stack el hit-rate de la caché debería ser bastante alto, agilizando la lectura, no así la escritura. \\
 
 % ******************************************************************************
 %\newpage
@@ -69,8 +73,11 @@ Indicar
     \item Qué optimizaciones observa que realizó el compilador
     \item Qué otros flags de optimización brinda el compilador
     \item Los nombres de tres optimizaciones que realizan los compiladores.
-\end{inparaenum}
-
+\end{inparaenum}\\
+\\
+\indent GCC provee un arsenal de optimizaciones disponibles para que podamos usar cuando lo creamos conveniente, asímismo provee unos flags para poder compilar el código con un conjunto de optimizaciones, estos son O1, O2, O3, Os, entre otros. O1, O2 y O3 son optimizaciones generales no agresivas, es decir, no deberían modificar el funcionamiento del programa. Otras optimizaciones podrían asumir que todas las operaciones aritméticas son sin signo o que están bien implementadas y no es necesario chequear la consistencia de los resultados (fno-math-errno). Estas optimizaciones tienen como objetivo mejorar la performance del programa, sin embargo Os tiene como objetivo reducir el tamaño del ejecutable, es decir, activa todas las optimizaciones que contribuyen a reducir la cantidad de instrucciones regardless del impacto que esto pueda tener en la performance del programa. \\
+\indent Concretamente al activar las optimizaciones O3 en cropflip el cambio más notorio es que GCC utiliza instrucciones SSE para procesar 4 pixels por iteración, lo cual le brinda un boost de velocidad impresionante. Además de haberse reducido la cantidad de instrucciones. \\
+\\
 %----------------------------------------------
 \vspace*{0.3cm} \noindent
 \textbf{Experimento 1.3 - calidad de las mediciones}
@@ -113,6 +120,8 @@ Luego de ejecutar 10 veces el filtro Cropflip obtuvimos los siguientes resultado
 13.720,5329 & 203.626,443	\\
 		\hline
 	\end{tabular}\\\\
+	
+	\textcolor{red}{Aca puso Matias que el desvio standar en c no le da, VOLVER A CALCULARLO.} \\
 	El cuadro denota la cantidad de ciclos de clock utilizada por cada ejecuci\'on del programa. \\
 	\\
 	Luego de eliminar los dos valores m\'as altos y los dos valores m\'as bajos, recalculamos obteniendo los siguientes datos: \\
@@ -185,7 +194,12 @@ Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteri
   \end{center}
 \end{figure}
 \newpage
-\indent Siendo el Caso 1 las mediciones de esperanza y Desvío standard para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers. Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que fue ejecutado en una computadora con un procesador i5. \\
+\indent Siendo el Caso 1 las mediciones de esperanza y Desvío standard para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers. Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que fue ejecutado en una computadora con un procesador i5. \textcolor{red}{Podria explicarse un poco mas que pasa con los is}\\
+\\
+\indent Por este motivo, volvimos a ejecutar este caso una mayor cantidad de veces para que el procesador no modifique la frecuencia de clock, obteniendo los siguientes resultados: \\
+\textbf{Esperanza:} 269.945,590 (ASM) y 9.524.152,001 (C) \\
+\textbf{Desv\'io Standard:} 3.801,837 y 7.774.736,417 (C) \\
+\textcolor{red}{El grafico mas importante es este, HACERLO Y SACAR EL OTRO.}
 \\
 \textit{A partir de aquí todos los experimentos de mediciones deberán hacerse igual 
 que en el presente ejercicio: tomando 10 mediciones, luego descartando 
@@ -194,7 +208,7 @@ outliers y finalmente calculando promedio y Desvío standard.}\\
 Decidimos: \\
 Realizar 12000 mediciones por experimento, eliminando los primeros mil casos que hayan llevado menos ciclos de clock y los mil casos que hayan llevado la mayor cantidad de ciclos de clock. \\
 Lo determinamos de esta manera, ya que dejar dos mediciones afuera, como dice el enunciado, no tiene influencia en los c\'alculos de la esperanza y la varianza para muestras tan grandes. \\
-Luego de experimentar distintas cantidades de casos de testeo, notamos que elegir 7000 valores pertenecientes a la franja del medio de los 12000 es una soluci\'on lo suficientemente establo, por lo cual es la que llevamos a cabo. \\
+Luego de experimentar distintas cantidades de casos de testeo, notamos que elegir 7000 valores pertenecientes a la franja del medio de los 12000 es una soluci\'on lo suficientemente estable, por lo cual es la que llevamos a cabo. \\
 \\
 % ******************************************************************************
 %\newpage
@@ -222,8 +236,7 @@ C -o3 & 266.688 & 0,287 \\
 ASM & 362.232 & 2,079\\
 \hline
 	\end{tabular}\\\\
-\\
-Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. \\
+Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. Adem\'as, es notorio c\'omo el correr el programa con la orden de -o0 no efect\'ua ninguna optimizaci\'on. Tambi\'en se puede observar que el c\'odigo corrido en C bajo el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler.
 \newpage
 \begin{figure}
   \begin{center}
@@ -259,9 +272,39 @@ Realizar un único gráfico que compare:
     \item Las versiones con más instrucciones aritméticas
     \item Las versiones com más accesos a memoria
 \end{inparaenum}
-
-Acompañar al gráfico con una tabla que indique los valores graficados.  
-  
+\textcolor{red}{Poner que instrucciones usamos!!!}\\
+Acompañar al gráfico con una tabla que indique los valores graficados. \\
+\\
+ \begin{tabular}[c]{|c|c|c|}
+	\hline
+		Cropflip & Esperanza & Desv\'io Standard\\
+		\hline
+Versi\'on com\'un & 157.236,897 & 5.334,414 \\
+\hline
+Con 4 instrucciones aritméticas & 183.968,425 & 8.391,506 \\
+\hline
+Con 8 instrucciones aritméticas & 225.991,244 & 7.729,428 \\
+\hline
+Con 16 instrucciones aritméticas & 707.857,067 & 12.756,322 \\
+\hline
+Con 4 accesos a memoria & 281.032,176 & 11.258,907 \\
+\hline
+Con 8 accesos a memoria & 352.370,777 & 14.353,789 \\
+\hline
+Con 16 accesos a memoria & 342.023,334 & 12.136,799 \\
+\hline
+	\end{tabular}\\\\
+\\
+Se puede percibir c\'omo se ve afectado el tiempo de ejecuci\'on frente al incremento de instrucciones aritm\'eticas m\'as que por los accesos a Memoria.
+\newpage
+\begin{figure}
+  \begin{center}
+%	\includegraphics[width=0.7\textwidth]{imagenes/15.jpg}
+  \end{center}
+\end{figure}
+\textcolor{red}{Esta conclusion no se desprende inmediatamente del grafico. Con 4 y 8 accesos a memoria, el programa es m\'as lento. Con 16 accesos pasa algo no intuitivo, que al menos deber\'ia mencionarse (y para intentar entenderlo es clave que pongan qu\'e accesos usaron). \\
+El pico de 16 instrucciones aritm\'eticas tampoco me resulta intuitivo a simple vista.}
+  \newpage
 % ------------------------------------------------------------------------------
 
 \subsection{Filtro \textit{Sierpinski}}
@@ -295,7 +338,7 @@ ASM & 3.661.626 & 115,583 \\
 \hline
 	\end{tabular}\\\\
 \\
-Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. \\
+Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. Donde correr el c\'odigo en C bajo el comando -o0 sigue siendo el caso con mayor esperanza y adem\'as la esperanza del c\'odigo Assembler es menor a la del c\'odigo C con -o3.\\
 \newpage
 \begin{figure}
   \begin{center}
@@ -309,7 +352,39 @@ Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. \\
 \textbf{Experimento 2.1 - cpu vs. bus de memoria}
 
 ¿Cuál es el factor que limita la performance en este filtro?
-Repetir el experimento 1.5 para este filtro.
+Repetir el experimento 1.5 para este filtro. \\
+\\
+ \begin{tabular}[c]{|c|c|c|}
+	\hline
+		 & Esperanza & Desv\'io Standard\\
+		\hline
+Versi\'on com\'un & 2.936.302,152 & 26.416,331 \\
+\hline
+Con 4 instrucciones aritméticas & 2.961.773,596 & 47.749,307 \\
+\hline
+Con 8 instrucciones aritméticas & 2.940.553,343 & 59.912,727 \\
+\hline
+Con 16 instrucciones aritméticas & 3.031.280,298 & 37.499,415 \\
+\hline
+Con 4 accesos a memoria & 2.919.253,679 & 57.697,386 \\
+\hline
+Con 8 accesos a memoria & 2.936.432,138 & 56.870,171 \\
+\hline
+Con 16 accesos a memoria & 3.051.926,505 & 40.964,812 \\
+\hline
+	\end{tabular}\\\\
+\\
+En este caso, los accesos a memoria influyen m\'as notoriamente la esperanza que las operaciones aritm\'eticas l\'ogicas.
+\newpage
+\begin{figure}
+  \begin{center}
+%	\includegraphics[width=0.7\textwidth]{imagenes/21B.jpg}
+  \end{center}
+\end{figure}
+\textcolor{red}{Algo parecido al experimento 1.5 \\
+Adem\'as se podr\'ia mencionar que el desv\'io standard es elevado.}
+
+\newpage
 
 \subsection{Filtro \textit{Bandas}}
 
@@ -327,8 +402,17 @@ que detecta a que banda pertenece cada pixel, dejando
 sólo una banda.
 Por más que la imagen resultante no sea correcta, será posible tomar una
 medida aproximada del impacto de los saltos condicionales.
-Analizar como varía la performance. 
-
+Analizar como varía la performance. \\
+\\
+En la siguiente figura se ve c\'omo var\'ia la esperanza y el desv\'io standard entre dos corridas de C con el flag -o1 ambas:
+\newpage
+\begin{figure}
+  \begin{center}
+	%\includegraphics[width=0.7\textwidth]{imagenes/31.jpg}
+  \end{center}
+\end{figure}
+\newpage
+En el gr\'afico anterior se puede ver que la influencia de los saltos condicionables es notable. \\
 % ******************************************************************************
 \vspace*{0.3cm} \noindent
 \textbf{Experimento 3.2 - secuencial vs. vectorial}
@@ -353,8 +437,7 @@ C -o3 & 3.259.767 & 117,391  \\
 ASM & 3.703.203,5 & 115,659 \\
 \hline
 	\end{tabular}\\\\
-\\
-Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. \\
+Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. En este caso, el tiempo de ejecuci\'on del c\'odigo con el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. \textcolor{red}{y -o2 tambien, por que?}
 \newpage
 \begin{figure}
   \begin{center}
@@ -394,7 +477,7 @@ ASM & 2.993.980,5 & 118,245 \\
 \hline
 	\end{tabular}\\\\
 \\
-Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. \\
+Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. Donde las optimizaciones del compilador en la versi\'on -o3 no son suficientes para tener una esperanza menor a la esperanza obtenida bajo el c\'odigo Assembler.\\
 \newpage
 \begin{figure}
   \begin{center}
