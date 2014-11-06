@@ -7,8 +7,6 @@
 
 #include "tss.h"
 
-tss tss_inicial;
-tss tss_idle;
 
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
@@ -17,7 +15,9 @@ u8 inUse[CANT_ZOMBIS*2] = {};
 
 int currentZombieA;
 int currentZombieB;
-int turno;
+
+
+
 
 void tss_inicializar() {
 
@@ -25,9 +25,24 @@ void tss_inicializar() {
 	tss_inicializar_tarea_idle();
 
     memcpy(&tss_idle, &tss_inicial, sizeof(tss));
+    memcpy(&tss_idle, &current_task, sizeof(tss));
+    memcpy(&tss_idle, &next_task, sizeof(tss));
 
-    add_entry((unsigned int) &tss_inicial, 0x67, 0x9, 1, 0);
-    add_entry((unsigned int) &tss_idle, 0x67, 0x9, 1, 0);
+	gdt[GDT_INITIAL_TSS].base_31_24 = ((u32) (&tss_inicial) & 0xFF000000) >> 24;
+	gdt[GDT_INITIAL_TSS].base_23_16 = ((u32) (&tss_inicial) & 0x00FF0000) >> 16;
+	gdt[GDT_INITIAL_TSS].base_0_15  = (u32) (&tss_inicial) & 0x0000FFFF;
+
+	gdt[GDT_CURRENT_TSS].base_31_24 = ((u32) (&current_task) & 0xFF000000) >> 24;
+	gdt[GDT_CURRENT_TSS].base_23_16 = ((u32) (&current_task) & 0x00FF0000) >> 16;
+	gdt[GDT_CURRENT_TSS].base_0_15  = (u32) (&current_task) & 0x0000FFFF;
+
+	gdt[GDT_NEXT_TSS].base_31_24 = ((u32) (&next_task) & 0xFF000000) >> 24;
+	gdt[GDT_NEXT_TSS].base_23_16 = ((u32) (&next_task) & 0x00FF0000) >> 16;
+	gdt[GDT_NEXT_TSS].base_0_15  = (u32) (&next_task) & 0x0000FFFF;
+
+
+    // add_entry((unsigned int) &tss_inicial, 0x67, 0x9, 1, 0);
+    // add_entry((unsigned int) &tss_idle, 0x67, 0x9, 1, 0);
 }
 
 void tss_inicializar_tarea_idle() {
@@ -47,6 +62,7 @@ void tss_inicializar_tarea_idle() {
     tss_idle.cs = 0x50;
 
 	tss_idle.eflags = 0x202;
+	tss_idle.iomap = 0xffff;
 }
 
 tss* get_next_tss(u8 player) {

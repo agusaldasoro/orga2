@@ -36,8 +36,9 @@
 #define GDT_IDX_CODE_0         0xA
 #define GDT_IDX_CODE_3         0xB
 #define GDT_IDX_VIDEO          0xC
-#define TSS_INICIAL            0xD
-#define TSS_IDLE               0xE
+#define GDT_INITIAL_TSS        0xD
+#define GDT_CURRENT_TSS        0xE
+#define GDT_NEXT_TSS           0xF
 
 typedef unsigned int u32;
 typedef unsigned short u16;

@@ -19,6 +19,8 @@ extern print_map
 extern habilitar_pic
 extern resetear_pic
 
+; extern gdt_init
+extern tss_inicializar
 ;; Saltear seccion de datos
 
 
@@ -58,6 +60,7 @@ start:
 	call habilitar_A20
     ;xchg bx, bx
     ; Cargar la GDT
+
 	lgdt [GDT_DESC]
 
     ; Setear el bit PE del registro CR0
@@ -120,17 +123,13 @@ modo_protegido:
     mov eax,0x100000
     mov cr3,eax
 
-
     ; Inicializar tss
-
     ; Inicializar tss de la tarea Idle
+    call tss_inicializar
 
     ; Inicializar el scheduler
 
     ; Inicializar la IDT
-
-
-
     call idt_inicializar
     ; Cargar IDT
     lidt [IDT_DESC]

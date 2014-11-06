@@ -5,7 +5,7 @@
   definicion de estructuras para administrar tareas
 */
 
-#ifndef __TSS_H__
+#ifndef __TSS_H__ 
 #define __TSS_H__
 
 #include "defines.h"
@@ -58,6 +58,11 @@ void tss_inicializar();
 void tss_inicializar_tarea_idle();
 void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags);
 tss* get_next_tss(u8 player);
+
+tss tss_inicial;
+tss tss_idle;
+tss current_task;
+tss next_task;
 
 #endif  /* !__TSS_H__ */
 
