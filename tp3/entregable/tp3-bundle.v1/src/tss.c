@@ -19,6 +19,8 @@ int currentZombieB;
 
 u8 currentPlayer_rait_nau;
 
+u8 current_selector;
+
 void tss_inicializar() {
 
 	// inicializar tss_idle
@@ -130,6 +132,40 @@ tss* get_free_tss(u8 player) {
 
 	return (player ? &tss_zombisB[i] : &tss_zombisA[i]);
 
+}
+
+u8 is_busy(gdt_entry* tss_selector) {
+	return (tss_selector->type == 11);
+}
+
+void tss_set_base(gdt_entry* sel, u32 base) {
+	sel->base_31_24 = (base & 0xFF000000) >> 24;
+	sel->base_23_16 = (base & 0x00FF0000) >> 16;
+	sel->base_0_15  = base & 0x0000FFFF;
+}
+
+u32 tss_get_base(gdt_entry* sel) {
+	return (sel->base_31_24 << 24 | sel->base_23_16 << 16 | sel->base_0_15); 
+}
+
+int proximo_indice() {
+	int next_selector;
+
+	if (is_busy(&gdt[GDT_CURRENT_TSS])) {
+		next_selector = GDT_NEXT_TSS;
+	} else {
+		next_selector = GDT_CURRENT_TSS;
+	}
+
+	tss* next_tss = get_next_tss();
+
+	if ((u32) &next_tss == tss_get_base(&gdt[next_selector])) {
+		return 0;
+	}
+
+	tss_set_base(&gdt[next_selector], (u32) next_tss);
+	current_selector = next_selector;
+	return next_selector;
 }
 
 

@@ -18,10 +18,13 @@ extern fin_intr_pic1
 extern sched_proximo_indice
 
 extern print_exception
-
+extern proximo_indice
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
+
+offset: dd 0
+selector: dw 0
 
 %macro ISR 1
 global _isr%1 
@@ -71,10 +74,23 @@ ISR 19 ; _isr0
 ;; -------------------------------------------------------------------------- ;;
 global _isr32
 _isr32:
-    ; xchg bx, bx
+    xchg bx, bx
     pushad
     call proximo_reloj
+    call proximo_indice
+
+    cmp ax,0
+    je .nojump
+
+    mov [selector], ax
     call fin_intr_pic1
+    jmp far [offset]
+    jmp .end
+
+.nojump:
+    call fin_intr_pic1
+
+.end:
     ; switchear tareas.
     popad
     iret
@@ -88,7 +104,7 @@ extern print_int
 _isr33:
     ; xchg bx, bx
     pushad
-    ; call proximo_reloj
+;    call proximo_reloj
     xor eax,eax
     in al, 0x60
     ; mov dword [esp+4], 5
