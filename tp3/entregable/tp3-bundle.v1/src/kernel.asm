@@ -91,7 +91,7 @@ modo_protegido:
 
     ; Establecer la base de la pila
     mov ebp, 0x27000
-    ; mov esp, ebp
+    mov esp, 0x27000
 
     ; imprimir_texto_mp iniciando_mp_msg, iniciando_mp_len,0x07,0,0
 

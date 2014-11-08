@@ -142,3 +142,14 @@ void* memcpy(void* src, void* dst, int length) {
 
     return dst;
 }
+
+void* memset(void* src, int c, int n) {
+
+    char* psrc = (char*) src;
+
+    while(n--) {
+        *psrc++ = c;
+    }
+
+    return src;
+}

@@ -149,28 +149,27 @@ u32 tss_get_base(gdt_entry* sel) {
 }
 
 int proximo_indice() {
-	int next_selector;
 
-	if (is_busy(&gdt[GDT_CURRENT_TSS])) {
-		next_selector = GDT_NEXT_TSS;
-	} else {
-		next_selector = GDT_CURRENT_TSS;
-	}
+	// El proximo es el que no está busy.
+	int next_selector = is_busy(&gdt[GDT_CURRENT_TSS]) ? GDT_NEXT_TSS : GDT_CURRENT_TSS;
 
 	tss* next_tss = get_next_tss();
 
+	// Si es el proximo tss es igual al ya seteado devolvemos 0.
 	if ((u32) &next_tss == tss_get_base(&gdt[next_selector])) {
 		return 0;
 	}
 
 	tss_set_base(&gdt[next_selector], (u32) next_tss);
 	current_selector = next_selector;
-	return next_selector;
+	return next_selector * 8;
 }
 
 
 void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags) {
 	// TODO : Hay que ponerlo en 0, memset?
+
+	memset(tss, 0, sizeof(tss));
 
 	tss->cr3 = cr3;
 	tss->eip = eip;
@@ -188,6 +187,6 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	tss->eflags = eflags;
 
 
-    add_entry((unsigned int) &tss, 0x67, 0x9, 1, 0);
+    // add_entry((unsigned int) &tss, 0x67, 0x9, 1, 0);
 
 }

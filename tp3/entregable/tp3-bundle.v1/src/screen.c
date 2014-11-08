@@ -144,6 +144,8 @@ void print_map() {
     }
 }
 
+
+// esto no anda.
 void print_exception(int number) {
 
     clear_screen();

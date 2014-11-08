@@ -17,6 +17,7 @@ void print_backtrace(unsigned int col, unsigned int row);
 #define GET_REGISTER(register, output) __asm __volatile("movl %%"register", %0;" :"=r"(output));
 
 void* memcpy(void* src, void* dst, int length);
+void* memset(void* src, int c, int n);
 
 
 typedef struct cursor {

@@ -23,9 +23,6 @@ extern proximo_indice
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
 
-offset: dd 0
-selector: dw 0
-
 %macro ISR 1
 global _isr%1 
 
@@ -82,9 +79,9 @@ _isr32:
     cmp ax,0
     je .nojump
 
-    mov [selector], ax
+    mov [sched_tarea_selector], ax
     call fin_intr_pic1
-    jmp far [offset]
+    jmp far [sched_tarea_offset]
     jmp .end
 
 .nojump:
