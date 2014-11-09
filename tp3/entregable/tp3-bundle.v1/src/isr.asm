@@ -71,7 +71,7 @@ ISR 19 ; _isr0
 ;; -------------------------------------------------------------------------- ;;
 global _isr32
 _isr32:
-    xchg bx, bx
+    ; xchg bx, bx
     pushad
     call proximo_reloj
     call proximo_indice

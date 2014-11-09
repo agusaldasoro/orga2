@@ -17,11 +17,20 @@ u8 inUseB[CANT_ZOMBIS] = {};
 int currentZombieA;
 int currentZombieB;
 
-u8 currentPlayer_rait_nau;
+u8 currentPlayer;
 
 u8 current_selector;
 
 void tss_inicializar() {
+
+	int i = 0;
+	while(i < CANT_ZOMBIS) {
+		inUseA[i] = 0;
+		inUseB[i] = 0;
+		i++;
+	}
+	currentZombieA = 0;
+	currentZombieB = 0;
 
 	// inicializar tss_idle
 	tss_inicializar_tarea_idle();
@@ -38,10 +47,11 @@ void tss_inicializar() {
 	gdt[GDT_CURRENT_TSS].base_23_16 = ((u32) (&current_task) & 0x00FF0000) >> 16;
 	gdt[GDT_CURRENT_TSS].base_0_15  = (u32) (&current_task) & 0x0000FFFF;
 
+/*
 	gdt[GDT_NEXT_TSS].base_31_24 = ((u32) (&next_task) & 0xFF000000) >> 24;
 	gdt[GDT_NEXT_TSS].base_23_16 = ((u32) (&next_task) & 0x00FF0000) >> 16;
 	gdt[GDT_NEXT_TSS].base_0_15  = (u32) (&next_task) & 0x0000FFFF;
-
+*/
     // add_entry((unsigned int) &tss_inicial, 0x67, 0x9, 1, 0);
     // add_entry((unsigned int) &tss_idle, 0x67, 0x9, 1, 0);
 }
@@ -67,13 +77,10 @@ void tss_inicializar_tarea_idle() {
 }
 
 
-/**
-Lafunction maestra.
-**/
-
 tss* _get_next_tss(u8 player) {
 	int i = 0;
 	tss* ret = 0;
+	
 	if (player) {
 		do {
 		 	i++;
@@ -91,27 +98,32 @@ tss* _get_next_tss(u8 player) {
 			currentZombieA = currentZombieA % 8;
 		} while(!inUseA[currentZombieA] && i < 8);
 
-		ret = &tss_zombisA[currentZombieA];
-
 		if (inUseA[currentZombieA]) ret = &tss_zombisA[currentZombieA];		
 
 	}
+
+	breakpoint();
+	if (!ret) breakpoint();
 
 	return ret;
 }
 
 tss* get_next_tss() {
 
-	currentPlayer_rait_nau = !currentPlayer_rait_nau;
+	currentPlayer = !currentPlayer;
 
-	tss * ret = _get_next_tss(currentPlayer_rait_nau);
+	breakpoint();
+	tss * ret = _get_next_tss(currentPlayer);
+	breakpoint();
 
 	// No hay player en el otro jugador? No problem, agarramos el próximo tss del jugador actual.
 	if (!ret) {
-		currentPlayer_rait_nau = !currentPlayer_rait_nau;
-		ret = _get_next_tss(currentPlayer_rait_nau);
+		currentPlayer = !currentPlayer;
+		ret = _get_next_tss(currentPlayer);
 	} 
-	if (!ret)  {
+
+	breakpoint();
+	if (!ret) {
 		ret = &tss_idle;
 	}
 

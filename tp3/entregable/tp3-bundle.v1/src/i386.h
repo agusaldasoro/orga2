@@ -100,8 +100,12 @@ LS_INLINE void hlt(void) {
     __asm __volatile("hlt" : : );
 }
 
+
 LS_INLINE void breakpoint(void) {
+#ifdef DEBUG
     __asm __volatile("xchg %%bx, %%bx" : :);
+#endif
 }
+
 
 #endif  /* !__i386_H__ */
