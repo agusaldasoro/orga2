@@ -102,9 +102,6 @@ tss* _get_next_tss(u8 player) {
 
 	}
 
-	breakpoint();
-	if (!ret) breakpoint();
-
 	return ret;
 }
 
@@ -112,9 +109,7 @@ tss* get_next_tss() {
 
 	currentPlayer = !currentPlayer;
 
-	breakpoint();
 	tss * ret = _get_next_tss(currentPlayer);
-	breakpoint();
 
 	// No hay player en el otro jugador? No problem, agarramos el próximo tss del jugador actual.
 	if (!ret) {
@@ -122,7 +117,6 @@ tss* get_next_tss() {
 		ret = _get_next_tss(currentPlayer);
 	} 
 
-	breakpoint();
 	if (!ret) {
 		ret = &tss_idle;
 	}
@@ -179,7 +173,6 @@ int proximo_indice() {
 
 
 void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags) {
-	// TODO : Hay que ponerlo en 0, memset?
 
 	memset(tss, 0, sizeof(tss));
 
@@ -197,8 +190,5 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	tss->cs = cs;
 	
 	tss->eflags = eflags;
-
-
-    // add_entry((unsigned int) &tss, 0x67, 0x9, 1, 0);
-
+	tss->iomap = 0xffff;
 }

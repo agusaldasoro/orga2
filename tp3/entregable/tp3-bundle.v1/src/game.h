@@ -20,4 +20,15 @@ void game_lanzar_zombi(unsigned int jugador);
 void game_move_current_zombi(direccion dir);
 
 
+u32 currentPosA;
+u32 currentPosB;
+u8 zombieClassA;
+u8 zombieClassB;
+
+
+void game_init();
+void game_change_class(u8 player, u8 d);
+void game_move_zombie(u8 jugador, u8 d);
+
+
 #endif  /* !__GAME_H__ */

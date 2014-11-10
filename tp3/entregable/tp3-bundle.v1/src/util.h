@@ -1,7 +1,7 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-// #include "defines.h"
+#include "defines.h"
 
 int digits(unsigned int n, int base);
 
@@ -19,10 +19,6 @@ void print_backtrace(unsigned int col, unsigned int row);
 void* memcpy(void* src, void* dst, int length);
 void* memset(void* src, int c, int n);
 
-
-typedef struct cursor {
-    unsigned int  x;
-    unsigned int  y;
-} __attribute__((__packed__)) cursor;
+void handle_keyboard_interrumption(u8 scancode);
 
 #endif  /* !__UTIL_H__ */

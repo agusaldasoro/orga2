@@ -8,6 +8,7 @@
 #include "util.h"
 #include "screen.h"
 #include <stdarg.h>
+#include "game.h"
 
 unsigned int strlen(const char *s) {
     unsigned int len = 0;
@@ -144,7 +145,7 @@ void* memcpy(void* src, void* dst, int length) {
 }
 
 void* memset(void* src, int c, int n) {
-
+ 
     char* psrc = (char*) src;
 
     while(n--) {
@@ -152,4 +153,32 @@ void* memset(void* src, int c, int n) {
     }
 
     return src;
+}
+
+void handle_keyboard_interrumption(u8 scancode) {
+
+    int sc = (int) scancode;
+    printf(67, 0, "Teclado: %h   ", sc);
+
+    if (sc == 158) {
+        game_change_class(PLAYER_B, -1);
+    } else if (sc == 160) {
+        game_change_class(PLAYER_B, 1);
+    } else if (sc == 161) {
+        game_move_zombie(PLAYER_B, -1);
+    } else if (sc == 159) {
+        game_move_zombie(PLAYER_B, 1);
+    } else if (sc == 170) {
+       game_lanzar_zombi(PLAYER_B);
+    } else if (sc == 203) {
+        game_change_class(PLAYER_A, -1);
+    } else if (sc == 205) {
+        game_change_class(PLAYER_A, 1);
+    } else if (sc == 200) {
+        game_move_zombie(PLAYER_A, -1);
+    } else if (sc == 208) {
+        game_move_zombie(PLAYER_A, 1);
+    } else if (sc == 182) {
+       game_lanzar_zombi(PLAYER_A);
+    }
 }

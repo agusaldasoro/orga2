@@ -118,7 +118,7 @@ void print_map() {
 
     clear_screen();
     
-    for(y = 0; y < rows; y++) {
+    for(y = 1; y < rows; y++) {
         for(x = 0; x < cols; x++) {
             if (y >= rows-5) {
                 screen[y][x] = black;

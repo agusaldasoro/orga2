@@ -16,7 +16,7 @@
 #define ERROR                   1
 
 
-// #define DEBUG 0
+#define DEBUG 0
 
 /* Misc */
 /* -------------------------------------------------------------------------- */
@@ -57,6 +57,7 @@ typedef unsigned char u8;
 /* -------------------------------------------------------------------------- */
 #define VIDEO                   0x000B8000 /* direccion fisica del buffer de video */
 
-
+#define PLAYER_A 0
+#define PLAYER_B 1
 
 #endif  /* !__DEFINES_H__ */

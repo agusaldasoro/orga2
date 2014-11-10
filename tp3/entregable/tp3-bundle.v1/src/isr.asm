@@ -11,6 +11,9 @@ BITS 32
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 
+keyboard_str:   db "Teclado: %h",0
+
+
 ;; PIC
 extern fin_intr_pic1
 
@@ -97,17 +100,25 @@ _isr32:
 ;; -------------------------------------------------------------------------- ;;
 
 global _isr33
+extern printf
 extern print_int
+extern handle_keyboard_interrumption
 _isr33:
     ; xchg bx, bx
     pushad
 ;    call proximo_reloj
     xor eax,eax
     in al, 0x60
-    ; mov dword [esp+4], 5
-    ; mov dword [esp+8], 5
-    ; mov dword [esp+12], eax
-    ; call print_int
+
+    mov dword [esp], eax
+    call handle_keyboard_interrumption
+
+    ; mov dword [esp + 0x], 0
+    ; mov dword [esp + 0xc], 67
+    ; mov dword [esp + 0x8], keyboard_str
+    ; mov dword [esp + 0x4], eax
+    ; call printf
+
     call fin_intr_pic1
     popad
     iret
@@ -120,6 +131,9 @@ _isr33:
 %define ADE 0x83D
 %define ATR 0x732
 
+
+global _isr66
+_isr66:
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;
