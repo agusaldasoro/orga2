@@ -1,7 +1,7 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.9.2)  6 NOV 2014 12:17
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.9.2)  10 NOV 2014 12:26
 entering extended mode
 **informe.tex
-(C:\Users\Agustina\Desktop\Informe\informe.tex
+(C:\Users\Agustina\Documents\GitHub\orga2\tp3\entregable\Informe\informe.tex
 LaTeX2e <2011/06/27>
 Babel <v3.8m> and hyphenation patterns for english, afrikaans, ancientgreek, ar
 abic, armenian, assamese, basque, bengali, bokmal, bulgarian, catalan, coptic, 
@@ -315,8 +315,8 @@ Package: paralist 2013/06/09 v2.4 Extended list environments
 \plparsep=\skip46
 \pl@lab=\toks18
 )
-(C:\Users\Agustina\Desktop\Informe\codesnippet.tex
-("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\color.sty"
+(C:\Users\Agustina\Documents\GitHub\orga2\tp3\entregable\Informe\codesnippet.te
+x ("C:\Program Files\MiKTeX 2.9\tex\latex\graphics\color.sty"
 Package: color 2005/11/14 v1.0j Standard LaTeX Color (DPC)
 
 ("C:\Program Files\MiKTeX 2.9\tex\latex\00miktex\color.cfg"
@@ -337,8 +337,9 @@ Style option: `fancybox' v1.4 <2010/05/15> (tvz)
 \EndVerbatimTokens=\toks22
 \Verbatim@Outfile=\write3
 \Verbatim@Infile=\read1
-)) (C:\Users\Agustina\Desktop\Informe\page.layout.tex
-("C:\Program Files\MiKTeX 2.9\tex\latex\fancyhdr\fancyhdr.sty"
+))
+(C:\Users\Agustina\Documents\GitHub\orga2\tp3\entregable\Informe\page.layout.te
+x ("C:\Program Files\MiKTeX 2.9\tex\latex\fancyhdr\fancyhdr.sty"
 \fancy@headwidth=\skip47
 \f@ncyO@elh=\skip48
 \f@ncyO@erh=\skip49
@@ -353,7 +354,7 @@ Style option: `fancybox' v1.4 <2010/05/15> (tvz)
 Package: underscore 2006/09/13
 LaTeX Info: Redefining \_ on input line 42.
 )
-(C:\Users\Agustina\Desktop\Informe\caratula.sty
+(C:\Users\Agustina\Documents\GitHub\orga2\tp3\entregable\Informe\caratula.sty
 Package: caratula 2005/08/09 v0.3 Para componer caratulas de TPs del DC
 
 Cargando package 'caratula' v0.3 (2005/08/09)
@@ -362,7 +363,7 @@ Cargando package 'caratula' v0.3 (2005/08/09)
 \Urlmuskip=\muskip10
 Package: url 2006/04/12  ver 3.3  Verb mode for urls, etc.
 )
-(C:\Users\Agustina\Desktop\Informe\informe.aux)
+(C:\Users\Agustina\Documents\GitHub\orga2\tp3\entregable\Informe\informe.aux)
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 44.
 LaTeX Font Info:    ... okay on input line 44.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 44.
@@ -427,9 +428,9 @@ Overfull \hbox (22.76358pt too wide) in paragraph at lines 57--57
 
 [1
 
-{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map} <C:/Users/Agustina/Desktop
-/Informe/imagenes/logodc.jpg> <C:/Users/Agustina/Desktop/Informe/imagenes/logou
-ba.jpg>]
+{C:/ProgramData/MiKTeX/2.9/pdftex/config/pdftex.map} <C:/Users/Agustina/Documen
+ts/GitHub/orga2/tp3/entregable/Informe/imagenes/logodc.jpg> <C:/Users/Agustina/
+Documents/GitHub/orga2/tp3/entregable/Informe/imagenes/logouba.jpg>]
 Overfull \hbox (6.0pt too wide) in paragraph at lines 83--83
  [][][][][][] 
  []
@@ -464,130 +465,156 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 173--173
  [][][][][][] 
  []
 
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 226--226
+[3]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 198--198
  [][][][][][] 
  []
 
-[3] [4]
-Underfull \hbox (badness 10000) in paragraph at lines 230--235
+[4]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 258--258
+ [][][][][][] 
+ []
 
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 295--295
+ [][][][][][] 
  []
 
 [5]
-Underfull \hbox (badness 10000) in paragraph at lines 241--246
+Underfull \hbox (badness 10000) in paragraph at lines 299--300
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 247--252
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 253--254
-
+Overfull \hbox (6.0pt too wide) in paragraph at lines 316--316
+ [][][][][][] 
  []
 
 [6]
-Underfull \hbox (badness 10000) in paragraph at lines 261--263
-
+Overfull \hbox (6.0pt too wide) in paragraph at lines 344--344
+ [][][][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 264--271
-
+Overfull \hbox (6.0pt too wide) in paragraph at lines 363--363
+ [][][][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 278--280
-
+Overfull \hbox (6.0pt too wide) in paragraph at lines 408--408
+ [][][][][][] 
  []
 
 [7]
-Underfull \hbox (badness 10000) in paragraph at lines 289--291
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 292--296
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 297--300
-
+Overfull \hbox (6.0pt too wide) in paragraph at lines 440--440
+ [][][][][][] 
  []
 
 [8]
-Underfull \hbox (badness 10000) in paragraph at lines 308--311
+Underfull \hbox (badness 10000) in paragraph at lines 443--446
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 312--317
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 318--324
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 325--326
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 327--328
-
+Overfull \hbox (6.0pt too wide) in paragraph at lines 452--452
+ [][][][][][] 
  []
 
 [9]
-Underfull \hbox (badness 10000) in paragraph at lines 335--336
+Overfull \hbox (6.0pt too wide) in paragraph at lines 491--491
+ [][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 494--496
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 337--340
+Overfull \hbox (6.0pt too wide) in paragraph at lines 523--523
+ [][][][][][] 
+ []
+
+[10] [11]
+Underfull \hbox (badness 10000) in paragraph at lines 534--536
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 341--343
+Underfull \hbox (badness 10000) in paragraph at lines 537--539
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 344--346
+Overfull \hbox (6.0pt too wide) in paragraph at lines 568--568
+ [][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 593--593
+ [][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 595--599
+
+ []
+
+[12]
+Underfull \hbox (badness 10000) in paragraph at lines 600--601
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 347--349
+Overfull \hbox (6.0pt too wide) in paragraph at lines 628--628
+ [][][][][][] 
+ []
+
+[13]
+Underfull \hbox (badness 10000) in paragraph at lines 632--633
 
  []
 
-[10]
-Underfull \hbox (badness 10000) in paragraph at lines 370--372
+
+Underfull \hbox (badness 10000) in paragraph at lines 634--637
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 385--387
+Underfull \hbox (badness 10000) in paragraph at lines 638--640
 
  []
 
-[11] [12] (C:\Users\Agustina\Desktop\Informe\informe.aux)
+
+Underfull \hbox (badness 10000) in paragraph at lines 641--643
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 644--646
+
+ []
+
+[14]
+Underfull \hbox (badness 10000) in paragraph at lines 667--669
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 682--684
+
+ []
+
+[15] [16]
+(C:\Users\Agustina\Documents\GitHub\orga2\tp3\entregable\Informe\informe.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
  2635 strings out of 493921
- 33108 string characters out of 3147274
- 99727 words of memory out of 3000000
+ 33498 string characters out of 3147274
+ 100727 words of memory out of 3000000
  5894 multiletter control sequences out of 15000+200000
  20394 words of font info for 36 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
@@ -599,9 +626,9 @@ ype1/bitstrea/charter/bchri8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/publ
 ic/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfo
 nts/cm/cmtt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/c
 mtt9.pfb>
-Output written on informe.pdf (12 pages, 460375 bytes).
+Output written on informe.pdf (16 pages, 468635 bytes).
 PDF statistics:
- 68 PDF objects out of 1000 (max. 8388607)
+ 81 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

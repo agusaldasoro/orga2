@@ -152,14 +152,14 @@ los jugadores (rojo y azul).
 \begin{verbatim}
     ; Inicializar pantalla
     call clear_screen
-    call print_map
+    call print_map ;código que va a pintar el mapa de los colores deseados
 \end{verbatim}
 \end{codesnippet}
 \begin{codesnippet}
 \begin{verbatim}
 void clear_screen() {
     int size = VIDEO_COLS * VIDEO_FILS;    
-    ca (*p) = (ca (*)) VIDEO; // magia
+    ca (*p) = (ca (*)) VIDEO; 
     int i = 0;
     ca empty;
     empty.c = 0;
@@ -172,6 +172,36 @@ void clear_screen() {
 \end{verbatim}
 \end{codesnippet}
 
+\newpage
+\section{Ejercio 2}
+{\large a)} Inicializamos las entradas 0-19 en la IDT.
+
+
+
+
+
+{\large b)} Para probar lo programado anteriormente hicimos:
+
+\begin{codesnippet}
+\begin{verbatim}
+    ; Inicializar la IDT
+    call idt_inicializar
+    ; Cargar IDT
+    lidt [IDT_DESC]
+
+    ; test para que salte la divide by 0 exception (0)
+    mov edx,0
+    mov ecx,0
+    mov eax,3
+    div ecx
+\end{verbatim}
+\end{codesnippet}
+
+\newpage
+\section{Ejercio 3}
+{\large a)} La siguiente es la rutina que se encarga de limpiar el buffer de video y pintarlo como indica
+la figura 9. 
+
 \begin{codesnippet}
 \begin{verbatim}
 void print_map() {
@@ -180,6 +210,7 @@ void print_map() {
 
     ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
 
+	/* Defino los colores que voy a usar */
     ca red;
     red.c = 0;
     red.a = getFormat(C_FG_RED, 0, C_BG_RED, 0);
@@ -200,22 +231,23 @@ void print_map() {
     for(y = 0; y < rows; y++) {
         for(x = 0; x < cols; x++) {
             if (y >= rows-5) {
-                screen[y][x] = black;
+                screen[y][x] = black;		//las últimas 5 filas van de negro
             } else if (x == cols-1) {
-                screen[y][x] = blue;
+                screen[y][x] = blue;		//el jugador de la derecha es azul
             } else if (x == 0) {
-                screen[y][x] = red;
+                screen[y][x] = red;			//el jugador de la izquierda es rojo
             } else {
-                screen[y][x] = green;
+                screen[y][x] = green;		//el terreno de juego es verde
             }
         }
     }
+    /*Armo el cuadrado para el puntaje rojo */
     for(y = rows-5; y < rows; y++) {
         for(x = 35; x < 40; x++) {
             screen[y][x] = red;
         }
     }
-
+    /*Armo el cuadrado para el puntaje azul */
     for(y = rows-5; y < rows; y++) {
         for(x = 40; x < 45; x++) {
             screen[y][x] = blue;
@@ -225,110 +257,375 @@ void print_map() {
 \end{verbatim}
 \end{codesnippet}
 
-\newpage
-\section{Ejercio 2}
-{\large a)} Completar las entradas necesarias en la IDT para asociar diferentes rutinas a todas las
-excepciones del procesador. Cada rutina de excepci\'on debe indicar en pantalla qu\'e problema
-se produjo e interrumpir la ejecuci\'on. Posteriormente se modificar\'an estas rutinas
-para que se continue la ejecuci\'on, resolviendo el problema y desalojando a la tarea que lo
-produjo.\\
 
-{\large b)} Hacer lo necesario para que el procesador utilice la IDT creada anteriormente. Generar
-una excepci\'on para probarla.
+{\large b)} Se muestran las rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel
+(mmu_inicializar_dir_kernel). 
 
-\newpage
-\section{Ejercio 3}
-{\large a)} Escribir una rutina que se encargue de limpiar el buffer de video y pintarlo como indica
-la figura 9. Tener en cuenta que deben ser escritos de forma gen\'erica para posteriormente
-ser completados con informaci\'on del sistema. Adem\'as considerar estas im\'agenes como
-sugerencias, ya que pueden ser modificadas a gusto seg\'un cada grupo mostrando siempre
-la misma informaci\'on.\\
+\begin{codesnippet}
+\begin{verbatim}
+void mmu_inicializar_dir_kernel() {
+    page_directory *pd = (page_directory *) 0x27000;
+    int i;
 
-{\large b)} Escribir las rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel
-(mmu inicializar dir kernel). Se debe generar un directorio de p\'aginas que mapee,
-usando identity mapping, las direcciones 0x00000000 a 0x003FFFFF, como ilustra la figura
-6. Adem\'as, esta funci\'on debe inicializar el directorio de p\'aginas en la direcci\'on 0x27000
-y las tablas de p\'aginas seg\'un muestra la figura 1.\\
+    /* Creo 1024 entradas en page_directory con todo cero. */
+    for (i = 0; i < 1024; i++) {
+        pd[i] = (page_directory) {};
+    }
+
+    /* Mapeo las primeras 4 (0,1,2,3) entradas del page directory
+    con la base y permisos correspondientes. */
+    for(i = 0; i < 4; i++) {
+        pd[i] = (page_directory) {
+            .base = 0x28 + i,
+            .rw = 0x1,
+            .p = 1,
+        };
+    }
+
+    page_table* pt = (page_table*) 0x28000;
+    for(i = 0; i < 1024; i++) {
+        pt[i] = (page_table) {
+            .base = i,
+            .rw = 0x1,
+            .p = 1,
+        };
+    }
+}
+\end{verbatim}
+\end{codesnippet}
+
+
 
 {\large c)} Completar el c\'odigo necesario para activar paginaci\'on.\\
 
-{\large d)} Escribir una rutina que imprima el nombre del grupo en pantalla. Debe estar ubicado en
-la primer l\'inea de la pantalla alineado a derecha.
-4.4.
+\begin{codesnippet}
+\begin{verbatim}
+    ; Habilitar paginacion
+
+    mov eax,0x27000
+    mov cr3,eax
+
+    mov eax,cr0
+    or eax,0x80000000
+    mov cr0,eax
+
+
+    mov eax,0x100000
+    mov cr3,eax
+\end{verbatim}
+\end{codesnippet}
 
 \newpage
 \section{Ejercio 4}
-{\large a)} Escribir una rutina (inicializar mmu) que se encargue de inicializar las estructuras necesarias
-para administrar la memoria en el area libre (un contador de paginas libres).\\
+{\large a)} Para administrar la memoria en el área libre, tenemos un contador de páginas utilizadas denoninándolo \textit{páginas}. Luego contamos con las funciones \textit{get_page_directory} y \textit{get_page_table} las cuales nos brindan un nuevo page directory o una nueva page table correspondientemente.
 
-{\large b)} Escribir una rutina (mmu inicializar dir zombi) encargada de inicializar un directorio
-de p\'aginas y tablas de p\'aginas para una tarea, respetando la figura 6. La rutina debe copiar
+
+\begin{codesnippet}
+\begin{verbatim}
+page_directory* get_page_directory() {
+    page_directory* pd = (page_directory*) PAGES;
+    pd += paginas * 4096;
+    int i;
+    for (i = 0; i < 1024; i++) {
+        pd[i] = (page_directory) {};
+    }
+
+    pd[0] = (page_directory) {
+        .base = 0x28,
+        .rw = 0x1,
+        .p = 1
+    };
+
+    paginas++;
+
+    return pd;
+}
+\end{verbatim}
+\end{codesnippet}
+
+
+\begin{codesnippet}
+\begin{verbatim}
+page_table* get_page_table() {
+    page_table* pgt = (page_table*) PAGES;
+    pgt += paginas * 0x1000;
+    int i;
+    for (i = 0; i < 1024; i++) {
+        pgt[i] = (page_table) {};
+    }
+
+    paginas++;
+
+    return pgt
+    };
+}
+\end{verbatim}
+\end{codesnippet}
+{\large b)} La rutina \textit{mmu_inicializar_dir_zombi} se encarga de inicializar un directorio
+de p\'aginas y tablas de p\'aginas para una tarea, respetando la figura 6. Copia
 el c\'odigo de la tarea a su \'area asignada, es decir la posici\'on indicada por el jugador dentro
-de el mapa y mapear dichas p\'aginas a partir de la direcci\'on virtual 0x08000000(128MB).
-Recordar que los zombis comienzan en la segunda columna de el mapa y en la fila correspondiente
-a la posici\'on donde esta el jugador. Sugerencia: agregar a esta funci\'on todos los
-par\'amentros que considere necesarios.\\
+del mapa y mapea dichas p\'aginas a partir de la direcci\'on virtual 0x08000000(128MB).
 
-{\large c)} Escribir dos rutinas encargadas de mapear y desmapear p\'aginas de memoria.
 
-I- mmu mapear p\'agina(unsigned int virtual, unsigned int cr3, unsigned int f\'isica)
-Permite mapear la p\'agina f\'isica correspondiente a f\'isica en la direcci\'on virtual
-virtual utilizando cr3.
+\begin{codesnippet}
+\begin{verbatim}
+/* Guerrero = 0, Mago = 1, Clerigo = 2
+   player = 0 es A
+   player = 1 es B
+*/
+  page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, 
+  unsigned int y) {
 
+    page_directory* pd = get_page_directory();
+    unsigned int x = (player ? 79 : 2);
+
+    unsigned int offset_x[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
+    unsigned int offset_y[9] = {0, 0, -1, 1, -1, 1, 0, 1, -1};
+
+    /* En este for se mapean las nueve páginas correspondientes a un jugador */
+    int i, _x, _y;
+    for(i = 0; i < 9; i++) {
+        _x = y + offset_x[i] * (player ? 1 : -1);  \\ x es la posición x dentro del mapa
+        _y = x + offset_y[i] * (player ? 1 : -1);  \\ y es la posición y dentro del mapa
+
+        /* La función get_physical_address devuelve la dirección física en memoria
+        a la cual le corresponde el par (x, y) pasado por parámetro */      
+        mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 0);      
+    }
+
+    /* Código para copiar la tarea del Zombie */
+    int address = address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
+    i = 0;
+    unsigned char *code = (unsigned char *) 0x8000000;
+    unsigned char * paddress = (unsigned char*) address;
+    while (i++ < 0x1000) {
+        code[i] = paddress[i];
+    }
+    
+    return pd;
+}
+\end{verbatim}
+\end{codesnippet}
+
+
+
+{\large c)} La rutina \textit{mmu_mapear_p\'agina} permite mapear la p\'agina f\'isica correspondiente a su f\'isica en la direcci\'on virtual utilizando cr3.
+
+\begin{codesnippet}
+\begin{verbatim}
+void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fisica, 
+   unsigned char rw, unsigned char us) {
+
+    unsigned int directory = (virtual >> 22);
+    unsigned int table     = (virtual & 0x003FF000) >> 12;
+
+    page_table* pt = (page_table*) (pd[directory].base << 12);
+
+    if (pd[directory].p == 0){
+        pd[directory].base = ((unsigned int) get_page_table()) >> 12;
+        pd[directory].rw = rw;
+	    pd[directory].us = us;
+        pd[directory].p = 1;
+    }
+
+    pt = (page_table*) (pd[directory].base << 12);
+    pt[table].base = fisica >> 12;
+    pt[table].rw = rw;
+    pt[table].us = us;
+    pt[table].p = 1;
+
+    tlbflush();
+}
+\end{verbatim}
+\end{codesnippet}
+
+
+\textcolor{red}{Esto no lo hicimos}
 II- mmu unmapear pagina(unsigned int virtual, unsigned int cr3)
 Borra el mapeo creado en la direcci\'on virtual virtual utilizando cr3. \\
 
-{\large d)} Construir un mapa de memoria para tareas e intercambiarlo con el del kernel, luego cambiar
-el color del fondo del primer caracter de la pantalla y volver a la normalidad. Este item
-no debe estar implementado en la soluci\'on final.
 
+\begin{codesnippet}
+\begin{verbatim}
+Aca va la implementacion de muu_unmapear_pagina
+\end{verbatim}
+\end{codesnippet}
 
 \newpage
 \section{Ejercio 5}
 
-{\large a)} Completar las entradas necesarias en la IDT para asociar una rutina a la interrupci\'on del
-reloj, otra a la interrupci\'on de teclado y por \'ultimo una a la interrupci\'on de software 0x66. \\
+{\large a)} Completamos las entradas necesarias en la IDT para asociar una rutina a la interrupci\'on del
+reloj, otra a la interrupci\'on de teclado y por \'ultimo una a la interrupci\'on de software 0x66. Es decir las posiciones 32,33 y 66.
 
-{\large b)} Escribir la rutina asociada a la interrupci\'on del reloj, para que por cada tick llame a la
+
+{\large b)} A continuación, la rutina asociada a la interrupci\'on del reloj, para que por cada tick llame a la
 funci\'on screen pr\'oximo reloj. La misma se encarga de mostrar cada vez que se llame, la
-animaci\'on de un cursor rotando en la esquina inferior derecha de la pantalla. La funci\'on
-pr\'oximo reloj est\'a definida en isr.asm. \\
+animaci\'on de un cursor rotando en la esquina inferior derecha de la pantalla. 
 
-{\large c)} Escribir la rutina asociada a la interrupci\'on de teclado de forma que si se presiona cualquiera
-de las teclas a utilizar en el juego, se presente la misma en la esquina superior
-derecha de la pantalla. \\
+\begin{codesnippet}
+\begin{verbatim}
+;; Rutina de atención del RELOJ
+
+global _isr32
+_isr32:
+    pushad
+    call proximo_reloj 	 ; Ya definida en isr.asm
+    call proximo_indice  ;Devuelve el próximo índice en la GDT a ejecutar
+
+    cmp ax,0
+    je .nojump
+
+    mov [sched_tarea_selector], ax
+    call fin_intr_pic1
+    jmp far [sched_tarea_offset]
+    jmp .end
+
+.nojump:
+    call fin_intr_pic1
+
+.end:
+    ; switchear tareas.
+    popad
+    iret
+\end{verbatim}
+\end{codesnippet}
+
+
+{\large c)} Ahora, la rutina asociada a la interrupci\'on de teclado de forma que si se presiona cualquiera
+de las teclas a utilizar en el juego, se presenta la misma en la esquina superior derecha de la pantalla. \\
+
+\begin{codesnippet}
+\begin{verbatim}
+;; Rutina de atención del TECLADO
+
+global _isr33
+extern printf
+extern print_int
+extern handle_keyboard_interrumption
+_isr33:
+    pushad
+    xor eax,eax
+    in al, 0x60
+
+    mov dword [esp], eax
+    call handle_keyboard_interrumption
+    
+    mov dword  [esp + 0x], 0
+    mov dword [esp + 0xc], 67
+    mov dword [esp + 0x8], keyboard_str
+    mov dword [esp + 0x4], eax
+    call printf    ;función implementada por nosotros
+
+    call fin_intr_pic1
+    popad
+    iret
+\end{verbatim}
+\end{codesnippet}
+
 
 {\large d)} Escribir la rutina asociada a la interrupci\'on 0x66 para que modifique el valor de eax por
 0x42. Posteriormente este comportamiento va a ser modificado para atender el servicio del
 sistema.
 
+\textcolor{red}{Esto no lo hicimos tampoco!}
 
 \newpage
 \section{Ejercio 6}
-{\large a)} Definir las entradas en la GDT que considere necesarias para ser usadas como descriptores
-de TSS. Minimamente, una para ser utilizada por la tarea inicial y otra para la tarea
-Idle.\\
+{\large a)} Definimos tres entradas en la GDT que consideramos necesarias para ser usadas como descriptores
+de TSS: una para ser utilizada por la tarea inicial, otra para la tarea actual y una \'ultima para la tarea siguiente.\\
 
-{\large b)} Completar la entrada de la TSS de la tarea Idle con la informaci\'on de la tarea Idle. Esta
-informaci\'on se encuentra en el archivo TSS.C. La tarea Idle se encuentra en la direcci\'on
-0x00016000. La pila se alojar\'a en la misma direcci\'on que la pila del kernel y ser\'a mapeada
-con identity mapping. Esta tarea ocupa 1 pagina de 4KB y debe ser mapeada con identity
-mapping. Adem\'as la misma debe compartir el mismo CR3 que el kernel. \\
+{\large b)} Completamos la entrada de la TSS de la tarea Idle con la informaci\'on de la tarea Idle. La tarea Idle se encuentra en la direcci\'on 0x00016000. La pila se alojar\'a en la misma direcci\'on que la pila del kernel y ser\'a mapeada
+con identity mapping. Esta tarea ocupa 1 pagina de 4KB y debe ser mapeada con identity mapping. Adem\'as la misma comparte el mismo CR3 que el kernel. \\
+
+\begin{codesnippet}
+\begin{verbatim}
+void tss_inicializar() {
+    int i = 0;
+    while(i < CANT_ZOMBIS) {
+        inUseA[i] = 0;
+        inUseB[i] = 0;
+        i++;
+    }
+    currentZombieA = 0;
+    currentZombieB = 0;
+
+    // inicializar tss_idle
+    tss_inicializar_tarea_idle();
+
+    memcpy(&tss_idle, &tss_inicial, sizeof(tss));
+    memcpy(&tss_idle, &current_task, sizeof(tss));
+    memcpy(&tss_idle, &next_task, sizeof(tss));
+
+    gdt[GDT_INITIAL_TSS].base_31_24 = ((u32) (&tss_inicial) & 0xFF000000) >> 24;
+    gdt[GDT_INITIAL_TSS].base_23_16 = ((u32) (&tss_inicial) & 0x00FF0000) >> 16;
+    gdt[GDT_INITIAL_TSS].base_0_15  = (u32) (&tss_inicial) & 0x0000FFFF;
+
+    gdt[GDT_CURRENT_TSS].base_31_24 = ((u32) (&current_task) & 0xFF000000) >> 24;
+    gdt[GDT_CURRENT_TSS].base_23_16 = ((u32) (&current_task) & 0x00FF0000) >> 16;
+    gdt[GDT_CURRENT_TSS].base_0_15  = (u32) (&current_task) & 0x0000FFFF;
+}
+\end{verbatim}
+\end{codesnippet}
+
+
+\begin{codesnippet}
+\begin{verbatim}
+void tss_inicializar_tarea_idle() {
+
+    tss_idle = (tss) {};
+
+    tss_idle.eip = 0x00016000;
+    tss_idle.cr3 = 0x27000;
+    
+    tss_idle.ebp = 0x27000;
+    tss_idle.esp = 0x27000;
+
+    tss_idle.es = 0x40;
+    tss_idle.ds = 0x40;
+    tss_idle.ss = 0x40;
+    tss_idle.gs = 0x40;
+    tss_idle.cs = 0x50;
+
+    tss_idle.eflags = 0x202;
+    tss_idle.iomap = 0xffff;
+}
+\end{verbatim}
+\end{codesnippet}
 
 {\large c)} Construir una funci\'on que complete una TSS libre con los datos correspondientes a una
 tarea (zombi). El c\'odigo de las tareas se encuentra a partir de la direcci\'on 0x00010000
 ocupando una pagina de 4kb cada una seg\'un indica la figura 1. Para la direcci\'on de la
-pila se debe utilizar el mismo espacio de la tarea, la misma crecer\'a desde la base de la tarea. Para el mapa de memoria se debe construir uno nuevo utilizando la funci\'on
-mmu inicializar dir zombi. Adem\'as, tener en cuenta que cada tarea utilizar\'a una pila
-distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin. \\
+pila se debe utilizar el mismo espacio de la tarea, la misma crecer\'a desde la base de la tarea. Para el mapa de memoria se debe construir uno nuevo utilizando la funci\'on mmu inicializar dir zombi. Adem\'as, tener en cuenta que cada tarea utilizar\'a una pila distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin. \\
 
-d) Completar la entrada de la GDT correspondiente a la tarea inicial.\\
+\textcolor{red}{Y aca que onda?}\\
 
-e) Completar la entrada de la GDT correspondiente a la tarea Idle.\\
+{\large d)} C\'odigo necesario para ejecutar la tarea Idle, es decir, saltar intercambiando las
+TSS, entre la tarea inicial y la tarea Idle:
 
-f) Escribir el c\'odigo necesario para ejecutar la tarea Idle, es decir, saltar intercambiando las
-TSS, entre la tarea inicial y la tarea Idle.
+\begin{codesnippet}
+\begin{verbatim}
+idle:
+    .loopear:
+        inc dword [numero]
+        cmp dword [numero], 0x4
+        jb .imprimir
 
+    .reset_contador:
+        mov dword [numero], 0x0
+
+    .imprimir:
+        ; Imprimir 'reloj'
+        mov ebx, dword [numero]
+        add ebx, message1
+        imprimir_texto_mp ebx, 1, 0x0f, 49, 76
+        mov ebx, chirimbolo_open
+        imprimir_texto_mp ebx, 1, 0x0f, 49, 76-1
+        mov ebx, chirimbolo_close
+        imprimir_texto_mp ebx, 1, 0x0f, 49, 76+1
+
+    jmp .loopear
+\end{verbatim}
+\end{codesnippet}
 
 \newpage
 \section{Ejercio 7}
