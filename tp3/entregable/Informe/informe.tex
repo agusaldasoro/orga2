@@ -50,8 +50,10 @@
 \titulo{Trabajo Práctico III}
 \subtitulo{System Programming - Zombi defense}
 \integrante{Aldasoro Agustina}{86/13}{agusaldasoro@gmail.com}
-\integrante{Rey Maximiliano}{XXX/XX}{mail}
-\integrante{Tirabasso Ignacio}{XXX/XX}{mail}
+\integrante{Rey Maximiliano}{37/13}{rey.maximiliano@gmail.com}
+\integrante{Tirabasso Ignacio}{718/12}{ignacio.tirabasso@gmail.com}
+
+ 
 
 
 \maketitle
@@ -253,10 +255,32 @@ void print_map() {
             screen[y][x] = blue;
         }
     }
-}
+
 \end{verbatim}
 \end{codesnippet}
 
+\begin{codesnippet}
+\begin{verbatim}
+    /** Escribe a los numeritos de los zombies de cada jugador con sus cruces*/
+    char * text = "1 2 3 4 5 6 7 8 9 10", 0;
+    print_string(text, 4, 46, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+    print_string(text, 60, 46, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+
+    text = "x x x x x x x x x x",0;
+    print_string(text, 4, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
+    print_string(text, 60, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
+
+    /** Imprime puntajes */
+    text = "00",0;
+    print_string(text, 31, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
+    print_string(text, 48, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+
+    text = "0",0;
+    print_string(text, 37, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
+    print_string(text, 42, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+}
+\end{verbatim}
+\end{codesnippet}
 
 {\large b)} Se muestran las rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel
 (mmu_inicializar_dir_kernel). 
@@ -296,7 +320,7 @@ void mmu_inicializar_dir_kernel() {
 
 
 
-{\large c)} Completar el c\'odigo necesario para activar paginaci\'on.\\
+{\large c)} Completamos el c\'odigo necesario para activar paginaci\'on.\\
 
 \begin{codesnippet}
 \begin{verbatim}
@@ -440,14 +464,24 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
 \end{codesnippet}
 
 
-\textcolor{red}{Esto no lo hicimos}
-II- mmu unmapear pagina(unsigned int virtual, unsigned int cr3)
-Borra el mapeo creado en la direcci\'on virtual virtual utilizando cr3. \\
+\textit{mmu_unmapear_pagina }  borra el mapeo creado en la direcci\'on virtual virtual utilizando cr3. \\
 
 
 \begin{codesnippet}
 \begin{verbatim}
-Aca va la implementacion de muu_unmapear_pagina
+ void mmu_unmapear_pagina(unsigned int virtual,page_directory* cr3){
+ 	unsigned int directory = (virtual >> 22);
+    unsigned int table     = (virtual & 0x003FF000) >> 12;
+
+    page_table* pt = (page_table*) (cr3[directory].base << 12);
+
+    if (cr3[directory].p != 0){
+        pt = (page_table*) (cr3[directory].base << 12);
+        pt[table].p = 0;
+    }
+
+    tlbflush();
+ }
 \end{verbatim}
 \end{codesnippet}
 
@@ -523,11 +557,20 @@ _isr33:
 \end{codesnippet}
 
 
-{\large d)} Escribir la rutina asociada a la interrupci\'on 0x66 para que modifique el valor de eax por
-0x42. Posteriormente este comportamiento va a ser modificado para atender el servicio del
-sistema.
+{\large d)} Escribimos la rutina asociada a la interrupci\'on 0x66 para que modifique el valor de eax por
+0x42. 
+\begin{codesnippet}
+\begin{verbatim}
+;; Rutina de atención 0x66
 
-\textcolor{red}{Esto no lo hicimos tampoco!}
+global _isr66
+_isr33:
+    pushad
+    mov eax,0x42
+  
+    iret
+\end{verbatim}
+\end{codesnippet}
 
 \newpage
 \section{Ejercio 6}
@@ -631,107 +674,55 @@ idle:
 \section{Ejercio 7}
 {\large a)} Construir una funci\'on para inicializar las estructuras de datos del scheduler.\\
 
+\textcolor{red}{COMPLETAR!}\\
+
 {\large b)} Crear la funci\'on sched pr\'oximo indice() que devuelve el \'indice en la GDT de la pr\'oxima
 tarea a ser ejecutada. Construir la rutina de forma devuelva una tarea de cada jugador
 por vez seg\'un se explica en la secci\'on 3.2\\
 
-{\large c)} Modificar la rutina de la interrupci\'on 0x66, para que implemente el servicio mover seg\'un
+
+\textcolor{red}{COMPLETAR!}\\
+
+{\large c)} Se muestra la rutina de la interrupci\'on 0x66, para que implemente el servicio mover seg\'un
 se indica en la secci\'on 3.1.1.\\
+
+\begin{codesnippet}
+\begin{verbatim}
+global _isr66
+extern movimiento
+_isr66:
+    pushad
+    
+    push dx
+    push esi
+    push edi
+    push eax
+    call movimiento
+
+    popad
+    iret
+\end{verbatim}
+\end{codesnippet}
+
 
 {\large d)} Modificar el c\'odigo necesario para que se realice el intercambio de tareas por cada ciclo de
 reloj. El intercambio se realizar\'a seg\'un indique la funci\'on sched proximo \'indice().\\
 
+
+\textcolor{red}{COMPLETAR!}\\
+
+
 {\large e)} Modificar las rutinas de excepciones del procesador para que desalojen a la tarea que
 estaba corriendo y corran la pr\'oxima.\\
+
+\textcolor{red}{COMPLETAR!}\\
 
 {\large f)} Implementar el mecanismo de debugging explicado en la secci\'on 3.4 que indicar\'a en pantalla
 la raz\'on del desalojo de una tarea.
 
 
-\newpage
-\section{Ejercio 8}
-{\large a)} Crear un conjunto de 3 tareas zombis (Guerrero, Mago y Clerigo). Los mismos deber\'an respetar
-las restricciones del trabajo pr\'actico, ya que de no hacerlo no podr\'an ser ejecutados
-en el sistema implementado por la c\'atedra.
-
-Deben cumplir:
-
-No ocupar m\'as de 4 kb cada uno (tener en cuenta la pila).
-
-Tener como punto de entrada la direcci\'on cero.
-
-Estar compilado para correr desde la direcci\'on 0x08000000.
-
-Utilizar el unico servicio del sistema (mover).
-
-Explicar en pocas palabras qu\'e estrategia utiliza cada uno de los zombis, o en su conjunto
-en t\'erminos de defensa y ataque.\\
-
-{\large b)} Si consideran que sus tareas pueden hacer algo mas que completar el primer item de este
-ejercicio, y tienen a un audaz campion que se atreva a enfrentarse en el campo de batalla
-zombi, entonces pueden enviar el binario de sus tareas a la lista de docentes indicando
-los siguientes datos:
-
-Nombre del campion (Alumno de la materia que se presente como jugador)
-
-Nombre de cada uno de las tareas zombi
-
-Estrategia de alimentaci\'on de los zombis (es decir, como se comer\'an los cerebros de
-las otras tareas)
-
-Se realizar\'a una competencia a fin de cuatrimestre con premios en/de chocolate para los
-primeros puestos. \\
-
-{\large c)} Pelicula y Video Juego favorito sobre Zombis.
-
-
-\newpage
-\section{Conclusiones y trabajo futuro}
-
+\textcolor{red}{COMPLETAR!}\\
 
 \end{document}
 
 
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-
-\section{Objetivos generales}
-
-El objetivo de este Trabajo Práctico es ...
-
-
-\section{Contexto}
-
-\begin{figure}
-  \begin{center}
-	\includegraphics[scale=0.66]{imagenes/logouba.jpg}
-	\caption{Descripcion de la figura}
-	\label{nombreparareferenciar}
-  \end{center}
-\end{figure}
-
-
-\paragraph{\textbf{Titulo del parrafo} } Bla bla bla bla.
-Esto se muestra en la figura~\ref{nombreparareferenciar}.
-
-
-
-\begin{codesnippet}
-\begin{verbatim}
-
-struct Pepe {
-
-    ...
-
-};
-
-\end{verbatim}
-\end{codesnippet}
-
-
-%\section{Enunciado y solucion} 
-%\input{enunciado}
