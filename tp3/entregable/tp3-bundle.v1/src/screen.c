@@ -7,6 +7,7 @@
 
 #include "screen.h"
 #include "util.h"
+  #include "colors.h"
 
 // http://en.wikipedia.org/wiki/Interrupt_descriptor_table
 static char *exceptions[] = {
@@ -142,6 +143,26 @@ void print_map() {
             screen[y][x] = blue;
         }
     }
+        /** Escribe a los numeritos de los zombies de cada jugador con sus cruces*/
+    char * text;
+    text = "1 2 3 4 5 6 7 8 9 10",0;
+    print_string(text, 4, 46, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+    print_string(text, 55, 46, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+
+    text = "x x x x x x x x x x",0;
+    print_string(text, 4, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
+    print_string(text, 55, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
+
+    /** Imprime puntajes */
+    text = "00",0;
+    print_string(text, 31, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
+    print_string(text, 48, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+
+    text = "0",0;
+    print_string(text, 37, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
+    print_string(text, 42, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+
+    print_debugger(0, 0);
 }
 
 
@@ -188,7 +209,7 @@ void print_exception(int number) {
 
 
 
-    // testing.
+    // testing.C_BG_LACK
     // row++;
     // putc(7*16+1, col, row); // deberia imprimir "q"
     // row++;
@@ -210,3 +231,95 @@ void print_exception(int number) {
 
 }
 
+void print_debugger(unsigned int player, unsigned char class){
+
+    // TODO: copiar_mapa() en algun espacio de memoria libre
+    ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
+    ca gris;
+    gris.c = 0;
+    gris.a = getFormat(C_FG_WHITE, 0, C_BG_LIGHT_GREY , 0);
+
+    ca negro;
+    negro.c = 0;
+    negro.a = getFormat(C_FG_BLACK, 0, C_BG_BLACK , 0);
+
+    ca azul;
+    azul.c = 0;
+    azul.a = getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0);
+
+    ca rojo;
+    rojo.c = 0;
+    rojo.a = getFormat(C_FG_WHITE, 0, C_BG_RED , 0);
+
+    int x;
+    int y;
+
+//Primera y ultima filas pintadas de negro
+    for (x = 25; x < 55; ++x){
+        screen[7][x] = negro;
+        screen[42][x] = negro;
+    }
+
+//Primera y ultima columnas pintadas de negro
+    for (y = 7; y < 42; ++y){
+        screen[y][25] = negro;
+        screen[y][54] = negro;
+    }
+
+//Lo del medio de gris
+    for (y = 9; y < 42; ++y){
+        for (x = 26; x < 54; ++x){
+            screen[y][x] = gris;
+        }
+    }
+
+//La barra de estado de que jugador y zombie es
+    if (player){
+        for (x = 25; x < 55; ++x){
+            screen[8][x] = azul;
+        }
+        print_string("Zombie B", 26, 8, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+        if (class == 0)
+            print_string("Guerrero", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+        if (class == 1)
+            print_string("Mago", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+        if (class == 2)
+            print_string("Clerigo", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+    }else{
+        for (x = 25; x < 55; ++x){
+            screen[8][x] = rojo;
+        }
+        print_string("Zombie A", 26, 8, getFormat(C_FG_WHITE, 0, C_BG_RED , 0));
+        if (class == 0)
+            print_string("Guerrero", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_RED , 0));
+        if (class == 1)
+            print_string("Mago", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_RED , 0));
+        if (class == 2)
+            print_string("Clerigo", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_RED , 0));
+    }
+
+    print_string("eax           cr0", 27, 10, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string("ebx           cr2", 27, 12, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string("ecx           cr3", 27, 14, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string("edx           cr4", 27, 16, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string("esi", 27, 18, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string("edi", 27, 20, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string("ebp", 27, 22, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string("esp", 27, 24, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string("eip", 27, 26, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+
+    print_string("stack", 41, 27, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+
+    print_string(" cs", 27, 28, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string(" ds", 27, 30, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string(" es", 27, 32, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string(" fs", 27, 34, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string(" gs", 27, 36, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string(" ss", 27, 38, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    print_string(" eflags", 27, 40, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+
+
+/** TODO: Imprimir los valores de los registros
+
+    // pegar_mapa() que teniamos guardado */
+}

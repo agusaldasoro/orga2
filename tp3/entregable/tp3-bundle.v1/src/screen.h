@@ -31,5 +31,6 @@ unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned cha
 void clear_screen();
 void print_map();
 void print_exception(int number);
+void print_debugger(unsigned int player, unsigned char class);
 
 #endif  /* !__SCREEN_H__ */

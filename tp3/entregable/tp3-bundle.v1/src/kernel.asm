@@ -146,7 +146,18 @@ modo_protegido:
     call habilitar_pic
     ; Cargar tarea inicial
 
-    xchg bx, bx
+
+    ;extern start_zombie
+
+    ;xchg bx, bx
+    ;mov ax,5
+    ;push ax
+    ;mov ax,0
+    ;push ax
+    ;push ax
+    ;call start_zombie
+
+    ;xchg bx, bx
     ; Habilitar interrupciones
     sti
     ; Saltar a la primera tarea: Idle
