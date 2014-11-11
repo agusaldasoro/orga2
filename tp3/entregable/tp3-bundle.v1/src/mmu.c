@@ -173,18 +173,24 @@ void desplazar_fisica(unsigned int virtual, page_directory* pd, int x, int y) {
     pt[table].base += y*50;
 }
 
-void mover_soldado(int x, int y, page_directory* pd) {
-    int i = 0;
-    while(i<9){
-        desplazar_fisica(0x8000000+i*0x1000, pd, x, y);
-        i++;
+ void mmu_unmapear_pagina(unsigned int virtual,page_directory* cr3){
+ 	unsigned int directory = (virtual >> 22);
+    unsigned int table     = (virtual & 0x003FF000) >> 12;
+
+    page_table* pt = (page_table*) (cr3[directory].base << 12);
+
+    if (cr3[directory].p != 0){
+        pt = (page_table*) (cr3[directory].base << 12);
+        pt[table].p = 0;
     }
-}
+
+    tlbflush();
+ }
 
 void copy_code(u32 fisica, page_directory* cr3, u8 class, u8 player) {
 	mmu_mapear_pagina(0x400000, cr3, fisica, 1, 0);
 	memcpy((void*) 0x10000 + ((player ? 0 : 1)  * 0x3000 + class * 0x1000), (void*) 0x400000, 0x1000);
-	// TODO : Implementar mmu_unmapear. mmu unmapear pagina(0x400000, cr3)
+	mmu_unmapear_pagina(0x400000, cr3);
 }
 
 

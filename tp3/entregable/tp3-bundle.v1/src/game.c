@@ -7,12 +7,27 @@
 #include "game.h"
 #include "sched.h"
 
+u8 puntajeA;
+u8 puntajeB;
+
 
 void game_init() {
+	puntajeA = 0;
+	puntajeB = 0;
 	currentPosA = 20;
 	currentPosB = 20;
 	zombieClassA = MAGO;
 	zombieClassB = MAGO;
+}
+
+void sumarPuntoA(){
+	puntajeA++;
+	if(puntajeA==15){/*TODO terminoElJuego*/}
+}
+
+void sumarPuntoB(){
+	puntajeB++;
+	if(puntajeB==15){/*TODO terminoElJuego*/}
 }
 
 void game_change_class(u8 player, u8 d) {
@@ -54,4 +69,17 @@ void game_move_current_zombi(direccion dir) {
 
 
 
+}
+void mover_soldado(int x, int y, page_directory* pd) {
+    int i = 0;
+    if(recuperar_fisica(0x8000000,pd)%(50*0x1000)==0){
+    	sumarPuntoB();
+    }else if(recuperar_fisica(0x8000000,pd)%(49 * 0x1000)){
+    	sumarPuntoA();
+    }else{
+    	while(i<9){
+        	desplazar_fisica(0x8000000+i*0x1000, pd, x, y);
+        	i++;
+    	}
+    }
 }
