@@ -51,6 +51,7 @@ void copy_code(u32 fisica, page_directory* cr3, u8 class, u8 player);
 
 unsigned int recuperar_fisica(unsigned int virtual, page_directory* pd);
 void desplazar_fisica(unsigned int virtual, page_directory* pd, int x, int y);
+void get_position(unsigned int* x, unsigned int* y, unsigned int dir);
 
 
 unsigned int paginas; 

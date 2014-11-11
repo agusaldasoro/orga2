@@ -133,7 +133,19 @@ _isr33:
 
 
 global _isr66
+extern movimiento
 _isr66:
+    pushad
+    push dx
+    push esi
+    push edi
+    push eax
+    call movimiento
+
+    ; pd:eax,delta_x:edi,delta_y:esi, tipo: dx
+
+    popad
+    iret
 
 ;; Funciones Auxiliares
 ;; -------------------------------------------------------------------------- ;;

@@ -6,6 +6,8 @@
 
 #include "game.h"
 #include "sched.h"
+#include "screen.h"
+#include "mmu.h"
 
 u8 puntajeA;
 u8 puntajeB;
@@ -70,16 +72,39 @@ void game_move_current_zombi(direccion dir) {
 
 
 }
-void mover_soldado(int x, int y, page_directory* pd) {
-    int i = 0;
+
+
+
+void mover_soldado(int delta_x, int delta_y, page_directory* pd) {
+	desplazar_fisica(0x8000000, pd, delta_x, delta_y);
     if(recuperar_fisica(0x8000000,pd)%(50*0x1000)==0){
     	sumarPuntoB();
     }else if(recuperar_fisica(0x8000000,pd)%(49 * 0x1000)){
     	sumarPuntoA();
     }else{
+    	int i = 1;
     	while(i<9){
-        	desplazar_fisica(0x8000000+i*0x1000, pd, x, y);
+        	desplazar_fisica(0x8000000+i*0x1000, pd, delta_x, delta_y);
         	i++;
     	}
     }
+}
+
+void mover_pantalla(int x,int y,int delta_x,int delta_y,u8 tipo){
+	print_string("X",x, y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if (tipo==0)
+		print_string("G",x+delta_x, y+delta_y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if (tipo==1)
+		print_string("M",x+delta_x, y+delta_y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if (tipo==2)
+		print_string("C",x+delta_x, y+delta_y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+}
+
+/* pd:eax,delta_x:edi,delta_y:esi, tipo: dx */
+void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
+	mover_soldado(delta_x,delta_y,pd);
+	unsigned int x;
+	unsigned int y;
+	get_position(&x,&y,recuperar_fisica(0x8000000,pd));
+	mover_pantalla(x,y,delta_x,delta_y,tipo);
 }

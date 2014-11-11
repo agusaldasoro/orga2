@@ -98,6 +98,18 @@ unsigned int get_physical_address(unsigned int x, unsigned int y) {
 	return ret;
 }
 
+void get_position(unsigned int* x, unsigned int* y,unsigned int dir){
+	int y2 = 0;
+	dir = dir-0x400000;
+	dir = dir/0x1000;
+	while(dir<50){
+		dir = dir-50;
+		y2++;
+	}
+	*y = y2;
+	*x = dir;
+}
+
 void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fisica, unsigned char rw, unsigned char us) {
 
     unsigned int directory = (virtual >> 22);
