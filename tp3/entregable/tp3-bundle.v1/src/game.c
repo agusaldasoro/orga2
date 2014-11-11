@@ -68,9 +68,15 @@ void game_lanzar_zombi(unsigned int player) {
 }
 
 void game_move_current_zombi(direccion dir) {
-
-
-
+	//if(dir==ADE){
+	//	movimiento(pd,1,0);
+	//}else if(dir==DER){
+	//	movimiento(pd,0,1);
+	//}else if(dir==ATR){
+	//	movimiento(pd,-1,0);
+//	}else{
+//		movimiento(pd,0,-1);
+//	}
 }
 
 

@@ -154,7 +154,7 @@ global _isr66
 extern movimiento
 _isr66:
     pushad
-    push dx
+    push dl
     push esi
     push edi
     push eax
