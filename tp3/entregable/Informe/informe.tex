@@ -565,7 +565,7 @@ _isr33:
 
 global _isr66
 _isr33:
-    pushad
+
     mov eax,0x42
   
     iret
@@ -635,12 +635,14 @@ void tss_inicializar_tarea_idle() {
 \end{verbatim}
 \end{codesnippet}
 
-{\large c)} Construir una funci\'on que complete una TSS libre con los datos correspondientes a una
-tarea (zombi). El c\'odigo de las tareas se encuentra a partir de la direcci\'on 0x00010000
-ocupando una pagina de 4kb cada una seg\'un indica la figura 1. Para la direcci\'on de la
-pila se debe utilizar el mismo espacio de la tarea, la misma crecer\'a desde la base de la tarea. Para el mapa de memoria se debe construir uno nuevo utilizando la funci\'on mmu inicializar dir zombi. Adem\'as, tener en cuenta que cada tarea utilizar\'a una pila distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin. \\
+%{\large c)} Construir una funci\'on que complete una TSS libre con los datos correspondientes a una
+%tarea (zombi). El c\'odigo de las tareas se encuentra a partir de la direcci\'on 0x00010000
+%ocupando una pagina de 4kb cada una seg\'un indica la figura 1. Para la direcci\'on de la
+%pila se debe utilizar el mismo espacio de la tarea, la misma crecer\'a desde la base de la tarea. 
+%Para el mapa de memoria se debe construir uno nuevo utilizando la funci\'on mmu inicializar dir zombi. 
+%Adem\'as, tener en cuenta que cada tarea utilizar\'a una pila distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin. \\
 
-\textcolor{red}{Y aca que onda?}\\
+%\textcolor{red}{Y aca que onda?}\\
 
 {\large d)} C\'odigo necesario para ejecutar la tarea Idle, es decir, saltar intercambiando las
 TSS, entre la tarea inicial y la tarea Idle:
@@ -672,16 +674,16 @@ idle:
 
 \newpage
 \section{Ejercio 7}
-{\large a)} Construir una funci\'on para inicializar las estructuras de datos del scheduler.\\
+%{\large a)} Construir una funci\'on para inicializar las estructuras de datos del scheduler.\\
 
-\textcolor{red}{COMPLETAR!}\\
+%\textcolor{red}{COMPLETAR!}\\
 
-{\large b)} Crear la funci\'on sched pr\'oximo indice() que devuelve el \'indice en la GDT de la pr\'oxima
-tarea a ser ejecutada. Construir la rutina de forma devuelva una tarea de cada jugador
-por vez seg\'un se explica en la secci\'on 3.2\\
+%{\large b)} Crear la funci\'on sched pr\'oximo indice() que devuelve el \'indice en la GDT de la pr\'oxima
+%tarea a ser ejecutada. Construir la rutina de forma devuelva una tarea de cada jugador
+%por vez seg\'un se explica en la secci\'on 3.2\\
 
 
-\textcolor{red}{COMPLETAR!}\\
+%\textcolor{red}{COMPLETAR!}\\
 
 {\large c)} Se muestra la rutina de la interrupci\'on 0x66, para que implemente el servicio mover seg\'un
 se indica en la secci\'on 3.1.1.\\
@@ -705,23 +707,23 @@ _isr66:
 \end{codesnippet}
 
 
-{\large d)} Modificar el c\'odigo necesario para que se realice el intercambio de tareas por cada ciclo de
-reloj. El intercambio se realizar\'a seg\'un indique la funci\'on sched proximo \'indice().\\
+%{\large d)} Modificar el c\'odigo necesario para que se realice el intercambio de tareas por cada ciclo de
+%reloj. El intercambio se realizar\'a seg\'un indique la funci\'on sched proximo \'indice().\\
 
 
-\textcolor{red}{COMPLETAR!}\\
+%\textcolor{red}{COMPLETAR!}\\
 
 
-{\large e)} Modificar las rutinas de excepciones del procesador para que desalojen a la tarea que
-estaba corriendo y corran la pr\'oxima.\\
+%{\large e)} Modificar las rutinas de excepciones del procesador para que desalojen a la tarea que
+%estaba corriendo y corran la pr\'oxima.\\
 
-\textcolor{red}{COMPLETAR!}\\
+%\textcolor{red}{COMPLETAR!}\\
 
-{\large f)} Implementar el mecanismo de debugging explicado en la secci\'on 3.4 que indicar\'a en pantalla
-la raz\'on del desalojo de una tarea.
+%{\large f)} Implementar el mecanismo de debugging explicado en la secci\'on 3.4 que indicar\'a en pantalla
+%la raz\'on del desalojo de una tarea.
 
 
-\textcolor{red}{COMPLETAR!}\\
+%\textcolor{red}{COMPLETAR!}\\
 
 \end{document}
 
