@@ -162,8 +162,6 @@ void print_exception(int number, registers* regs) {
 
     print_string(str, 5, 5, 0);
 
-    print_backtrace(5, 8);
-
     printf(45, 8, "%s: %h", "eax", regs->eax);
     printf(45, 9, "%s: %h", "ebx", regs->ebx);
     printf(45, 10, "%s: %h", "ecx", regs->ecx);
@@ -173,6 +171,14 @@ void print_exception(int number, registers* regs) {
     printf(45, 14, "%s: %h", "ebp", regs->ebp);
     printf(45, 15, "%s: %h", "esp", regs->esp);
 
+}
+
+char* getClassName(u8 class) {
+    if (class == 0) return "Guerrero";
+    if (class == 1) return "Mago";
+    if (class == 2) return "Clerigo";
+
+    return "invalid class";
 }
 
 void print_debugger(unsigned int player, unsigned char class){
@@ -218,29 +224,12 @@ void print_debugger(unsigned int player, unsigned char class){
     }
 
 //La barra de estado de que jugador y zombie es
-    if (player){
-        for (x = 25; x < 55; ++x){
-            screen[8][x] = azul;
-        }
-        print_string("Zombie B", 26, 8, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
-        if (class == 0)
-            print_string("Guerrero", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
-        if (class == 1)
-            print_string("Mago", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
-        if (class == 2)
-            print_string("Clerigo", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
-    }else{
-        for (x = 25; x < 55; ++x){
-            screen[8][x] = rojo;
-        }
-        print_string("Zombie A", 26, 8, getFormat(C_FG_WHITE, 0, C_BG_RED , 0));
-        if (class == 0)
-            print_string("Guerrero", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_RED , 0));
-        if (class == 1)
-            print_string("Mago", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_RED , 0));
-        if (class == 2)
-            print_string("Clerigo", 36, 8, getFormat(C_FG_WHITE, 0, C_BG_RED , 0));
+    for (x = 25; x < 55; ++x){
+        screen[8][x] = (player ? azul : rojo);
     }
+    u8 attr = getFormat(C_FG_WHITE, 0, (player ? C_BG_BLUE : C_BG_RED), 0);
+    print_string((player ? "Zombie B" : "Zombie A"), 26, 8, attr);
+    print_string(getClassName(class), 36, 8, attr);
 
     print_string("eax           cr0", 27, 10, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
     print_string("ebx           cr2", 27, 12, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));

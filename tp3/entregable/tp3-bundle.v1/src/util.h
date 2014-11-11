@@ -21,7 +21,7 @@ void* memset(void* src, int c, int n);
 
 void handle_keyboard_interrumption(u8 scancode);
 
-// sizeof(registers= 16*4 = 64
+// sizeof(registers= 14*4 + 10*4 = 56 + 40
 typedef struct registers {
 	int eax;
     int ebx;
@@ -37,6 +37,16 @@ typedef struct registers {
     int fs;
     int gs;
     int ss;
+    int stack0;
+    int stack1;
+    int stack2;
+    int stack3;
+    int stack4;
+    int stack5;
+    int stack6;
+    int stack7;
+    int stack8;
+    int stack9;
 } __attribute__((__packed__, aligned (4))) registers;
 
 #endif  /* !__UTIL_H__ */

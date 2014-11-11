@@ -121,17 +121,6 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
 }
 
 
-void print_backtrace(unsigned int col, unsigned int row) {
-    int i, ebp;
-
-    asm("movl %%ebp, %0;" :"=r"(ebp));
-    for(i = 0; i < 10 && ebp != 0; i++) {
-        printf(col, row, "Call %d: 0x%d", i, ebp);
-        asm("movl (%%ebp), %0;" :"=r"(ebp));
-        row++;
-    }
-}
-
 void* memcpy(void* src, void* dst, int length) {
 
     char* psrc = (char*) src;

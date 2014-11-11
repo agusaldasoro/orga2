@@ -11,7 +11,7 @@ BITS 32
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 
-registers_snapshot dd 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+registers_snapshot dd 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 
 keyboard_str:   db "Teclado: %h",0
 
@@ -47,6 +47,14 @@ _isr%1:
     mov [registers_snapshot+44],fs
     mov [registers_snapshot+48],gs
     mov [registers_snapshot+52],ss
+    mov eax,0
+    lea ebx,[registers_snapshot+52]
+.stack
+    cmp eax,10
+    je .endstack
+    mov [ebx+eax*4],ebp
+    jmp .stack
+.endstack
     mov eax, %1
     push registers_snapshot
     push eax
