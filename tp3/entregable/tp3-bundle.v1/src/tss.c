@@ -6,6 +6,10 @@
 */
 
 #include "tss.h"
+  //borrar luego
+  #include "i386.h"
+  #include "colors.h"
+  #include "screen.h"
 
 
 tss tss_zombisA[CANT_ZOMBIS];
@@ -80,25 +84,33 @@ void tss_inicializar_tarea_idle() {
 tss* _get_next_tss(u8 player) {
 	int i = 0;
 	tss* ret = 0;
+
+	char* text;
+	text = "me declaro spectrum",0;
 	
 	if (player) {
+		i = currentZombieB;
 		do {
 		 	i++;
 			currentZombieB++;
 			currentZombieB = currentZombieB % 8;
-		} while(!inUseB[currentZombieB] && i < 8);
+			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+		} while(!inUseB[currentZombieB] && i < 10);
 
-		if (inUseB[currentZombieB]) ret = &tss_zombisB[currentZombieB];		
+		if (inUseB[currentZombieB]) ret = &tss_zombisB[currentZombieB];
+		if (!inUseB[currentZombieB]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
 
 	} else {
-
+		i = currentZombieA;
 		do {
 		 	i++;
 			currentZombieA++;
 			currentZombieA = currentZombieA % 8;
-		} while(!inUseA[currentZombieA] && i < 8);
+			print_hex(currentZombieA,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+		} while(!inUseA[currentZombieA] && i < 10);
 
 		if (inUseA[currentZombieA]) ret = &tss_zombisA[currentZombieA];		
+		if (!inUseB[currentZombieA]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
 
 	}
 
@@ -107,17 +119,24 @@ tss* _get_next_tss(u8 player) {
 
 tss* get_next_tss() {
 
+	breakpoint();
+
 	currentPlayer = !currentPlayer;
 
 	tss * ret = _get_next_tss(currentPlayer);
 
 	// No hay player en el otro jugador? No problem, agarramos el próximo tss del jugador actual.
 	if (!ret) {
+		
 		currentPlayer = !currentPlayer;
 		ret = _get_next_tss(currentPlayer);
 	} 
 
 	if (!ret) {
+		//char* text;
+		//text = "no encuentra tss",0;
+		//print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+
 		ret = &tss_idle;
 	}
 
@@ -134,6 +153,11 @@ tss* get_free_tss(u8 player) {
 	} else {
 		while(inUseA[i]) i++;
 
+	}
+	if(player){
+		inUseB[i] = 1;
+	}else{
+		inUseA[i] = 1;
 	}
 
 	return (player ? &tss_zombisB[i] : &tss_zombisA[i]);
