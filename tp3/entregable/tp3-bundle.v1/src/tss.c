@@ -97,7 +97,6 @@ tss* _get_next_tss(u8 player) {
 		 	i++;
 			currentZombieB++;
 			currentZombieB = currentZombieB % 8;
-			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseB[currentZombieB] && i < 10);
 
 		if (inUseB[currentZombieB]) ret = &tss_zombisB[currentZombieB];
@@ -109,7 +108,6 @@ tss* _get_next_tss(u8 player) {
 		 	i++;
 			currentZombieA++;
 			currentZombieA = currentZombieA % 8;
-			print_hex(currentZombieA,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseA[currentZombieA] && i < 10);
 
 		if (inUseA[currentZombieA]) ret = &tss_zombisA[currentZombieA];		
@@ -168,7 +166,6 @@ tss* get_free_tss(u8 player) {
 }
 
 u8 is_busy(gdt_entry* tss_selector) {
-	print_hex((unsigned int)tss_selector->type,15,15,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 	return (tss_selector->type == 11);
 }
 
