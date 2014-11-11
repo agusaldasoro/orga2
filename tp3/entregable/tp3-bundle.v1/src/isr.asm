@@ -11,6 +11,8 @@ BITS 32
 sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 
+registers_snapshot dd 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
 keyboard_str:   db "Teclado: %h",0
 
 
@@ -31,7 +33,22 @@ global _isr%1
 
 _isr%1:
     xchg bx, bx
+    mov [registers_snapshot],eax
+    mov [registers_snapshot+4],ebx
+    mov [registers_snapshot+8],ecx
+    mov [registers_snapshot+12],edx
+    mov [registers_snapshot+16],edi
+    mov [registers_snapshot+20],esi
+    mov [registers_snapshot+24],ebp
+    mov [registers_snapshot+28],esp
+    mov [registers_snapshot+32],cs
+    mov [registers_snapshot+36],ds
+    mov [registers_snapshot+40],es
+    mov [registers_snapshot+44],fs
+    mov [registers_snapshot+48],gs
+    mov [registers_snapshot+52],ss
     mov eax, %1
+    push registers_snapshot
     push eax
     call print_exception
     jmp $

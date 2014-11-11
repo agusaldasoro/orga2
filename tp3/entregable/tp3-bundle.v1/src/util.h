@@ -21,4 +21,22 @@ void* memset(void* src, int c, int n);
 
 void handle_keyboard_interrumption(u8 scancode);
 
+// sizeof(registers= 16*4 = 64
+typedef struct registers {
+	int eax;
+    int ebx;
+    int ecx;
+    int edx;
+    int edi;
+    int esi;
+    int ebp;
+    int esp;
+    int cs;
+    int ds;
+    int es;
+    int fs;
+    int gs;
+    int ss;
+} __attribute__((__packed__, aligned (4))) registers;
+
 #endif  /* !__UTIL_H__ */

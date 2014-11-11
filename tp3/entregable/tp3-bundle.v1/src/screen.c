@@ -7,7 +7,7 @@
 
 #include "screen.h"
 #include "util.h"
-  #include "colors.h"
+#include "colors.h"
 
 // http://en.wikipedia.org/wiki/Interrupt_descriptor_table
 static char *exceptions[] = {
@@ -32,18 +32,6 @@ static char *exceptions[] = {
     "Machine Check",
     "SIMD Floating-Point Exception"
 };
-
-// static char *registers[] = {
-//     "eax",
-//     "ebx",
-//     "ecx",
-//     "edx",
-//     "edi",
-//     "esi",
-//     "esp",
-//     "ebp"
-// };
-
 
 // ;;  Color:
 // ;;      * Bit #: 7 6 5 4 3 2 1 0
@@ -166,68 +154,24 @@ void print_map() {
 }
 
 
-// esto no anda.
-void print_exception(int number) {
+void print_exception(int number, registers* regs) {
 
     clear_screen();
 
     char * str = exceptions[number];
-    int tmp;
-
 
     print_string(str, 5, 5, 0);
 
     print_backtrace(5, 8);
 
-    GET_REGISTER("eax", tmp);
-    printf(45, 8, "%s: %h", "eax", tmp);
-
-    GET_REGISTER("ebx", tmp);
-    printf(45, 9, "%s: %h", "ebx", tmp);
-
-    GET_REGISTER("ecx", tmp);
-    printf(45, 10, "%s: %h", "ecx", tmp);
-
-    GET_REGISTER("edx", tmp);
-    printf(45, 11, "%s: %h", "edx", tmp);
-
-    GET_REGISTER("edi", tmp);
-    printf(45, 12, "%s: %h", "edi", tmp);
-
-    GET_REGISTER("esi", tmp);
-    printf(45, 13, "%s: %h", "esi", tmp);
-
-    GET_REGISTER("ebp", tmp);
-    printf(45, 14, "%s: %h", "ebp", tmp);
-
-    GET_REGISTER("esp", tmp);
-    printf(45, 15, "%s: %h", "esp", tmp);
-
-
-
-    // imprir stack!
-
-
-
-    // testing.C_BG_LACK
-    // row++;
-    // putc(7*16+1, col, row); // deberia imprimir "q"
-    // row++;
-    // print_int(51, col, row); // deberia imprimir "51"
-    // row++;
-    // putc(48, col, row); // deberia ser una "0"
-    // putc(120, col+1, row); // deberia ser una "x"
-    // print_hex(100, col+2, row, 0); // deberia imprimir "64"
-    // row++;
-    // putc(48, col, row); // deberia ser una "0"
-    // putc(120, col+1, row); // deberia ser una "x"
-    // print_hex((unsigned int) exceptions, col+2, row, 0);
-    // row++;
-    // char * test = "queso";
-    // printf(col, row, "'%s' es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
-    // row++;
-    // test = 0;
-    // printf(col, row, "'%s' es un string de %d caracters y esta en memoria %p", test, strlen(test), test);
+    printf(45, 8, "%s: %h", "eax", regs->eax);
+    printf(45, 9, "%s: %h", "ebx", regs->ebx);
+    printf(45, 10, "%s: %h", "ecx", regs->ecx);
+    printf(45, 11, "%s: %h", "edx", regs->edx);
+    printf(45, 12, "%s: %h", "edi", regs->edi);
+    printf(45, 13, "%s: %h", "esi", regs->esi);
+    printf(45, 14, "%s: %h", "ebp", regs->ebp);
+    printf(45, 15, "%s: %h", "esp", regs->esp);
 
 }
 
