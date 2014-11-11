@@ -78,6 +78,9 @@ void tss_inicializar_tarea_idle() {
 
 	tss_idle.eflags = 0x202;
 	tss_idle.iomap = 0xffff;
+
+	tss_idle.esp0 = 0x27000;
+	tss_idle.ss0 = 0x40;
 }
 
 
@@ -85,8 +88,8 @@ tss* _get_next_tss(u8 player) {
 	int i = 0;
 	tss* ret = 0;
 
-	char* text;
-	text = "me declaro spectrum",0;
+	//char* text;
+	//text = "me declaro spectrum",0;
 	
 	if (player) {
 		i = currentZombieB;
@@ -98,7 +101,7 @@ tss* _get_next_tss(u8 player) {
 		} while(!inUseB[currentZombieB] && i < 10);
 
 		if (inUseB[currentZombieB]) ret = &tss_zombisB[currentZombieB];
-		if (!inUseB[currentZombieB]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
+		//if (!inUseB[currentZombieB]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
 
 	} else {
 		i = currentZombieA;
@@ -110,7 +113,7 @@ tss* _get_next_tss(u8 player) {
 		} while(!inUseA[currentZombieA] && i < 10);
 
 		if (inUseA[currentZombieA]) ret = &tss_zombisA[currentZombieA];		
-		if (!inUseB[currentZombieA]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
+		//if (!inUseB[currentZombieA]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
 
 	}
 
@@ -165,6 +168,7 @@ tss* get_free_tss(u8 player) {
 }
 
 u8 is_busy(gdt_entry* tss_selector) {
+	print_hex((unsigned int)tss_selector->type,15,15,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 	return (tss_selector->type == 11);
 }
 
@@ -180,8 +184,12 @@ u32 tss_get_base(gdt_entry* sel) {
 
 int proximo_indice() {
 
+	char* text;
+	text = "me declaro spectrum",0;
+
 	// El proximo es el que no está busy.
 	int next_selector = is_busy(&gdt[GDT_CURRENT_TSS]) ? GDT_NEXT_TSS : GDT_CURRENT_TSS;
+	if(is_busy(&gdt[next_selector]))print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
 
 	tss* next_tss = get_next_tss();
 
@@ -190,7 +198,7 @@ int proximo_indice() {
 		return 0;
 	}
 
-	tss_set_base(&gdt[next_selector], (u32) next_tss);
+	tss_set_base(&(gdt[next_selector]), (u32) next_tss);
 	current_selector = next_selector;
 	return next_selector * 8;
 }
@@ -212,7 +220,10 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	tss->ss = ds;
 	tss->gs = ds;
 	tss->cs = cs;
+	tss->fs = 0x60;
 	
 	tss->eflags = eflags;
 	tss->iomap = 0xffff;
+	tss->esp0 = 0x27000;
+	tss->ss0 = 0x40;
 }

@@ -156,7 +156,7 @@ page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char cl
 		_y = x + offset_y[i] * (player ? 1 : -1);
 
 		// TODO : No debería tener permisos de usuario?
-		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 0);		
+		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);		
 	}
 
 

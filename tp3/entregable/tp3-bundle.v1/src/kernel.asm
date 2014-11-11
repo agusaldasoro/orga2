@@ -134,6 +134,9 @@ modo_protegido:
     ; Cargar IDT
     lidt [IDT_DESC]
 
+    mov ax,0x68
+    ltr ax
+
 
     ; ; test para que salte la divide by 0 exception (0)
     ; mov edx,0
@@ -147,17 +150,17 @@ modo_protegido:
     ; Cargar tarea inicial
 
 
-    ;extern start_zombie
+    extern start_zombie
 
-    ;xchg bx, bx
-    ;mov ax,5
-    ;push ax
-    ;mov ax,0
-    ;push ax
-    ;push ax
-    ;call start_zombie
+    xchg bx, bx
+    mov ax,5
+    push ax
+    mov ax,0
+    push ax
+    push ax
+    call start_zombie
 
-    ;xchg bx, bx
+    xchg bx, bx
     ; Habilitar interrupciones
     sti
     ; Saltar a la primera tarea: Idle
