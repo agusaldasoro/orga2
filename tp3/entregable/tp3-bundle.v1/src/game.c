@@ -114,3 +114,15 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
 	get_position(&x,&y,recuperar_fisica(0x8000000,pd));
 	mover_pantalla(x,y,delta_x,delta_y,tipo);
 }
+
+void movimiento_direccional(direccion d){
+	if(d==ADE){
+		movimiento((page_directory*)rcr3(),1,0,0);
+	}else if(d==DER){
+		movimiento((page_directory*)rcr3(),0,1,0);
+	}else if(d==ATR){
+		movimiento((page_directory*)rcr3(),-1,0,0);
+	}else{
+		movimiento((page_directory*)rcr3(),0,-1,0);
+	}
+}

@@ -62,6 +62,10 @@ void tss_inicializar() {
 
 void tss_inicializar_tarea_idle() {
 
+	gdt[GDT_TSS_IDLE].base_0_15 = ((unsigned int)&tss_idle) & 0x0000FFFF;
+	gdt[GDT_TSS_IDLE].base_23_16 = (((unsigned int)&tss_idle) & 0x00FF0000) >> 16;
+	gdt[GDT_TSS_IDLE].base_31_24 = (((unsigned int)&tss_idle) & 0xFF000000) >> 24;
+
 	tss_idle = (tss) {};
 
 	tss_idle.eip = 0x00016000;
@@ -79,8 +83,8 @@ void tss_inicializar_tarea_idle() {
 	tss_idle.eflags = 0x202;
 	tss_idle.iomap = 0xffff;
 
-	tss_idle.esp0 = 0x27000;
-	tss_idle.ss0 = 0x40;
+	//tss_idle.esp0 = 0x27000;
+	//tss_idle.ss0 = 0x40;
 }
 
 
@@ -97,6 +101,7 @@ tss* _get_next_tss(u8 player) {
 		 	i++;
 			currentZombieB++;
 			currentZombieB = currentZombieB % 8;
+			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseB[currentZombieB] && i < 10);
 
 		if (inUseB[currentZombieB]) ret = &tss_zombisB[currentZombieB];
@@ -108,6 +113,7 @@ tss* _get_next_tss(u8 player) {
 		 	i++;
 			currentZombieA++;
 			currentZombieA = currentZombieA % 8;
+			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseA[currentZombieA] && i < 10);
 
 		if (inUseA[currentZombieA]) ret = &tss_zombisA[currentZombieA];		
@@ -120,7 +126,7 @@ tss* _get_next_tss(u8 player) {
 
 tss* get_next_tss() {
 
-	breakpoint();
+	//breakpoint();
 
 	currentPlayer = !currentPlayer;
 
@@ -166,6 +172,7 @@ tss* get_free_tss(u8 player) {
 }
 
 u8 is_busy(gdt_entry* tss_selector) {
+	print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 	return (tss_selector->type == 11);
 }
 
@@ -204,9 +211,10 @@ int proximo_indice() {
 void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags) {
 
 	memset(tss, 0, sizeof(tss));
+	breakpoint();
 
 	tss->cr3 = cr3;
-	tss->eip = eip;
+	tss->eip = 0x8000000;
 	
 	tss->ebp = stack;
 	tss->esp = stack;
@@ -218,9 +226,11 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	tss->gs = ds;
 	tss->cs = cs;
 	tss->fs = 0x60;
+	tss->eax = 0x3498;
 	
 	tss->eflags = eflags;
 	tss->iomap = 0xffff;
 	tss->esp0 = 0x27000;
 	tss->ss0 = 0x40;
+	tss->eip = 0x8000000;
 }

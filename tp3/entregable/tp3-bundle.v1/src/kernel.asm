@@ -21,8 +21,10 @@ extern resetear_pic
 
 ; extern gdt_init
 extern tss_inicializar
+extern GDT_TSS_IDLE
 ;; Saltear seccion de datos
 
+%define GDT_TSS_SELEC (GDT_TSS_IDLE * 8)
 
 jmp start
 
@@ -134,8 +136,10 @@ modo_protegido:
     ; Cargar IDT
     lidt [IDT_DESC]
 
+    xor eax, eax
     mov ax,0x68
     ltr ax
+    xchg bx, bx
 
 
     ; ; test para que salte la divide by 0 exception (0)
@@ -158,7 +162,11 @@ modo_protegido:
     mov ax,0
     push ax
     push ax
+    xchg bx, bx
     call start_zombie
+
+    xchg bx, bx
+    jmp 0x80:modo_protegido
 
     xchg bx, bx
     ; Habilitar interrupciones

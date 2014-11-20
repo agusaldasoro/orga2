@@ -140,9 +140,9 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
 	Clerigo = 2
 */
 page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y) {
-
 	page_directory* pd = get_page_directory();
-
+breakpoint();
+	
 	unsigned int x = (player ? 79 : 2);
 // player = 0 es A
 // player = 1 es B
@@ -160,7 +160,7 @@ page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char cl
 	}
 
 
-	int address = address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
+	unsigned int address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
 	i = 0;
 	unsigned char *code = (unsigned char *) 0x8000000;
 	unsigned char * paddress = (unsigned char*) address;
@@ -168,6 +168,8 @@ page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char cl
 		code[i] = paddress[i];
 	}
 	// memcpy()
+	lcr3((unsigned int)pd);
+	breakpoint();
 
 	return pd;
 }
