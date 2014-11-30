@@ -6,6 +6,7 @@
 */
 
 #include "mmu.h"
+#DEFINE ANCHO_MAPA 78
 
 
 void mmu_inicializar_dir_kernel() {
@@ -83,27 +84,25 @@ page_table* get_page_table() {
 
 
 unsigned int get_physical_address(unsigned int x, unsigned int y) {
-	unsigned int ret;
 
 	if (y==-1) {
-		get_physical_address(x, 44);
+		return get_physical_address(x, 44);
 	} else if (y==45) {
-		get_physical_address(x, 0);
+		return get_physical_address(x, 0);
 	} else {
-		ret = (x + y*50) * 0x1000;
+	    unsigned int ret;
+		ret = (x + y*ANCHO_MAPA) * 0x1000;
+		ret = ret + 0x400000;
+		return ret;
 	}
-
-	ret = ret + 0x400000;
-
-	return ret;
 }
 
 void get_position(unsigned int* x, unsigned int* y,unsigned int dir){
 	int y2 = 0;
 	dir = dir-0x400000;
 	dir = dir/0x1000;
-	while(dir<50){
-		dir = dir-50;
+	while(dir<ANCHO_MAPA){
+		dir = dir-ANCHO_MAPA;
 		y2++;
 	}
 	*y = y2;
@@ -142,7 +141,7 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
 page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y) {
 	page_directory* pd = get_page_directory();
 breakpoint();
-	
+
 	unsigned int x = (player ? 79 : 2);
 // player = 0 es A
 // player = 1 es B
@@ -156,7 +155,7 @@ breakpoint();
 		_y = x + offset_y[i] * (player ? 1 : -1);
 
 		// TODO : No debería tener permisos de usuario?
-		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);		
+		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
 	}
 
 
@@ -187,7 +186,7 @@ void desplazar_fisica(unsigned int virtual, page_directory* pd, int x, int y) {
     page_table* pt = (page_table*) (pd[virtual >> 22].base << 12);
     unsigned int table  = (virtual & 0x003FF000) >> 12;
     pt[table].base += x;
-    pt[table].base += y*50;
+    pt[table].base += y*ANCHO_MAPA;
 }
 
  void mmu_unmapear_pagina(unsigned int virtual,page_directory* cr3){
