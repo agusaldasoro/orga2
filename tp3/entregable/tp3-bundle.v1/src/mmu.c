@@ -160,16 +160,19 @@ breakpoint();
 	}
 
 
-	unsigned int address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
-	i = 0;
-	unsigned char *code = (unsigned char *) 0x8000000;
-	unsigned char * paddress = (unsigned char*) address;
-	while (i++ < 0x1000) {
-		code[i] = paddress[i];
-	}
-	// memcpy()
-	lcr3((unsigned int)pd);
-	breakpoint();
+	//unsigned int address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
+	copy_code(get_physical_address(x,y),(page_directory*)rcr3(),class,player);
+	//breakpoint();
+	//i = 0;
+	//unsigned char *code = (unsigned char *) 0x8000000;
+	//unsigned char * paddress = (unsigned char*) address;
+	//while (i++ < 0x1000) {
+	//	code[i] = paddress[i];
+	//}
+
+
+	//lcr3((unsigned int)pd);
+	//breakpoint();
 
 	return pd;
 }
@@ -202,9 +205,10 @@ void desplazar_fisica(unsigned int virtual, page_directory* pd, int x, int y) {
  }
 
 void copy_code(u32 fisica, page_directory* cr3, u8 class, u8 player) {
-	mmu_mapear_pagina(0x400000, cr3, fisica, 1, 0);
-	memcpy((void*) 0x10000 + ((player ? 0 : 1)  * 0x3000 + class * 0x1000), (void*) 0x400000, 0x1000);
-	mmu_unmapear_pagina(0x400000, cr3);
+	mmu_mapear_pagina(0x4000000, cr3, fisica, 1, 0);
+	breakpoint();
+	memcpy((void*) 0x10000 + ((player ? 0 : 1)  * 0x3000 + class * 0x1000), (void*) 0x4000000, 0x1000);
+	mmu_unmapear_pagina(0x4000000, cr3);
 }
 
 
