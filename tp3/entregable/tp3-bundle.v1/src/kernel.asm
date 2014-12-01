@@ -161,7 +161,7 @@ modo_protegido:
     mov ax,0
     push ax
     push ax
-    mov ax,5
+    mov ax,0
     push ax
     xchg bx, bx
     call start_zombie
