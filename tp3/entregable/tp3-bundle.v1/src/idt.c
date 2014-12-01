@@ -25,6 +25,13 @@ idt_descriptor IDT_DESC = {
     idt[numero].attr = (unsigned short) 0x8E00;                                                                      \
     idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
 
+#define IDT_ENTRY_PRIVILEGIO_3(numero)                                                                                        \
+    idt[numero].offset_0_15 = (unsigned short) ((unsigned int)(&_isr ## numero) & (unsigned int) 0xFFFF);        \
+    idt[numero].segsel = (unsigned short) 0x50;                                                                  \
+    idt[numero].attr = (unsigned short) 0xEE00;                                                                      \
+    idt[numero].offset_16_31 = (unsigned short) ((unsigned int)(&_isr ## numero) >> 16 & (unsigned int) 0xFFFF);
+
+
 // attr = 1 00 01110 000 00000
 
 void idt_inicializar() {
@@ -53,5 +60,5 @@ void idt_inicializar() {
     IDT_ENTRY(33);
 
 
-    IDT_ENTRY(66);
+    IDT_ENTRY_PRIVILEGIO_3(66);
 }
