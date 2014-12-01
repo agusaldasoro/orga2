@@ -99,7 +99,7 @@ ISR 19 ; _isr0
 ;; -------------------------------------------------------------------------- ;;
 global _isr32
 _isr32:
-    ; xchg bx, bx
+     xchg bx, bx
     pushad
     call proximo_reloj
     call proximo_indice
@@ -159,14 +159,14 @@ _isr33:
 
 
 global _isr66
-extern movimiento
+extern game_move_current_zombi
 _isr66:
+    xchg bx, bx
     pushad
-    push dx
-    push esi
-    push edi
     push eax
-    call movimiento
+    call game_move_current_zombi
+
+    xchg bx, bx
 
     ; pd:eax,delta_x:edi,delta_y:esi, tipo: dx
 

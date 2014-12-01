@@ -67,18 +67,6 @@ void game_lanzar_zombi(unsigned int player) {
 
 }
 
-void game_move_current_zombi(direccion dir) {
-	//if(dir==ADE){
-	//	movimiento(pd,1,0);
-	//}else if(dir==DER){
-	//	movimiento(pd,0,1);
-	//}else if(dir==ATR){
-	//	movimiento(pd,-1,0);
-//	}else{
-//		movimiento(pd,0,-1);
-//	}
-}
-
 
 
 void mover_soldado(int delta_x, int delta_y, page_directory* pd) {
@@ -121,6 +109,19 @@ void movimiento_direccional(direccion d){
 	}else if(d==DER){
 		movimiento((page_directory*)rcr3(),0,1,0);
 	}else if(d==ATR){
+		movimiento((page_directory*)rcr3(),-1,0,0);
+	}else{
+		movimiento((page_directory*)rcr3(),0,-1,0);
+	}
+}
+
+
+void game_move_current_zombi(direccion dir) {
+	if(dir==ADE){
+		movimiento((page_directory*)rcr3(),1,0,0);
+	}else if(dir==DER){
+		movimiento((page_directory*)rcr3(),0,1,0);
+	}else if(dir==ATR){
 		movimiento((page_directory*)rcr3(),-1,0,0);
 	}else{
 		movimiento((page_directory*)rcr3(),0,-1,0);
