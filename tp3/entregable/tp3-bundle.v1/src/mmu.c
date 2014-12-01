@@ -6,7 +6,7 @@
 */
 
 #include "mmu.h"
-#DEFINE ANCHO_MAPA 78
+#define ANCHO_MAPA 78
 
 
 void mmu_inicializar_dir_kernel() {
@@ -43,7 +43,7 @@ void mmu_inicializar_dir_kernel() {
 
 void mmu_inicializar() {
 	mmu_inicializar_dir_kernel();
-	mmu_inicializar_dir_zombie(1, 3, 0);
+	//mmu_inicializar_dir_zombie(1, 3, 0);
 }
 
 page_directory* get_page_directory() {
@@ -160,7 +160,9 @@ breakpoint();
 
 
 	//unsigned int address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
+	breakpoint();
 	copy_code(get_physical_address(x,y),(page_directory*)rcr3(),class,player);
+	breakpoint();
 	//breakpoint();
 	//i = 0;
 	//unsigned char *code = (unsigned char *) 0x8000000;
@@ -204,9 +206,11 @@ void desplazar_fisica(unsigned int virtual, page_directory* pd, int x, int y) {
  }
 
 void copy_code(u32 fisica, page_directory* cr3, u8 class, u8 player) {
+	breakpoint();
 	mmu_mapear_pagina(0x4000000, cr3, fisica, 1, 0);
 	breakpoint();
 	memcpy((void*) 0x10000 + ((player ? 0 : 1)  * 0x3000 + class * 0x1000), (void*) 0x4000000, 0x1000);
+	breakpoint();
 	mmu_unmapear_pagina(0x4000000, cr3);
 }
 

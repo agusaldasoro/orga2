@@ -112,7 +112,7 @@ modo_protegido:
     call mmu_inicializar
         
     ; Habilitar paginacion
-    ;xchg bx, bx
+    xchg bx, bx
 
     mov eax,0x27000
     mov cr3,eax
@@ -122,8 +122,8 @@ modo_protegido:
     mov cr0,eax
 
 
-    mov eax,0x100000
-    mov cr3,eax
+    ;mov eax,0x100000
+    ;mov cr3,eax
 
     ; Inicializar tss
     ; Inicializar tss de la tarea Idle
@@ -157,16 +157,17 @@ modo_protegido:
     extern start_zombie
 
     xchg bx, bx
-    mov ax,5
-    push ax
+    xor ax,ax
     mov ax,0
     push ax
+    push ax
+    mov ax,5
     push ax
     xchg bx, bx
     call start_zombie
 
-    xchg bx, bx
-    jmp 0x80:modo_protegido
+    ;xchg bx, bx
+    ;jmp 0x80:modo_protegido
 
     xchg bx, bx
     ; Habilitar interrupciones
