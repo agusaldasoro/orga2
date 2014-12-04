@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.9.2)  1 NOV 2014 16:22
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.9.2)  3 DEC 2014 20:19
 entering extended mode
 **informe.tex
 (C:\Users\Agustina\Documents\GitHub\orga2\tp2\documentos\informe.tex
@@ -522,7 +522,46 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 242--242
  [][][][][][] 
  []
 
-[8] (C:\Users\Agustina\Documents\GitHub\orga2\tp2\documentos\enunciado.tex
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 256--256
+ [][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 258--269
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 269--269
+ [][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 294--294
+ [][][][][][] 
+ []
+
+[8]
+Overfull \hbox (6.0pt too wide) in paragraph at lines 305--305
+ [][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 324--324
+ [][][][][][] 
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 397--397
+ [][][][][][] 
+ []
+
+[9]
+Overfull \vbox (93.78552pt too high) has occurred while \output is active []
+
+
+[10] (C:\Users\Agustina\Documents\GitHub\orga2\tp2\documentos\enunciado.tex
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 20.
 LaTeX Font Info:    External font `cmex10' loaded for size
@@ -554,7 +593,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 69--84
 
  []
 
-[9]
+[11]
 Underfull \hbox (badness 10000) in paragraph at lines 86--123
 
  []
@@ -589,14 +628,14 @@ Underfull \hbox (badness 10000) in paragraph at lines 124--133
 
  []
 
-[10] [11] <imagenes/13/asm1.jpg, id=52, 362.10281pt x 217.5628pt>
+[12] [13] <imagenes/13/asm1.jpg, id=59, 362.10281pt x 217.5628pt>
 File: imagenes/13/asm1.jpg Graphic file (type jpg)
 
 <use imagenes/13/asm1.jpg>
 Package pdftex.def Info: imagenes/13/asm1.jpg used on input line 136.
 (pdftex.def)             Requested size: 318.66946pt x 191.46913pt.
 
-<imagenes/13/C1.jpg, id=53, 362.10281pt x 217.5628pt>
+<imagenes/13/C1.jpg, id=60, 362.10281pt x 217.5628pt>
 File: imagenes/13/C1.jpg Graphic file (type jpg)
  <use imagenes/13/C1.jpg>
 Package pdftex.def Info: imagenes/13/C1.jpg used on input line 139.
@@ -626,16 +665,16 @@ Underfull \hbox (badness 10000) in paragraph at lines 147--186
 
  []
 
-[12 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/13/asm1.j
+[14 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/13/asm1.j
 pg> <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/13/C1.jpg
->] [13] <imagenes/13/asm2.jpg, id=61, 491.58656pt x 296.60812pt>
+>] [15] <imagenes/13/asm2.jpg, id=67, 491.58656pt x 296.60812pt>
 File: imagenes/13/asm2.jpg Graphic file (type jpg)
 
 <use imagenes/13/asm2.jpg>
 Package pdftex.def Info: imagenes/13/asm2.jpg used on input line 189.
 (pdftex.def)             Requested size: 318.66946pt x 192.28157pt.
 
-<imagenes/13/C2.jpg, id=62, 431.36156pt x 283.0575pt>
+<imagenes/13/C2.jpg, id=68, 431.36156pt x 283.0575pt>
 File: imagenes/13/C2.jpg Graphic file (type jpg)
  <use imagenes/13/C2.jpg>
 Package pdftex.def Info: imagenes/13/C2.jpg used on input line 192.
@@ -655,7 +694,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 197--216
 
  []
 
-[14 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/13/asm2.j
+[16 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/13/asm2.j
 pg> <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/13/C2.jpg
 >]
 Underfull \hbox (badness 10000) in paragraph at lines 217--240
@@ -672,7 +711,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 217--240
 
  []
 
-[15] <imagenes/14.jpg, id=69, 362.10281pt x 349.305pt>
+[17] <imagenes/14.jpg, id=75, 362.10281pt x 349.305pt>
 File: imagenes/14.jpg Graphic file (type jpg)
  <use imagenes/14.jpg>
 Package pdftex.def Info: imagenes/14.jpg used on input line 243.
@@ -692,8 +731,8 @@ Underfull \hbox (badness 10000) in paragraph at lines 269--299
 
  []
 
-[16 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/14.jpg>]
-[17] [18]
+[18 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/14.jpg>]
+[19] [20]
 Underfull \hbox (badness 10000) in paragraph at lines 319--342
 
  []
@@ -718,7 +757,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 319--342
 
  []
 
-[19] <imagenes/21.jpg, id=83, 362.10281pt x 388.45125pt>
+[21] <imagenes/21.jpg, id=89, 362.10281pt x 388.45125pt>
 File: imagenes/21.jpg Graphic file (type jpg)
  <use imagenes/21.jpg>
 Package pdftex.def Info: imagenes/21.jpg used on input line 345.
@@ -738,13 +777,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 354--378
 
  []
 
-[20 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/21.jpg>]
-[21]
+[22 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/21.jpg>]
+[23]
 Underfull \hbox (badness 10000) in paragraph at lines 398--408
 
  []
 
-[22]
+[24]
 Underfull \hbox (badness 10000) in paragraph at lines 420--441
 
  []
@@ -759,7 +798,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 420--441
 
  []
 
-[23] <imagenes/32.jpg, id=96, 362.10281pt x 445.665pt>
+[25] <imagenes/32.jpg, id=103, 362.10281pt x 445.665pt>
 File: imagenes/32.jpg Graphic file (type jpg)
  <use imagenes/32.jpg>
 Package pdftex.def Info: imagenes/32.jpg used on input line 444.
@@ -789,18 +828,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 459--481
 
  []
 
-[24 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/32.jpg>]
-<imagenes/41.jpg, id=100, 362.10281pt x 402.75468pt>
+[26 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/32.jpg>]
+<imagenes/41.jpg, id=107, 362.10281pt x 402.75468pt>
 File: imagenes/41.jpg Graphic file (type jpg)
  <use imagenes/41.jpg>
 Package pdftex.def Info: imagenes/41.jpg used on input line 484.
 (pdftex.def)             Requested size: 318.66946pt x 354.44978pt.
 )
-Underfull \hbox (badness 10000) in paragraph at lines 250--252
+Underfull \hbox (badness 10000) in paragraph at lines 406--408
 
  []
 
-[25 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/41.jpg>]
+[27 <C:/Users/Agustina/Documents/GitHub/orga2/tp2/documentos/imagenes/41.jpg>]
 (C:\Users\Agustina\Documents\GitHub\orga2\tp2\documentos\informe.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -809,11 +848,11 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Here is how much of TeX's memory you used:
  2711 strings out of 493921
  34709 string characters out of 3147274
- 99727 words of memory out of 3000000
+ 100727 words of memory out of 3000000
  5942 multiletter control sequences out of 15000+200000
  31070 words of font info for 52 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
- 29i,12n,43p,933b,416s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 31i,12n,43p,933b,416s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Program Files/MiKTeX 2.9/fonts/enc/dvips/fontname/8r.enc}<C:/Program File
 s/MiKTeX 2.9/fonts/type1/bitstrea/charter/bchb8a.pfb><C:/Program Files/MiKTeX 2
 .9/fonts/type1/bitstrea/charter/bchbi8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/
@@ -828,9 +867,9 @@ iKTeX 2.9/fonts/type1/public/amsfonts/cm/cmss10.pfb><C:/Program Files/MiKTeX 2.
 type1/public/amsfonts/cm/cmtt10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmtt8.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsf
 onts/cm/cmtt9.pfb>
-Output written on informe.pdf (25 pages, 802920 bytes).
+Output written on informe.pdf (27 pages, 808583 bytes).
 PDF statistics:
- 150 PDF objects out of 1000 (max. 8388607)
+ 156 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  51 words of extra memory for PDF output out of 10000 (max. 10000000)
 

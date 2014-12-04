@@ -240,9 +240,162 @@ cerocomados  dd  0.2 , 0.2 , 0.2 , 0.2
 rgb_only     dd  0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF, 0x00FFFFFF
 \end{verbatim}
 \end{codesnippet}
-\indent Salvamos la base de la pila y los registros a utilizar. Alineamos la pila. \\
+
+ \begin{codesnippet}
+\begin{verbatim}
+Salvamos la base de la pila y los registros a utilizar. Alineamos la pila.
+Limpiamos con xor o pxor los registros a utilizar: r10, r11, r15, r13 y xmm13.
+
+; r10 = i
+; r11 = j
+mov r15d,edx ; r15 = cols
+	mov r14d,ecx ; r14 = filas
+	sub r15,2 	 ; r15 = cols -2 
+	sub r14,2 	 ; r14 = filas - 2 
+\end{verbatim}
+\end{codesnippet}
+
+\indent El registro xmm13 es limpiado para luego utilizarlo a la hora de asignarle el borde negro. Se les resta 2 a las filas y a las columnas porque los \'ultimos dos p\'ixeles del borde van de negro.\\
 \\
-\indent 
+\indent Comienza el ciclo de y, es decir, primero recorremos por filas y por cada fila recorremos por columnas. Se recorren todas las filas y cada vez que se entra en el loop_x se inicializa la fila en cero.
+ \begin{codesnippet}
+\begin{verbatim}
+.loop_y:
+    cmp r10d,ecx 	; i < filas 
+    jge .endloop_y
+	
+    mov r11,0 		; j = 0
+\end{verbatim}
+\end{codesnippet}
+
+\indent El loop_x se recorre hasta que j alcanza el valor de la \'ultima columna. En el registro \textbf{rax} vamos a asignarle el n\'umero de orden del byte a tratar, es decir la fila actual multiplicada por la cantidad de columnas sumado a la columna actual multiplicada por cuatro porque es lo que ocupa un p\'ixel. 
+Antes de asignarle el nuevo valor a la imagen, debemos comprobar si el p\'ixel a tratar es de borde (el cual queda en negro: .cero) o si no lo es (.nocero). Todos los p\'ixeles que son bordes son los que est\'an ubicados en las primeras dos filas o columnas y los que est\'an ubicados en las \'ultimas dos filas o columnas.
+ \begin{codesnippet}
+\begin{verbatim}
+.loop_x:
+    cmp r11d,edx ; j < cols 
+    jge .endloop_x
+
+    mov rax,r10  ; rax = i
+    imul eax,r8d ; rax = i * row_size 
+    lea rax,[rax+r11*4] ; rax = i * row_size + j * 4
+
+    cmp r11,2   
+    jl .cero    ; j < 2
+    cmp r10,2 
+    jl .cero    ; i < 2
+    cmp r10,r14
+    jge .cero   ; i >= cols -2
+    cmp r11,r15
+    jge .cero   ; j >= filas -2
+
+    jmp .nocero
+\end{verbatim}
+\end{codesnippet}
+
+\newpage
+\indent Si el p\'ixel a tratar debe quedar en negro (cero) lo que debemos hacer es asignarle ceros mediante el registro \textbf{xmm13}:
+ \begin{codesnippet}
+\begin{verbatim}
+.cero:
+    movq [rsi+rax],xmm13        
+    add r11,2
+    jmp .loop_x
+\end{verbatim}
+\end{codesnippet}
+
+A continuaci\'on comienza la rutina a llevar a cabo en caso de que el p\'ixel a tratar no sea borde. Se copia en \textbf{rbx} el puntero actual con el que vamos a trabajar. Recordar que en \textbf{rax} ten\'iamos el offset en la imagen y en \textbf{rdi} el puntero al comienzo de la misma. Vamos a ejecutar 4 p\'ixeles por vez (porque son los que entran en un registro xmm) y para ello necesitamos hacer cinco lecturas a memoria y as\'i tener para cada p\'ixel sus cuatro vecinos que van a influir en su valor final. En \textbf{xmm14} copiamos el contenido de \textit{rgb_only} el cual nos permitir\'a s\'olo trabajar con los canales RGB de cada p\'ixel m\'as adelante.
+ \begin{codesnippet}
+\begin{verbatim}
+.nocero:
+    
+    lea rbx,[rdi+rax]
+    movdqu xmm1,[rbx]        ; (i,j)
+    movdqu xmm2,[rbx+r8*1+4] ; (i+1,j+1)
+    movdqu xmm3,[rbx+r8*2+8] ; (i+2,j+2)
+    mov r12,rbx
+    sub r12,r8
+    movdqu xmm4,[r12-4]      ; (i-1,j-1)
+    sub r12,r8
+    movdqu xmm5,[r12-8]      ; (i-2,j-1)
+
+    movdqu xmm14,[rgb_only]
+\end{verbatim}
+\end{codesnippet}
+
+
+ \begin{codesnippet}
+\begin{verbatim}
+    pxor xmm0,xmm0
+    movdqu xmm6,xmm1
+    punpcklbw xmm1,xmm0 
+    punpckhbw xmm6,xmm0
+
+    movdqu xmm7,xmm2
+    punpcklbw xmm2,xmm0
+    punpckhbw xmm7,xmm0
+
+    movdqu xmm8,xmm3
+    punpcklbw xmm3,xmm0
+    punpckhbw xmm8,xmm0
+
+    movdqu xmm9,xmm4
+    punpcklbw xmm4,xmm0
+    punpckhbw xmm9,xmm0
+
+    movdqu xmm10,xmm5
+    punpcklbw xmm5,xmm0
+    punpckhbw xmm10,xmm0
+
+    paddw xmm1,xmm2
+    paddw xmm1,xmm3
+    paddw xmm1,xmm4
+    paddw xmm1,xmm5
+
+    paddw xmm6,xmm7
+    paddw xmm6,xmm8
+    paddw xmm6,xmm9
+    paddw xmm6,xmm10
+
+    movdqu xmm2,xmm1
+    movdqu xmm7,xmm6
+
+    punpcklwd xmm1,xmm0
+    punpckhwd xmm2,xmm0
+
+    punpcklwd xmm6,xmm0
+    punpckhwd xmm7,xmm0
+
+    cvtdq2ps xmm1,xmm1  
+    cvtdq2ps xmm2,xmm2  
+    cvtdq2ps xmm6,xmm6  
+    cvtdq2ps xmm7,xmm7
+
+    movdqu xmm15,[cerocomados]
+
+    mulps xmm1,xmm15
+    mulps xmm2,xmm15
+    mulps xmm6,xmm15
+    mulps xmm7,xmm15
+
+    cvtps2dq xmm1,xmm1
+    cvtps2dq xmm2,xmm2
+    cvtps2dq xmm6,xmm6
+    cvtps2dq xmm7,xmm7
+
+    packusdw xmm1,xmm2
+    packusdw xmm6,xmm7
+
+    packuswb xmm1,xmm6
+
+    movdqu [rsi+rax],xmm1   
+
+    add r11,4
+    jmp .loop_x
+
+\end{verbatim}
+\end{codesnippet}
+
 
 \newpage
 \section{Enunciado y soluci\'on} 

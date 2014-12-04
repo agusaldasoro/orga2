@@ -32,10 +32,10 @@ mblur_asm:
 	xor r14,r14
 	pxor xmm13,xmm13
 
-	mov r15d,edx ; r15 = filas
-	mov r14d,ecx ; r14 = cols
-	sub r15,2 	 ; r15 = filas -2 (porque las filas y columnas de dos pixels del borde van de negro)
-	sub r14,2 	 ; r14 = cols - 2  
+	mov r15d,edx ; r15 = cols
+	mov r14d,ecx ; r14 = filas
+	sub r15,2 	 ; r15 = cols -2 (porque las filas y columnas de dos pixels del borde van de negro)
+	sub r14,2 	 ; r14 = filas - 2  
 	
 
 .loop_y:
@@ -50,9 +50,9 @@ mblur_asm:
 
 	mov rax,r10  ; rax = i
 	imul eax,r8d ; rax = i * row_size 
-	lea rax,[rax+r11*4] 
+	lea rax,[rax+r11*4] ; rax = i * row_size + j * 4
 
-	cmp r11,2 
+	cmp r11,2   
 	jl .cero 	; j < 2
 	cmp r10,2 
 	jl .cero 	; i < 2
