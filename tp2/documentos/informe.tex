@@ -255,9 +255,9 @@ mov r15d,edx ; r15 = cols
 \end{verbatim}
 \end{codesnippet}
 
-\indent El registro xmm13 es limpiado para luego utilizarlo a la hora de asignarle el borde negro. Se les resta 2 a las filas y a las columnas porque los \'ultimos dos p\'ixeles del borde van de negro.\\
+\indent El registro \textbf{xmm13} es limpiado para luego utilizarlo a la hora de asignarle el borde negro. Se les resta 2 a las filas y a las columnas porque los \'ultimos dos p\'ixeles del borde van de negro.\\
 \\
-\indent Comienza el ciclo de y, es decir, primero recorremos por filas y por cada fila recorremos por columnas. Se recorren todas las filas y cada vez que se entra en el loop_x se inicializa la fila en cero.
+\indent Comienza el ciclo de y, es decir, primero recorremos por filas y por cada fila recorremos por columnas. Se recorren todas las filas y cada vez que se entra en el \textit{loop_x} se inicializa la fila en cero.
  \begin{codesnippet}
 \begin{verbatim}
 .loop_y:
@@ -268,8 +268,8 @@ mov r15d,edx ; r15 = cols
 \end{verbatim}
 \end{codesnippet}
 
-\indent El loop_x se recorre hasta que j alcanza el valor de la \'ultima columna. En el registro \textbf{rax} vamos a asignarle el n\'umero de orden del byte a tratar, es decir la fila actual multiplicada por la cantidad de columnas sumado a la columna actual multiplicada por cuatro porque es lo que ocupa un p\'ixel. 
-Antes de asignarle el nuevo valor a la imagen, debemos comprobar si el p\'ixel a tratar es de borde (el cual queda en negro: .cero) o si no lo es (.nocero). Todos los p\'ixeles que son bordes son los que est\'an ubicados en las primeras dos filas o columnas y los que est\'an ubicados en las \'ultimas dos filas o columnas.
+\indent El \textit{loop_x} se recorre hasta que j alcanza el valor de la \'ultima columna. En el registro \textbf{rax} vamos a asignarle el n\'umero de orden del byte a tratar, es decir la fila actual multiplicada por la cantidad de columnas sumado a la columna actual multiplicada por cuatro porque es lo que ocupa un p\'ixel. 
+Antes de asignarle el nuevo valor a la imagen, debemos comprobar si el p\'ixel a tratar es de borde en cuyo caso queda negro (.cero) o si no lo es (.nocero). Todos los p\'ixeles que son bordes son los que est\'an ubicados en las primeras dos filas o columnas y los que est\'an ubicados en las \'ultimas dos filas o columnas.
  \begin{codesnippet}
 \begin{verbatim}
 .loop_x:
@@ -323,55 +323,80 @@ A continuaci\'on comienza la rutina a llevar a cabo en caso de que el p\'ixel a 
 \end{verbatim}
 \end{codesnippet}
 
+\indent Para continuar necesitamos desempaquetar los valores para poder hacer las cuentas, ya que necesitamos los valores de los p\'ixeles agrupados en n\'umeros de mayor tama\~no para el cual contemos con sus instrucciones necesarias y tambi\'en un orden de precisi\'on mayor. Para ello, los expandimos con ceros que van a provenir de haber limpiado el registro \textbf{xmm0}.
 
  \begin{codesnippet}
 \begin{verbatim}
     pxor xmm0,xmm0
-    movdqu xmm6,xmm1
-    punpcklbw xmm1,xmm0 
-    punpckhbw xmm6,xmm0
+    movdqu xmm6,xmm1      ; xmm6 = (i,j) || (i,j+1) || (i,j+2) || (i,j+3)
+    punpcklbw xmm1,xmm0   ; xmm1 = (i,j) || (i,j+1)
+    punpckhbw xmm6,xmm0   ; xmm6 = (i,j+2) || (i,j+3)
 
-    movdqu xmm7,xmm2
-    punpcklbw xmm2,xmm0
-    punpckhbw xmm7,xmm0
+    movdqu xmm7,xmm2      ; xmm7 = (i+1,j+1) || (i+1,j+2) || (i+1,j+3) || (i+1,j+4)
+    punpcklbw xmm2,xmm0   ; xmm2 = (i+1,j+1) || (i+1,j+2)
+    punpckhbw xmm7,xmm0   ; xmm7 = (i+1,j+3) || (i+1,j+4)
 
-    movdqu xmm8,xmm3
-    punpcklbw xmm3,xmm0
-    punpckhbw xmm8,xmm0
+    movdqu xmm8,xmm3      ; xmm8 = (i+2,j+2) || (i+2,j+3) || (i+2,j+4) || (i+2,j+5)
+    punpcklbw xmm3,xmm0   ; xmm3 = (i+2,j+2) || (i+2,j+3)
+    punpckhbw xmm8,xmm0   ; xmm8 = (i+2,j+4) || (i+2,j+5)
 
-    movdqu xmm9,xmm4
-    punpcklbw xmm4,xmm0
-    punpckhbw xmm9,xmm0
+    movdqu xmm9,xmm4      ; xmm9 = (i-1,j-1) || (i-1,j) || (i-1,j+1) || (i-1,j+2)
+    punpcklbw xmm4,xmm0   ; xmm4 = (i-1,j-1) || (i-1,j)
+    punpckhbw xmm9,xmm0   ; xmm9 = (i-1,j+1) || (i-1,j+2)
 
-    movdqu xmm10,xmm5
-    punpcklbw xmm5,xmm0
-    punpckhbw xmm10,xmm0
+    movdqu xmm10,xmm5     ; xmm10 = (i-2,j-1) || (i-2,j) || (i-2,j+1) || (i-2,j+2)
+    punpcklbw xmm5,xmm0   ; xmm5 = (i-2,j-1) || (i-2,j)
+    punpckhbw xmm10,xmm0  ; xmm10 = (i-2,j+1) || (i-2,j+2)
+\end{verbatim}
+\end{codesnippet}
+\newpage
 
-    paddw xmm1,xmm2
-    paddw xmm1,xmm3
-    paddw xmm1,xmm4
-    paddw xmm1,xmm5
+\indent Por cada registro tenemos dos p\'ixeles, de este modo ya podemos realizar la suma entre los cinco p\'ixeles vecinos que luego de dividirlo por la constante van a ser asignados al p\'ixel central de estos cinco. De este modo, contamos con la instrucci\'on \textit{paddw} la cual suma empaquetadamente de a Word (2 bytes). Utilizamos los registros \textbf{xmm1} y \textbf{xmm6} como acumuladores de la suma.
+ \begin{codesnippet}
+\begin{verbatim}
 
-    paddw xmm6,xmm7
-    paddw xmm6,xmm8
-    paddw xmm6,xmm9
-    paddw xmm6,xmm10
+    paddw xmm1,xmm2     ; xmm1 = (i,j)+(i+1,j+1)  ||  (i,j+1)+(i+1,j+2)
+    paddw xmm1,xmm3     ; xmm1 = (i,j)+(i+1,j+1)+(i+2,j+2)  ||  (i,j+1)+(i+1,j+2)+(i+2,j+3)
+    paddw xmm1,xmm4     ; xmm1 = (i,j)+(i+1,j+1)+(i+2,j+2)+(i-1,j-1)  ||
+                                 (i,j+1)+(i+1,j+2)+(i+2,j+3)+(i-1,j)
+    paddw xmm1,xmm5     ; xmm1 = (i,j)+(i+1,j+1)+(i+2,j+2)+(i-1,j-1)+(i-2,j-1)  ||
+                                 (i,j+1)+(i+1,j+2)+(i+2,j+3)+(i-1,j)+(i-2,j)
 
-    movdqu xmm2,xmm1
-    movdqu xmm7,xmm6
+    paddw xmm6,xmm7     ; xmm6 = (i,j+2)+(i+1,j+3)  ||  (i,j+3)+(i+1,j+4)
+    paddw xmm6,xmm8     ; xmm6 = (i,j+2)+(i+1,j+3)+(i+2,j+4)  ||  (i,j+3)+(i+1,j+4)+(i+2,j+5)
+    paddw xmm6,xmm9     ; xmm6 = (i,j+2)+(i+1,j+3)+(i+2,j+4)+(i-1,j+1)  ||
+                                 (i,j+3)+(i+1,j+4)+(i+2,j+5)+(i-1,j+2)
+    paddw xmm6,xmm10    ; xmm6 = (i,j+2)+(i+1,j+3)+(i+2,j+4)+(i-1,j+1)+(i-2,j+1)  ||
+                                 (i,j+3)+(i+1,j+4)+(i+2,j+5)+(i-1,j+2)+(i-2,j+2)
+\end{verbatim}
+\end{codesnippet}
 
-    punpcklwd xmm1,xmm0
-    punpckhwd xmm2,xmm0
+\indent Para poder multiplicarlos por una constante debemos transformar los valores en puntos flotantes, para ello primero debemos desempaquetarlos ampliandolos con cero (adquiriendo as\'i un tama\~no de Doubleword) y luego mediante la instrucci\'on \textit{cvtdq2ps} convertirlos de enteros con signo a puntos flotantes de precisi\'on simple sin perder el empaquetamiento que nos permite trabajar con los tres valores del p\'ixel a la vez. (En realidad son cuatro, pero un canal no lo usamos).
+ \begin{codesnippet}
+\begin{verbatim}
+    movdqu xmm2,xmm1        ; xmm2 = (i,j)+(i+1,j+1)+(i+2,j+2)+(i-1,j-1)+(i-2,j-1)   ||
+                                     (i,j+1)+(i+1,j+2)+(i+2,j+3)+(i-1,j)+(i-2,j)
+    movdqu xmm7,xmm6        ; xmm7 = (i,j+2)+(i+1,j+3)+(i+2,j+4)+(i-1,j+1)+(i-2,j+1) ||
+                                     (i,j+3)+(i+1,j+4)+(i+2,j+5)+(i-1,j+2)+(i-2,j+2)
 
-    punpcklwd xmm6,xmm0
-    punpckhwd xmm7,xmm0
+    punpcklwd xmm1,xmm0     ; xmm1 = (i,j)+(i+1,j+1)+(i+2,j+2)+(i-1,j-1)+(i-2,j-1)
+    punpckhwd xmm2,xmm0     ; xmm2 = (i,j+1)+(i+1,j+2)+(i+2,j+3)+(i-1,j)+(i-2,j)
+
+    punpcklwd xmm6,xmm0     ; xmm6 = (i,j+2)+(i+1,j+3)+(i+2,j+4)+(i-1,j+1)+(i-2,j+1)
+    punpckhwd xmm7,xmm0     ; xmm7 = (i,j+3)+(i+1,j+4)+(i+2,j+5)+(i-1,j+2)+(i-2,j+2)
 
     cvtdq2ps xmm1,xmm1  
     cvtdq2ps xmm2,xmm2  
     cvtdq2ps xmm6,xmm6  
     cvtdq2ps xmm7,xmm7
+\end{verbatim}
+\end{codesnippet}
 
-    movdqu xmm15,[cerocomados]
+\indent Ahora que los valores ya est\'an trasnformados en puntos flotantes, podemos hacer la multiplicaci\'on (tambi\'en empaquetada). De este modo, calculamos todo un p\'ixel por cada registro. Una vez hechas las multiplicaciones, volvemos a convertir los valores en enteros mediante la instrucci\'on \textit{cvtps2dq}. Como hab\'iamos definido antes, \textit{cerocomados} guarda el valor 0.2 cuatro veces.
+
+ \begin{codesnippet}
+\begin{verbatim}
+    movdqu xmm15,[cerocomados] 
 
     mulps xmm1,xmm15
     mulps xmm2,xmm15
@@ -382,7 +407,13 @@ A continuaci\'on comienza la rutina a llevar a cabo en caso de que el p\'ixel a 
     cvtps2dq xmm2,xmm2
     cvtps2dq xmm6,xmm6
     cvtps2dq xmm7,xmm7
+\end{verbatim}
+\end{codesnippet}
+\newpage
 
+\indent Ahora resta volver a empaquetar para que queden los cuatro p\'ixeles, que est\'abamos trabajando en simultaneo, en un s\'olo registro. Primero juntamos el valor final de \textbf{xmm1} $(i,j)$ con el de \textbf{xmm2} $(i,j+1)$ y el de \textbf{xmm6} $(i,j+2)$ con el del \textbf{xmm7} $(i,j+3)$ y por \'ultimo unimos todos en un mismo registro (\textbf{xxm1}). Guardamos el contenido de xmm1 en memoria, a la direcci\'on calculada previamente en \textbf{rax}, sumada al origen del puntero destino (\textbf{rsi}). Sumamos cuatro al contador de \textbf{r11} (columnas) porque por cada lectura en memoria, trabajamos con 4 p\'ixeles, y  luego volvemos al ciclo de x.
+ \begin{codesnippet}
+\begin{verbatim}
     packusdw xmm1,xmm2
     packusdw xmm6,xmm7
 
@@ -392,11 +423,26 @@ A continuaci\'on comienza la rutina a llevar a cabo en caso de que el p\'ixel a 
 
     add r11,4
     jmp .loop_x
-
 \end{verbatim}
 \end{codesnippet}
 
+\indent Al terminar el ciclo de x, lo que hacemos en incrementar en uno \textbf{r10}, el cual mide la fila actual. Es decir, avanzamos de fila y saltamos al ciclo de y.
+\begin{codesnippet}
+\begin{verbatim}
+.endloop_x:
+    inc r10
+    jmp .loop_y
+\end{verbatim}
+\end{codesnippet}
 
+\indent Al terminar el ciclo de y, queda finalizada la ejecuci\'on del filtro. Por lo tanto, solo queda restaurar los registros y retornar.
+\begin{codesnippet}
+\begin{verbatim}
+.endloop_y:
+    Hacemos pop de los registros salvados
+    ret
+\end{verbatim}
+\end{codesnippet}
 \newpage
 \section{Enunciado y soluci\'on} 
 
