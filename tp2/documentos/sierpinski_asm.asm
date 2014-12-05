@@ -25,25 +25,26 @@ sierpinski_asm:
     push r14
     push r15 
 
-    xor r15,r15 ; x
-    xor r14,r14 ; y
-    pxor xmm15,xmm15
-.loop_x:
-    cmp r14d,ecx
-    je .endloop_x
+    xor r15, r15 ; x
+    xor r14, r14 ; y
+    pxor xmm15, xmm15
 .loop_y:
-    cmp r15d,edx
-    je .endloop_y
+    cmp r14d, ecx
+    je .endloop_y        ; y = filas
 
-    xor rax,rax 
-    mov rax,r15           ; rax = x
-    cvtsi2ss xmm1,rax     ; rax = (float) rax y lo muevo a xmm1
-    shufps xmm1, xmm1, 0h ; replico rax en todo xmm1
+.loop_x:
+    cmp r15d,edx    ; x = cols
+    je .endloop_x
+
+    xor rax, rax 
+    mov rax, r15          ; rax = x
+    cvtsi2ss xmm1,rax     ; xmm1 = (float) rax
+    shufps xmm1, xmm1, 0h ; replico 4 veces rax en xmm1
     movups xmm2,[offset]  ; 
-    addps xmm1,xmm2       ; le sumo el offset de x en los pixels (3,2,1,0)
-    mov rax,r14           ; rax = y
-    cvtsi2ss xmm2,rax     ; rax = (float) rax y lo muevo a xmm2
-    shufps xmm2, xmm2, 0h ; replico rax en todo xmm2
+    addps xmm1, xmm2      ; le sumo el offset de x en los pixels (3,2,1,0)
+    mov rax, r14          ; rax = y
+    cvtsi2ss xmm2, rax    ; xmm2 = (float) rax
+    shufps xmm2, xmm2, 0h ; replico 4 veces rax en xmm2
 
 
     ; esto puede optimizarse haciendo 255/filas y 255/cols una única vez
@@ -55,14 +56,14 @@ sierpinski_asm:
     ; int i = (int) ( floor((x*255.0)/filas) );
     ; int j = (int) ( floor((y*255.0)/cols) );
 
-    cvtsi2ss xmm3,rdx     
-    shufps xmm3, xmm3, 0h ; filas
+    cvtsi2ss xmm3, rdx     ; xmm3 = cols  
+    shufps xmm3, xmm3, 0h  ; replico 4 veces cols en xmm3
 
-    cvtsi2ss xmm4,rcx
-    shufps xmm4,xmm4, 0h ; cols
+    cvtsi2ss xmm4, rcx     ; xmm4 = filas
+    shufps xmm4, xmm4, 0h  ; replico 4 veces filas en xmm4
 
-    divps xmm1,xmm3 
-    divps xmm2,xmm4
+    divps xmm1, xmm3       ; xmm1 = x*255/cols
+    divps xmm2, xmm4       ; xmm2 = y*255/filas
 
     cvttps2dq xmm1,xmm1 ; convierte a int truncando, o sea ((int) floor(n))
     cvttps2dq xmm2,xmm2
@@ -83,10 +84,10 @@ sierpinski_asm:
     xor rax,rax
     mov r12d,r14d ; r12 = y
     mov r13d,r15d ; r13 = x
-    imul r12d,r9d ; y * row_size
+    imul r12d,r9d ; y * row_size_src
     imul r13d,4   ; x * 4 (esto puede ser un shift left)
     mov eax,r12d  ; 
-    add eax,r13d  ; rax = y*row_size + x*4 
+    add eax,r13d  ; rax = y*row_size_src + x*4 
 
     
     movdqu xmm0,[rdi+rax] ; agarró 16 bytes del source!
@@ -140,15 +141,23 @@ sierpinski_asm:
 
     ; por qué necesitamos unsigned saturation? Marco señal.
 
+    xor rax,rax
+    mov r12d,r14d ; r12 = y
+    mov r13d,r15d ; r13 = x
+    imul r12d,r8d ; y * row_size_dest
+    imul r13d,4   ; x * 4
+    mov eax,r12d  ; 
+    add eax,r13d  ; rax = y*row_size_dest + x*4 
+
     movdqa [rsi+rax],xmm0
 
     add r15,4 ; avanzo 4 sobre x
-    jmp .loop_y
-.endloop_y:
-    inc r14
-    xor r15,r15 ; reinicio x
     jmp .loop_x
 .endloop_x:
+    inc r14     ; y++
+    xor r15,r15 ; reinicio x
+    jmp .loop_y
+.endloop_y:
 
     pop r15
     pop r14

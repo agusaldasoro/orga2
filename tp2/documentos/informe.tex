@@ -227,10 +227,386 @@ $\star$ En \textbf{r9} est\'a cargado el \textit{row_size} de la imagen de desti
 
 \newpage
 \subsection{Filtro Sierpinsky}
-Hola
+
+\indent Primero hacemos unos defines que vamos a utilizar luego.
+ \begin{codesnippet}
+\begin{verbatim}
+offset: dd 3.0, 2.0, 1.0, 0.0
+dq255:  dd 255.0,255.0,255.0,255.0
+\end{verbatim}
+\end{codesnippet}
+
+\indent Limpiamos los registros xmm15 y los que vamos a utilizar como \emph{x} e \emph{y}.
+ \begin{codesnippet}
+\begin{verbatim}
+    Salvamos el tope de la pila y salvamos los registros a usar.
+    xor r15,r15 ; x
+    xor r14,r14 ; y
+    pxor xmm15,xmm15
+\end{verbatim}
+\end{codesnippet}
+
+\indent Primero recorremos la imagen por filas (\emph{y}) y luego por columnas (\emph{x}). Para ello, primero comenzamos con el \textit{ciclo de y}. En \textbf{ecx} estaba almacenada la cantidad total de filas de la imagen pasada por par\'ametro. Cuando alcanza este valor, finaliza el ciclo.
+ \begin{codesnippet}
+\begin{verbatim}
+.loop_y:
+    cmp r14d, ecx
+    je .endloop_y     ; y = filas
+\end{verbatim}
+\end{codesnippet}
+
+\indent Para entrar a este ciclo, \emph{x} no debe haber alcanzado su tama\~no m\'aximo, es decir se repite hasta que hayamos trabajado con todas las columnas de la fila actual. Como para este filtro son necesarios los valores de \emph{x} e \emph{y} para hacer c\'alculos del coeficiente para cada iteraci\'on, nos debemos encargar de copiarlos en dos registro xmm transformados en puntos flotantes. Como vamos a trabajar en simult\'aneo, mediante la instrucci\'on \textit{shufps} y d\'andole como par\'ametro el 0h replicamos el valor 4 veces en el registro. Hacemos lo mismo tanto para \emph{y} como para \emph{x}, salvando que en \emph{x} le debemos sumar el offset ya que los cuatro p\'ixeles con los que vamos a trabajar en simult\'aneo pertenecen a la misma fila y a columnas contiguas. 
+ \begin{codesnippet}
+\begin{verbatim}
+.loop_x:
+    cmp r15d,edx    ; x = cols
+    je .endloop_x
+
+    xor rax, rax 
+    mov rax, r15           ; rax = x
+    cvtsi2ss xmm1,rax      ; xmm1 = (float) x
+    shufps xmm1, xmm1, 0h  ; replico 4 veces rax en xmm1
+    movups xmm2,[offset]   ; 
+    addps xmm1, xmm2       ; le sumo el offset de x en los pixels (3,2,1,0)
+    mov rax, r14           ; rax = y
+    cvtsi2ss xmm2, rax     ; xmm2 = (float) y
+    shufps xmm2, xmm2, 0h  ; replico 4 veces rax en xmm2
+\end{verbatim}
+\end{codesnippet}
+
+\indent Ahora, debemos multiplicar los valores de \emph{x} e \emph{y} por 255 y luego divirlos por la cantidad de columnas y de filas respectivamente. Para hacer esto, mantenemos el empaquetamiento de cuatro valores por registro xmm. Luego de este paso, en \textbf{xmm1} va a quedar el valor del \emph{x} actual, seguido de los valores de los tres siguientes, y en \textbf{xmm2} el valor del \emph{y} actual replicado 4 veces.
+ \begin{codesnippet}
+\begin{verbatim}
+    movups xmm0,[dq255]
+    mulps xmm1,xmm0        ; xmm1 = x*255
+    mulps xmm2,xmm0        ; xmm2 = y*255
+    
+    cvtsi2ss xmm3, rdx     ; xmm3 = cols  
+    shufps xmm3, xmm3, 0h  ; replico 4 veces cols en xmm3
+
+    cvtsi2ss xmm4, rcx     ; xmm4 = filas
+    shufps xmm4, xmm4, 0h  ; replico 4 veces filas en xmm4
+
+    divps xmm1, xmm3       ; xmm1 = x*255/cols
+    divps xmm2, xmm4       ; xmm2 = y*255/filas
+\end{verbatim}
+\end{codesnippet}
+\newpage
+
+\indent Lo que resta para calcular el coeficiente es hacer el xor y luego volver a dividir por 255. Para ejecutar el \textit{pxor} es necesario volver a tranformar los cuatro valores por registro en int, lo hacemos truncando. Luego se vuelve a transformar en puntos flotante de precisi\'on simple y as\'i dividirlos por 255.
+ \begin{codesnippet}
+\begin{verbatim}
+    cvttps2dq xmm1,xmm1 ; convierte a int truncando
+    cvttps2dq xmm2,xmm2
+
+    pxor xmm1,xmm2      ; Hace el xor entre los 4 Is y los 4 Js empaquetados
+
+    movups xmm0,[dq255]
+    cvtdq2ps xmm1,xmm1  ; se convierte a float otra vez
+    divps xmm1,xmm0     ; se divide por 255.0 
+\end{verbatim}
+\end{codesnippet}
+
+\indent Como resultado, en \textbf{xmm1} tenemos los cuatro coeficientes que corresponden a los próximos cuatro p\'ixeles que vamos a procesar. Hacemos una copia de los coeficientes al registro \textbf{xmm15}, porque el registro \textbf{xmm1} lo vamos a utilizar para guardar las lecturas en memoria. En \textbf{rax} hacemos el c\'alculo del offset en la matriz imagen que corresponde a los \emph{x} e \emph{y} actuales. Leemos los valores de \emph{x} e \emph{y} actuales, multiplicamos al \emph{y} por el \textit{row_size} de la imagen fuente y al valor de \emph{x} lo multiplicamos por cuatro porque por cada p\'ixel son cuatro bytes. En \textbf{rdi} se encuentra el puntero al origen de la imagen, entonces para hacer la lectura simplemente sumamos rax con rdi y lo guardamos en \textbf{xmm0}, haciendo una copia en \textbf{xmm1}.
+ \begin{codesnippet}
+\begin{verbatim}
+    movups xmm15,xmm1  
+    ; float s = (i xor j) / 255.0;
+
+    xor rax,rax
+    mov r12d,r14d ; r12 = y
+    mov r13d,r15d ; r13 = x
+    imul r12d,r9d ; r12 = y * row_size_src
+    imul r13d,4   ; r13 = x * 4
+    mov eax,r12d  ; 
+    add eax,r13d  ; rax = y*row_size_src + x*4 
+    
+    movdqu xmm0,[rdi+rax] ; Lectura de 16 Bytes del source
+    movdqu xmm1,xmm0      ; Se hace una copia
+\end{verbatim}
+\end{codesnippet}
+
+\indent Una vez que ya tenemos copiado en dos registros los p\'ixeles con los que vamos a trabajar, necesitamos convertirlos en puntos flotantes. Para ello es necesario primero expandirlos y por este motivo se desempaquetan mediante las instrucciones \textit{punpcklbw} y \textit{punpcklwd} con el registro \textbf{xmm2} que fue limpiado. De este modo es posible transformarlos en puntos flotantes mediante la instrucci\'on \textit{cvtdq2ps}, ya que tenemos un p\'ixel por registro y esto es 4 n\'umeros en punto flotante (4 Bytes).
+ \begin{codesnippet}
+\begin{verbatim}
+    pxor xmm2,xmm2
+
+    punpcklbw xmm0,xmm2 ; parte baja 
+    movdqu xmm6,xmm0    ; copia de la parte baja
+    punpcklwd xmm0,xmm2 ; baja de la baja 0 
+    punpckhbw xmm6,xmm2 ; alta de la baja 1
+
+    punpckhbw xmm1,xmm2 ; parte alta           
+    movdqu xmm7,xmm1    ; copia de la parte alta
+    punpckhwd xmm1,xmm2 ; alta de alta    3
+    punpcklwd xmm7,xmm2 ; baja de la alta 2
+
+    cvtdq2ps xmm0,xmm0
+    cvtdq2ps xmm6,xmm6
+    cvtdq2ps xmm1,xmm1
+    cvtdq2ps xmm7,xmm7
+\end{verbatim}
+\end{codesnippet}
+
+\indent En \textbf{xmm15} hab\'iamos copiado los coeficientes, ahora que ya tenemos los cuatro p\'ixeles con sus valores en puntos flotantes s\'olo resta multiplicarlos. Primero hacemos una copia de \textbf{xmm15} en \textbf{xmm14} porque lo vamos a pisar, ya que en cada caso necesitamos replicar cuatro veces los cuatro valores de coeficientes almacenados. De este modo, los tres canales de cada p\'ixel quedan multiplicados con su mismo coeficiente. Mediante \textit{shufps} replicamos el valor que necesitamos, tal cual figura comentado en binario.
+ \begin{codesnippet}
+\begin{verbatim}
+    movdqu xmm14,xmm15
+    shufps xmm15,xmm15, 0x00 ; 00 00 00 00
+    mulps xmm1,xmm15
+
+    movdqu xmm15,xmm14
+    shufps xmm15,xmm15, 0x55 ; 01 01 01 01 
+    mulps xmm7,xmm15       
+    
+    movdqu xmm15,xmm14
+    shufps xmm15,xmm15, 0xAA ; 10 10 10 10
+    mulps xmm6,xmm15
+    
+    movdqu xmm15,xmm14
+    shufps xmm15,xmm15, 0xFF ; 11 11 11 11
+    mulps xmm0,xmm15
+\end{verbatim}
+\end{codesnippet}
+
+\indent Una vez ya calculados todos los valores finales, debemos transformarlos en enteros y empaquetarlos al tama\~no de char como era originalmente para poder asign\'arselos a la imagen destino. Mediante la instrucci\'on \textit{cvttps2dq} se convierten los cuatro valores de cada p\'ixel, que estaban en puntos flotantes de precisi\'on simple a enteros empaquetados. Luego, mediante la instrucci\'on \textit{packusdw} empaquetamos de a dos registros, para as\'i modificar le tama\~no de ints a shorts. Por \'ultimo, unimos los cuatro p\'ixeles en un registro con la instrucci\'on packusdw que los transforma de shorts a char. Todo esto lo realizamos mediante unsigned saturation para eliminar casos de exceso que puedan hacer que la fotograf\'ia final no quede como lo deseado. Debemos volver a calcular \textbf{rax} para la imagen de destino, ya que no necesariamente tengan el mismo \textit{row_size}, el c\'odigo es el mismo que el \'utilizado anteriormente, s\'olo que en \textbf{r8d} se encuentra el tama\~no de row_size_destino. En rsi se encuentra el puntero a la imagen de destino, por este motivo se suman ambos registros y se asigna a esa posici\'on de memoria lo calculado que se encuentra en el registro \textbf{xmm0}. Avanzamos 4 en \emph{x}, porque le\'imos cuatro p\'ixeles y saltamos al comienzo del ciclo en \emph{x} otra vez.
+ \begin{codesnippet}
+\begin{verbatim}
+    cvttps2dq xmm1,xmm1
+    cvttps2dq xmm0,xmm0
+    cvttps2dq xmm6,xmm6
+    cvttps2dq xmm7,xmm7
+
+    packusdw xmm0,xmm6
+    packusdw xmm7,xmm1
+
+    packuswb xmm0,xmm7
+
+    xor rax,rax
+    mov r12d,r14d ; r12 = y
+    mov r13d,r15d ; r13 = x
+    imul r12d,r8d ; y * row_size_dest
+    imul r13d,4   ; x * 4
+    mov eax,r12d  ; 
+    add eax,r13d  ; rax = y*row_size_dest + x*4 
+
+    movdqa [rsi+rax],xmm0
+
+    add r15,4 ; avanzo 4 sobre x
+    jmp .loop_x
+\end{verbatim}
+\end{codesnippet}
+
+ \indent Para culminar el ciclo de \emph{x}, reiniciamos a cero el valor de \emph{x} y aumentamos en uno el valor de \emph{y}, volviendo al comienzo del ciclo de \emph{y}.
+ \begin{codesnippet}
+\begin{verbatim}
+.endloop_x:
+    inc r14     ; y++
+    xor r15,r15 ; reinicio x
+    jmp .loop_y
+\end{verbatim}
+\end{codesnippet}
+
+\indent Cuando termin\'o el ciclo de \emph{y}, termin\'o la ejecuci\'on del filtro. Por lo tanto, popeamos los registros usados y retornamos.
+ \begin{codesnippet}
+\begin{verbatim}
+.endloop_y:
+    Hacemos pop de los registros salvados
+    ret
+\end{verbatim}
+\end{codesnippet}
+
 \newpage
 \subsection{Filtro Bandas}
-Hola
+
+\indent Algunos defines que luego vamos a necesitar
+\begin{codesnippet}
+\begin{verbatim}
+color1 dw 64,64,64,64,64,64,64,64
+color3 db 128,128,128,255
+color4 db 192,192,192,255
+color5 db 255,255,255,255
+
+all_64w dw -64,-64,-64,-64,-64,-64,-64,-64
+
+color1_bound dw 96,96,96,96,96,96,96,96
+color2_bound dw 288,288,288,288,288,288,288,288
+color3_bound dw 480,480,480,480,480,480,480,480
+color4_bound dw 672,672,672,672,672,672,672,672
+
+rgb_only_mask dd 0x00FFFFFF,0x00FFFFFF,0x00FFFFFF,0x00FFFFFF
+
+all_1_mask    dd 0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF,0xFFFFFFFF
+all_0_mask    dd 0x00000000,0x00000000,0x00000000,0x00000000
+
+magic_shuffle db 8,8,8,8,10,10,10,10,0,0,0,0,2,2,2,2
+\end{verbatim}
+\end{codesnippet}
+ 
+\indent Salvamos los registros a utilizar, para respetar la convenci\'on C. Luego limpiamos los registros que vamos a usar como \emph{x} e \emph{y} y el registro xmm15.
+\begin{codesnippet}
+\begin{verbatim}
+    Pusheamos los registros que vamos a utilizar
+    xor r15,r15 ; x
+    xor r14,r14 ; y
+    pxor xmm15,xmm15
+\end{verbatim}
+\end{codesnippet}
+
+\indent Vamos a recorrer la imagen primero por filas y luego por columnas, por este motivo comenzamos con el ciclo de \emph{y}, el cual termina cuando el \emph{y} actual (\textbf{r14}) alcance su valor m\'aximo de filas que est\'a almacenado en \textbf{ecx}.
+\begin{codesnippet}
+\begin{verbatim}
+.loop_y:
+    cmp r14d,ecx
+    je .endloop_y  ; y = filas
+\end{verbatim}
+\end{codesnippet}
+
+\indent Comienza el ciclo de \emph{x}, el cual termina cuando \textbf{r15} alcanza el valor m\'aximo de columnas el cual est\'a almacenado en \textbf{edx}. Luego, en \textbf{rax} vamos a calcular el offset dentro de la matriz imagen sumando el valor de \emph{y} actual multiplicado por el row_size de destino con el valor de \emph{x} actual multiplicado por cuatro porque por cada p\'ixel hay cuatro bytes.
+\begin{codesnippet}
+\begin{verbatim}
+.loop_x:
+    cmp r15d,edx
+    je .endloop_x  ; x = cols
+
+    ; armo el offset
+    xor rax,rax
+    mov r12d,r14d ; r12 = y
+    mov r13d,r15d ; r13 = x
+    imul r12d,r9d ; y * row_size_src
+    imul r13d,4   ; x * 4 
+    mov eax,r12d  ; 
+    add eax,r13d  ; rax = y*row_size_src + x*4 
+\end{verbatim}
+\end{codesnippet}
+
+\indent Luego de haber calculado el offset actual, leemos de memoria 16 Bytes y los almacenamos en \textbf{xmm1}, copi\'andolos tambi\'en en \textbf{xmm2}. Para evitar inconvenientes, ponemos en cero al canal alpha mediante el \textit{pand} y la etiqueta definida antes \textit{rgb_only_mask}. De la lectura que hicimos, guardamos en \textbf{xmm1} la parte baja y en \textbf{xmm2} la parte alta desempaquetando.
+
+\textcolor{red}{No entiendo la parte del codigo que sigue... que hace? porque lo hace?}
+\begin{codesnippet}
+\begin{verbatim}
+    movdqu xmm1,[rdi+rax] ; agarro 16 bytes del source
+    movdqu xmm2,xmm1
+
+    movdqu xmm15,[rgb_only_mask]
+    pand xmm1,xmm15
+    pand xmm2,xmm15
+
+    pxor xmm7,xmm7
+    punpcklbw xmm1,xmm7 ; baja 0
+    punpckhbw xmm2,xmm7 ; alta 8
+
+    pxor xmm7,xmm7
+    pxor xmm8,xmm8
+
+    phaddw xmm1,xmm7
+    phaddw xmm7,xmm1 
+    
+    movdqu xmm1,xmm7
+
+    phaddw xmm2,xmm8
+    phaddw xmm2,xmm8
+
+    paddw xmm1,xmm2
+\end{verbatim}
+\end{codesnippet}
+
+\indent Copiamos en los registros \textbf{xmm14}, \textbf{xmm13} y \textbf{xmm12} las etiquetas predefinidas. Luego en \textbf{xmm15} vamos a ir copiando la etiqueta que necesitemos.
+
+\textcolor{red}{Despues no se que hace... jeje}
+\begin{codesnippet}
+\begin{verbatim}
+    movdqu xmm14,[all_64w]
+    movdqu xmm13,[all_1_mask]
+    movdqu xmm12,[color1]
+
+    movdqu xmm15,[color1_bound]
+    movdqu xmm0,xmm1 
+    pcmpgtw xmm15,xmm1
+    pandn xmm15,xmm13
+    pand xmm15,xmm12
+
+    movdqu xmm1,xmm15
+
+    movdqu xmm2,xmm0
+    movdqu xmm15,[color2_bound]
+    pcmpgtw xmm15,xmm2
+    pandn xmm15,xmm13
+    pand xmm15,xmm12
+
+    movdqu xmm2,xmm15
+
+    movdqu xmm3,xmm0
+    movdqu xmm15,[color3_bound]
+    pcmpgtw xmm15,xmm3
+    pandn xmm15,xmm13
+    pand xmm15,xmm12
+
+    movdqu xmm3,xmm15
+
+    movdqu xmm4,xmm0
+    movdqu xmm15,[color4_bound]
+    pcmpgtw xmm15,xmm4
+    pandn xmm15,xmm13
+    pand xmm15,xmm12
+
+    movdqu xmm4,xmm15
+\end{verbatim}
+\end{codesnippet}
+
+\indent \textcolor{red}{Completar}
+\begin{codesnippet}
+\begin{verbatim}
+    paddusb xmm1,xmm2
+    paddusb xmm1,xmm3
+    paddusb xmm1,xmm4
+
+    ; reordeno los bytes a como estaba original
+    movdqu xmm15,[magic_shuffle] 
+    pshufb xmm1,xmm15
+    
+    ; armo el offset
+    xor rax,rax
+    mov r12d,r14d ; r12 = y
+    mov r13d,r15d ; r13 = x
+    imul r12d,r8d ; y * row_size_dest
+    imul r13d,4   ; x * 4 (esto puede ser un shift left)
+    mov eax,r12d  ; 
+    add eax,r13d  ; rax = y*row_size_dest + x*4 
+
+    movdqu [rsi+rax],xmm1
+
+    add r15,4 ; avanzo 4 sobre x
+    jmp .loop_x
+\end{verbatim}
+\end{codesnippet}
+
+\indent \textcolor{red}{Completar}
+\begin{codesnippet}
+\begin{verbatim}
+.endloop_x:
+    inc r14
+    xor r15,r15 ; reinicio x
+    jmp .loop_y
+\end{verbatim}
+\end{codesnippet}
+
+\indent \textcolor{red}{Completar}
+\begin{codesnippet}
+\begin{verbatim}
+.endloop_y:
+
+	pop r15
+	pop r14
+	pop r13
+	pop rbp
+    ret
+\end{verbatim}
+\end{codesnippet}
+
+
+
+
 \newpage
 \subsection{Filtro Motion Blur}
 \indent Primero hacemos algunos define que vamos a necesitar luego:

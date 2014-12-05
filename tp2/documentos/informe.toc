@@ -4,12 +4,12 @@
 \contentsline {section}{\numberline {3}Implementaci\'on en Assembler}{4}
 \contentsline {subsection}{\numberline {3.1}Filtro CropFlip}{4}
 \contentsline {subsection}{\numberline {3.2}Filtro Sierpinsky}{6}
-\contentsline {subsection}{\numberline {3.3}Filtro Bandas}{7}
-\contentsline {subsection}{\numberline {3.4}Filtro Motion Blur}{8}
-\contentsline {section}{\numberline {4}Enunciado y soluci\'on}{12}
-\contentsline {subsection}{\numberline {4.1}Mediciones}{12}
-\contentsline {subsection}{\numberline {4.2}Filtro \textit {cropflip}}{12}
-\contentsline {subsection}{\numberline {4.3}Filtro \textit {Sierpinski}}{22}
-\contentsline {subsection}{\numberline {4.4}Filtro \textit {Bandas}}{25}
-\contentsline {subsection}{\numberline {4.5}Filtro \textit {Motion Blur}}{27}
-\contentsline {section}{\numberline {5}Conclusiones y trabajo futuro}{28}
+\contentsline {subsection}{\numberline {3.3}Filtro Bandas}{10}
+\contentsline {subsection}{\numberline {3.4}Filtro Motion Blur}{14}
+\contentsline {section}{\numberline {4}Enunciado y soluci\'on}{18}
+\contentsline {subsection}{\numberline {4.1}Mediciones}{18}
+\contentsline {subsection}{\numberline {4.2}Filtro \textit {cropflip}}{18}
+\contentsline {subsection}{\numberline {4.3}Filtro \textit {Sierpinski}}{28}
+\contentsline {subsection}{\numberline {4.4}Filtro \textit {Bandas}}{31}
+\contentsline {subsection}{\numberline {4.5}Filtro \textit {Motion Blur}}{33}
+\contentsline {section}{\numberline {5}Conclusiones y trabajo futuro}{34}
