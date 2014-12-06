@@ -68,13 +68,13 @@ void game_lanzar_zombi(unsigned int player) {
 }
 
 void mover_soldado(int delta_x, int delta_y, page_directory* pd) {
-	desplazar_fisica(0x8000000, pd, delta_x, delta_y);
-    if(recuperar_fisica(0x8000000,pd)%(50*0x1000)==0){
+	//desplazar_fisica(0x8000000, pd, delta_x, delta_y);
+    if(recuperar_fisica(0x8000001,pd)%(50*0x1000)==0){
     	sumarPuntoB();
-    }else if(recuperar_fisica(0x8000000,pd)%(49 * 0x1000)){
+    }else if(recuperar_fisica(0x8000001,pd)%(49 * 0x1000)){
     	sumarPuntoA();
     }else{
-    	int i = 1;
+    	int i = 0;
     	while(i<9){
         	desplazar_fisica(0x8000000+i*0x1000, pd, delta_x, delta_y);
         	i++;
