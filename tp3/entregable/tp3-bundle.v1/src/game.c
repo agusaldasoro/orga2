@@ -69,9 +69,14 @@ void game_lanzar_zombi(unsigned int player) {
 
 void mover_soldado(int delta_x, int delta_y, page_directory* pd) {
 	//desplazar_fisica(0x8000000, pd, delta_x, delta_y);
-    if(recuperar_fisica(0x8001000,pd)%(50*0x1000)==0){
+	char* text;
+    if(/*(recuperar_fisica(0x8001000,pd) >> 3)%(50*0x1000)==0*/0){
+    	text = "me declaro spectrum",0;
+    	print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
     	sumarPuntoB();
-    }else if(recuperar_fisica(0x8001000,pd)%(49 * 0x1000)){
+    }else if(0/*(recuperar_fisica(0x8001000,pd) >> 3)%(49 * 0x1000)*/){
+    	text = "me declaro spectrum15",0;
+    	print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
     	sumarPuntoA();
     }else{
     	int i = 0;

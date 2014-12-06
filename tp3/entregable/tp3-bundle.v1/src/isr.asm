@@ -167,11 +167,10 @@ _isr102:
     push eax
     call game_move_current_zombi
     pop eax
-    xchg bx, bx
-    jmp 0x80:0
+    ;jmp 0x80:0
 
     ; pd:eax,delta_x:edi,delta_y:esi, tipo: dx
-
+    xchg bx, bx
     popad
     iret
 
