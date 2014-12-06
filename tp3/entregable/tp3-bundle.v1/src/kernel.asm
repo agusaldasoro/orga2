@@ -173,6 +173,7 @@ modo_protegido:
     ; Habilitar interrupciones
     sti
     ; Saltar a la primera tarea: Idle
+    jmp 0x80:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
     mov eax, 0xFFFF

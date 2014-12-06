@@ -102,9 +102,7 @@ LS_INLINE void hlt(void) {
 
 
 LS_INLINE void breakpoint(void) {
-#ifdef DEBUG
     __asm __volatile("xchg %%bx, %%bx" : :);
-#endif
 }
 
 

@@ -41,6 +41,7 @@
 #define GDT_INITIAL_TSS        0xD
 #define GDT_CURRENT_TSS        0xE
 #define GDT_NEXT_TSS           0xF
+#define GDT_TSS_IDLE           0x10
 
 typedef unsigned int u32;
 typedef unsigned short u16;
