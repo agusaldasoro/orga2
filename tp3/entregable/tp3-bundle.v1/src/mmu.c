@@ -20,16 +20,15 @@ void mmu_inicializar_dir_kernel() {
 	}
 
 
-	// Mapeo las primeras 4 (0,1,2,3) entradas del page direcotry
-	// con el base y permisos correspondientes.
-	for(i = 0; i < 4; i++) {
-		pd[i] = (page_directory) {
-			.base = 0x28 + i,
+	// Mapeo solo la primera entrada del page direcotry
+	// con la base y permisos correspondientes.
+
+		pd[0] = (page_directory) {
+			.base = 0x28,
 			.rw = 0x1,
 			.p = 1,
     	};
-	}
-
+        
 	page_table* pt = (page_table*) 0x28000;
 	for(i = 0; i < 1024; i++) {
 		pt[i] = (page_table) {
