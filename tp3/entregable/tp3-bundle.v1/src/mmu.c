@@ -28,7 +28,7 @@ void mmu_inicializar_dir_kernel() {
 			.rw = 0x1,
 			.p = 1,
     	};
-        
+
 	page_table* pt = (page_table*) 0x28000;
 	for(i = 0; i < 1024; i++) {
 		pt[i] = (page_table) {
@@ -113,8 +113,6 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
     unsigned int directory = (virtual >> 22);
     unsigned int table     = (virtual & 0x003FF000) >> 12;
 
-    page_table* pt = (page_table*) (pd[directory].base << 12);
-
     if (pd[directory].p == 0){
         pd[directory].base = ((unsigned int) get_page_table()) >> 12;
         pd[directory].rw = rw;
@@ -122,7 +120,7 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
         pd[directory].p = 1;
     }
 
-    pt = (page_table*) (pd[directory].base << 12);
+    page_table* pt = (page_table*) (pd[directory].base << 12);
     pt[table].base = fisica >> 12;
     pt[table].rw = rw;
     pt[table].us = us;
