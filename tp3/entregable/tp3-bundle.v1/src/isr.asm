@@ -53,6 +53,7 @@ _isr%1:
     cmp eax,10
     je .endstack
     mov [ebx+eax*4],ebp
+    inc eax
     jmp .stack
 .endstack:
     mov eax, %1
@@ -158,9 +159,9 @@ _isr33:
 %define ATR 0x732
 
 
-global _isr66
+global _isr102
 extern game_move_current_zombi
-_isr66:
+_isr102:
     xchg bx, bx
     pushad
     push eax
