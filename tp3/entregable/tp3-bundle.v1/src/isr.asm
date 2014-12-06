@@ -48,11 +48,12 @@ _isr%1:
     mov [registers_snapshot+48],gs
     mov [registers_snapshot+52],ss
     mov eax,0
-    lea ebx,[registers_snapshot+52]
+    lea ebx,[registers_snapshot+56]
 .stack:
     cmp eax,10
     je .endstack
     mov [ebx+eax*4],ebp
+    inc eax
     jmp .stack
 .endstack:
     mov eax, %1
@@ -158,15 +159,16 @@ _isr33:
 %define ATR 0x732
 
 
-global _isr66
+global _isr102
 extern game_move_current_zombi
-_isr66:
+_isr102:
     xchg bx, bx
     pushad
     push eax
     call game_move_current_zombi
-
+    pop eax
     xchg bx, bx
+    jmp 0x80:0
 
     ; pd:eax,delta_x:edi,delta_y:esi, tipo: dx
 

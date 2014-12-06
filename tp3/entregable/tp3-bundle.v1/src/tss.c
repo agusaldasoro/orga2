@@ -10,7 +10,6 @@
 #include "colors.h"
 #include "screen.h"
 
-
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
 
@@ -61,14 +60,14 @@ void tss_inicializar() {
 
 void tss_inicializar_tarea_idle() {
 
-	// gdt[GDT_TSS_IDLE].base_0_15 = ((unsigned int)&tss_idle) & 0x0000FFFF;
-	// gdt[GDT_TSS_IDLE].base_23_16 = (((unsigned int)&tss_idle) & 0x00FF0000) >> 16;
-	// gdt[GDT_TSS_IDLE].base_31_24 = (((unsigned int)&tss_idle) & 0xFF000000) >> 24;
+	gdt[GDT_TSS_IDLE].base_0_15 = ((unsigned int)&tss_idle) & 0x0000FFFF;
+	gdt[GDT_TSS_IDLE].base_23_16 = (((unsigned int)&tss_idle) & 0x00FF0000) >> 16;
+	gdt[GDT_TSS_IDLE].base_31_24 = (((unsigned int)&tss_idle) & 0xFF000000) >> 24;
 
 	tss_idle = (tss) {};
 
 	tss_idle.eip = 0x00016000;
-	tss_idle.cr3 = 0x27000;
+	tss_idle.cr3 = rcr3();
 	
 	tss_idle.ebp = 0x27000;
 	tss_idle.esp = 0x27000;

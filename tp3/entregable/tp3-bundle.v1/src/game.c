@@ -86,6 +86,12 @@ void mover_soldado(int delta_x, int delta_y, page_directory* pd) {
 
 void mover_pantalla(int x,int y,int delta_x,int delta_y,u8 tipo){
 	print_string("X",x, y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if(y+delta_y<0){
+		delta_y += 10;
+	}
+	if(y+delta_y>9){
+		delta_y += -10;
+	}
 	if (tipo==0)
 		print_string("G",x+delta_x, y+delta_y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 	if (tipo==1)

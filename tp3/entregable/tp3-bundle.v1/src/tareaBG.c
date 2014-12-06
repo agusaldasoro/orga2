@@ -7,11 +7,13 @@
 #include "colors.h"
 #include "defines.h"
 #include "game.h"
-#include "syscall.h" 
+#include "syscall.h"
+#include "i386.h" 
 
 void task() {
     /* Tarea */
     int i;
+    //breakpoint();
     for(i=0;i<100;i++) {
       syscall_mover(ADE); 
       syscall_mover(DER); 
