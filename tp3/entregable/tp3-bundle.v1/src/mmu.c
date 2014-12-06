@@ -186,6 +186,7 @@ void desplazar_fisica(unsigned int virtual, page_directory* pd, int x, int y) {
     unsigned int table  = (virtual & 0x003FF000) >> 12;
     pt[table].base += x;
     pt[table].base += y*ANCHO_MAPA;
+    tlbflush();
 }
 
  void mmu_unmapear_pagina(unsigned int virtual,page_directory* cr3){
