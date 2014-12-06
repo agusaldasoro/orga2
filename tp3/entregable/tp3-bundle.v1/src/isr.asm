@@ -48,7 +48,7 @@ _isr%1:
     mov [registers_snapshot+48],gs
     mov [registers_snapshot+52],ss
     mov eax,0
-    lea ebx,[registers_snapshot+52]
+    lea ebx,[registers_snapshot+56]
 .stack:
     cmp eax,10
     je .endstack
