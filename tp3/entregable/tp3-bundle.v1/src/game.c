@@ -69,9 +69,9 @@ void game_lanzar_zombi(unsigned int player) {
 
 void mover_soldado(int delta_x, int delta_y, page_directory* pd) {
 	//desplazar_fisica(0x8000000, pd, delta_x, delta_y);
-    if(recuperar_fisica(0x8000001,pd)%(50*0x1000)==0){
+    if(recuperar_fisica(0x8001000,pd)%(50*0x1000)==0){
     	sumarPuntoB();
-    }else if(recuperar_fisica(0x8000001,pd)%(49 * 0x1000)){
+    }else if(recuperar_fisica(0x8001000,pd)%(49 * 0x1000)){
     	sumarPuntoA();
     }else{
     	int i = 0;
@@ -122,16 +122,16 @@ void movimiento_direccional(direccion d){
 
 void game_move_current_zombi(direccion dir) {
 	if(dir==ADE){
-		memcpy((void*)0x8000000,(void*)0x8000001,0x1000);
+		memcpy((void*)0x8000000,(void*)0x8001000,0x1000);
 		movimiento((page_directory*)rcr3(),1,0,0);
 	}else if(dir==DER){
-		memcpy((void*)0x8000000,(void*)0x8000004,0x1000);
+		memcpy((void*)0x8000000,(void*)0x8004000,0x1000);
 		movimiento((page_directory*)rcr3(),0,1,0);
 	}else if(dir==ATR){
-		memcpy((void*)0x8000000,(void*)0x8000006,0x1000);
+		memcpy((void*)0x8000000,(void*)0x8006000,0x1000);
 		movimiento((page_directory*)rcr3(),-1,0,0);
 	}else{
-		memcpy((void*)0x8000000,(void*)0x8000005,0x1000);
+		memcpy((void*)0x8000000,(void*)0x8005000,0x1000);
 		movimiento((page_directory*)rcr3(),0,-1,0);
 	}
 }
