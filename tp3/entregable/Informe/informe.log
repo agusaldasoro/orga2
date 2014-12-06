@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.9.2)  6 DEC 2014 16:22
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (MiKTeX 2.9 64-bit) (preloaded format=pdflatex 2013.9.2)  6 DEC 2014 20:07
 entering extended mode
 **informe.tex
 (C:\Users\Agustina\Documents\GitHub\orga2\tp3\entregable\Informe\informe.tex
@@ -511,111 +511,151 @@ Overfull \hbox (6.0pt too wide) in paragraph at lines 220--220
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 224--225
+Underfull \hbox (badness 10000) in paragraph at lines 223--224
 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 261--261
- [][][][][][] 
+Underfull \hbox (badness 10000) in paragraph at lines 225--226
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 227--228
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 229--230
+
  []
 
 [5]
-Underfull \hbox (badness 10000) in paragraph at lines 265--266
+Underfull \hbox (badness 10000) in paragraph at lines 233--234
 
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 282--282
- [][][][][][] 
+Underfull \hbox (badness 10000) in paragraph at lines 235--236
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 238--239
+
  []
 
 [6]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 310--310
- [][][][][][] 
+Underfull \hbox (badness 10000) in paragraph at lines 244--245
+
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 329--329
- [][][][][][] 
+Underfull \hbox (badness 10000) in paragraph at lines 249--250
+
  []
 
 
-Overfull \hbox (6.0pt too wide) in paragraph at lines 374--374
- [][][][][][] 
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 297--301
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 302--303
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 305--306
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 307--308
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 322--323
+
  []
 
 [7]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 406--406
+Underfull \hbox (badness 10000) in paragraph at lines 330--331
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 335--336
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 337--338
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 369--369
+ [][][][][][] 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 372--374
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 401--401
  [][][][][][] 
  []
 
 [8]
-Underfull \hbox (badness 10000) in paragraph at lines 409--410
-
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 428--428
+Overfull \hbox (6.0pt too wide) in paragraph at lines 417--417
  [][][][][][] 
  []
 
 [9]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 467--467
+Underfull \hbox (badness 10000) in paragraph at lines 421--423
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 424--426
+
+ []
+
+
+Overfull \hbox (6.0pt too wide) in paragraph at lines 455--455
  [][][][][][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 470--472
-
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 499--499
+Overfull \hbox (6.0pt too wide) in paragraph at lines 480--480
  [][][][][][] 
  []
 
 [10]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 515--515
+Overfull \hbox (6.0pt too wide) in paragraph at lines 517--517
  [][][][][][] 
  []
 
 [11]
-Underfull \hbox (badness 10000) in paragraph at lines 519--521
+Underfull \hbox (badness 10000) in paragraph at lines 532--534
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 522--524
-
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 553--553
- [][][][][][] 
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 578--578
+Overfull \hbox (6.0pt too wide) in paragraph at lines 551--551
  [][][][][][] 
  []
 
 [12]
-Overfull \hbox (6.0pt too wide) in paragraph at lines 615--615
- [][][][][][] 
- []
-
-[13]
-Underfull \hbox (badness 10000) in paragraph at lines 630--632
-
- []
-
-
-Overfull \hbox (6.0pt too wide) in paragraph at lines 649--649
- [][][][][][] 
- []
-
-[14]
 (C:\Users\Agustina\Documents\GitHub\orga2\tp3\entregable\Informe\informe.aux)
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -624,7 +664,7 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Here is how much of TeX's memory you used:
  2640 strings out of 493921
  33541 string characters out of 3147274
- 99727 words of memory out of 3000000
+ 97727 words of memory out of 3000000
  5896 multiletter control sequences out of 15000+200000
  23686 words of font info for 39 fonts, out of 3000000 for 9000
  841 hyphenation exceptions out of 8191
@@ -637,9 +677,9 @@ trea/charter/bchri8a.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfon
 ts/cm/cmmi10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
 ss10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt10.pfb
 ><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on informe.pdf (14 pages, 491742 bytes).
+Output written on informe.pdf (12 pages, 491638 bytes).
 PDF statistics:
- 83 PDF objects out of 1000 (max. 8388607)
+ 76 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  11 words of extra memory for PDF output out of 10000 (max. 10000000)
 

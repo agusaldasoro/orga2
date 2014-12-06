@@ -55,10 +55,10 @@ bandas_asm:
     xor rax,rax
     mov r12d,r14d ; r12 = y
     mov r13d,r15d ; r13 = x
-    imul r12d,r9d ; y * row_size
+    imul r12d,r9d ; y * row_size_src
     imul r13d,4   ; x * 4 (esto puede ser un shift left)
     mov eax,r12d  ; 
-    add eax,r13d  ; rax = y*row_size + x*4 
+    add eax,r13d  ; rax = y*row_size_src + x*4 
 
     movdqu xmm1,[rdi+rax] ; agarro 16 bytes del source
     movdqu xmm2,xmm1
@@ -132,6 +132,15 @@ bandas_asm:
     ; reordeno los bytes a como estaba original
     movdqu xmm15,[magic_shuffle] 
     pshufb xmm1,xmm15
+
+    ; armo el offset
+    xor rax,rax
+    mov r12d,r14d ; r12 = y
+    mov r13d,r15d ; r13 = x
+    imul r12d,r8d ; y * row_size_dest
+    imul r13d,4   ; x * 4 (esto puede ser un shift left)
+    mov eax,r12d  ; 
+    add eax,r13d  ; rax = y*row_size_dest + x*4 
 
     movdqu [rsi+rax],xmm1
 

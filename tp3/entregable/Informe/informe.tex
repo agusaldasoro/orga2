@@ -81,13 +81,13 @@ Al momento de armar la GDT, acorde a lo dispuesto en el enunciado, dejamos las p
 Armamos los cuatro segmentos de la GDT, llam\'andolos: 
 \begin{codesnippet}
 \begin{verbatim}
-    [GDT_IDX_CODE_0] = (gdt_entry) ; 
-    [GDT_IDX_CODE_3] = (gdt_entry) ; 
     [GDT_IDX_DATA_0] = (gdt_entry) ;  
     [GDT_IDX_DATA_3] = (gdt_entry) ; 
+    [GDT_IDX_CODE_0] = (gdt_entry) ; 
+    [GDT_IDX_CODE_3] = (gdt_entry) ; 
 \end{verbatim}
 \end{codesnippet}
-    
+
 A los cuatro les seteamos el mismo \emph{l\'imite}: \textbf{0x26EFF} y la misma \emph{base} en \textbf{0}, de este modo los cuatro descriptores de segmento direccionan a los primeros \emph{623MB} de memoria. El \emph{segment type} var\'ia depende el segmento: CODE_0: \textbf{0x0A} (code execute/read), CODE_3: \textbf{0x0F} (code execute/read, conforming, accesed), DATA_0 y DATA_3: \textbf{0x02} (data read/write). El \emph{Descriptor type} va en todos para system, por lo tanto es \textbf{0}. El \emph{Descriptor privilege level} coincide con el nombre del descriptor (\textbf{0} para CODE_0 y DATA_0; \textbf{3} para CODE_3 y DATA_3). El bit de \emph{Present} va para todos en \textbf{1} y los bit de \emph{Available for use by system software} y \emph{l} van para todos en \textbf{0}. El bit de \emph{Default operation size} va para todos en \textbf{1} porque es un c\'odigo de 32bits. El bit de \emph{Granularity} va para todos en \textbf{1}.\\
     
 
@@ -219,220 +219,122 @@ unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned cha
 \end{verbatim}
 \end{codesnippet}
 
-\textcolor{red}{HASTA ACA HICE, DE ACA PARA ABAJO NO DOY FE DE NADA...}
 
 {\large b)} \underline{Rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel.}\\
 
+Para poder mapear las direcciones 0x00000000 a 0x003FFFFF es necesaria una sola entrada en el Page Directory. En un primer momento, se crea un puntero a Page Directory en la direcci\'on 0x27000. Se limpian las 1024 entradas del Page Directory poniendo todos sus bits en 0.\\
 
-Se muestran las rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel
-(mmu_inicializar_dir_kernel). 
+Luego, a la primera entrada del Page Directory (\'indice: 0) se le asigna como base 0x28. Se le asigna permiso de escritura y lectura con su bit de presente seteado, como es de Kernel es de nivel 0.\\
 
-\begin{codesnippet}
-\begin{verbatim}
-void mmu_inicializar_dir_kernel() {
-    page_directory *pd = (page_directory *) 0x27000;
-    int i;
-
-    /* Creo 1024 entradas en page_directory con todo cero. */
-    for (i = 0; i < 1024; i++) {
-        pd[i] = (page_directory) {};
-    }
-
-    /* Mapeo las primeras 4 (0,1,2,3) entradas del page directory
-    con la base y permisos correspondientes. */
-    for(i = 0; i < 4; i++) {
-        pd[i] = (page_directory) {
-            .base = 0x28 + i,
-            .rw = 0x1,
-            .p = 1,
-        };
-    }
-
-    page_table* pt = (page_table*) 0x28000;
-    for(i = 0; i < 1024; i++) {
-        pt[i] = (page_table) {
-            .base = i,
-            .rw = 0x1,
-            .p = 1,
-        };
-    }
-}
-\end{verbatim}
-\end{codesnippet}
+Para que todo esto funcione y el primer \'indice del Page Directory apunte a un Page Table v\'alido, se debe crear un Page Table en la posici\'on 0x28000 en memoria. En esta misma se completan todos los \'indices (ya que es lo que ocupa el rango pedido para el Kernel) direccion\'andolos desde la posici\'on 0x0 en memoria, aumentando en uno acorde aumenta el \'indice. Todos tienen permiso de escritura con el bit de presente seteado, como es de Kernel es de nivel 0.\\
 
 
 
-{\large c)} Completamos el c\'odigo necesario para activar paginaci\'on.\\
+{\large c)} \underline{C\'odigo necesario para activar paginaci\'on.}\\
 
-\begin{codesnippet}
-\begin{verbatim}
-    ; Habilitar paginacion
-
-    mov eax,0x27000
-    mov cr3,eax
-
-    mov eax,cr0
-    or eax,0x80000000
-    mov cr0,eax
+Como ya contamos con un directorio de p\'aginas y una tabla de p\'aginas estamos en condiciones de activar paginaci\'on.\\
 
 
-    mov eax,0x100000
-    mov cr3,eax
-\end{verbatim}
-\end{codesnippet}
+Como para esto debemos poner en cr3 la base del directorio de p\'aginas y limpiar los bits PCD y PWT del mismo, basta con asignarle a cr3 el valor de 0x27000. De este modo la base queda en 0x27 y los bits limpios. \textcolor{red}{Es correcto esto?}\\
+
+Por \'ultimo resta setear el bit PG del cr0, lo hacemos mediante un or.
 
 \newpage
 \section{Ejercicio 4}
-{\large a)} Para administrar la memoria en el área libre, tenemos un contador de páginas utilizadas denoninándolo \textit{páginas}. Luego contamos con las funciones \textit{get_page_directory} y \textit{get_page_table} las cuales nos brindan un nuevo page directory o una nueva page table correspondientemente.
+{\large a)} \underline{inicializar_mmu.}\\
 
 
-\begin{codesnippet}
-\begin{verbatim}
-page_directory* get_page_directory() {
-    page_directory* pd = (page_directory*) PAGES;
-    pd += paginas * 4096;
-    int i;
-    for (i = 0; i < 1024; i++) {
-        pd[i] = (page_directory) {};
-    }
+Para administrar la memoria en el área libre, tenemos un contador de páginas utilizadas denoninándolo \textit{páginas}. Luego contamos con las funciones \textit{get_page_directory} y \textit{get_page_table} las cuales nos brindan un nuevo page directory o una nueva page table correspondientemente.
 
-    pd[0] = (page_directory) {
-        .base = 0x28,
-        .rw = 0x1,
-        .p = 1
-    };
-
-    paginas++;
-
-    return pd;
-}
-\end{verbatim}
-\end{codesnippet}
+\textcolor{red}{Todo esto aca del punto A esta re turbio...mirar que onda... ACA HAY QUE PONER GET_PAGE_TABLE Y GET_PAGE_DIRECTORY???}\\
 
 
-\begin{codesnippet}
-\begin{verbatim}
-page_table* get_page_table() {
-    page_table* pgt = (page_table*) PAGES;
-    pgt += paginas * 0x1000;
-    int i;
-    for (i = 0; i < 1024; i++) {
-        pgt[i] = (page_table) {};
-    }
 
-    paginas++;
+% \begin{codesnippet}
+% \begin{verbatim}
+% page_directory* get_page_directory() {
+%     page_directory* pd = (page_directory*) PAGES;
+%     pd += paginas * 4096;
+%     int i;
+%     for (i = 0; i < 1024; i++) {
+%         pd[i] = (page_directory) {};
+%     }
 
-    return pgt
-    };
-}
-\end{verbatim}
-\end{codesnippet}
-{\large b)} La rutina \textit{mmu_inicializar_dir_zombi} se encarga de inicializar un directorio
+%     pd[0] = (page_directory) {
+%         .base = 0x28,
+%         .rw = 0x1,
+%         .p = 1
+%     };
+
+%     paginas++;
+
+%     return pd;
+% }
+% \end{verbatim}
+% \end{codesnippet}
+
+
+% \begin{codesnippet}
+% \begin{verbatim}
+% page_table* get_page_table() {
+%     page_table* pgt = (page_table*) PAGES;
+%     pgt += paginas * 0x1000;
+%     int i;
+%     for (i = 0; i < 1024; i++) {
+%         pgt[i] = (page_table) {};
+%     }
+
+%     paginas++;
+
+%     return pgt
+%     };
+% }
+% \end{verbatim}
+% \end{codesnippet}
+
+{\large b)} \underline{mmu_inicializar_dir_zombi}\\
+
+La rutina \textit{mmu_inicializar_dir_zombi} se encarga de inicializar un directorio
 de p\'aginas y tablas de p\'aginas para una tarea, respetando la figura 6. Copia
 el c\'odigo de la tarea a su \'area asignada, es decir la posici\'on indicada por el jugador dentro
-del mapa y mapea dichas p\'aginas a partir de la direcci\'on virtual 0x08000000(128MB).
+del mapa y mapea dichas p\'aginas a partir de la direcci\'on virtual 0x08000000(128MB).\\
+
+\textcolor{red}{Este punto B tambien esta re turbio...}\\
 
 
-\begin{codesnippet}
-\begin{verbatim}
-/* Guerrero = 0, Mago = 1, Clerigo = 2
-   player = 0 es A
-   player = 1 es B
-*/
-  page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, 
-  unsigned int y) {
+{\large c)} \underline{Mapear y Des-Mapear p\'agina.}\\
 
-    page_directory* pd = get_page_directory();
-    unsigned int x = (player ? 79 : 2);
+ La rutina \textit{mmu_mapear_p\'agina} permite armar toda la estructura necesaria para que, dada una direcci\'on virtual, un puntero a Page Directory, una direcci\'on f\'isica y los atributos deseados (lectura/escritura y nivel); se mapee la direcci\'on virtual a la f\'isica.\\
+ 
+El comportamiento de la funci\'on \textbf{mmu_mapear_p\'agina} consiste en :
 
-    unsigned int offset_x[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
-    unsigned int offset_y[9] = {0, 0, -1, 1, -1, 1, 0, 1, -1};
+\begin{itemize}
+\item[$\triangleright$] Obtener el offset del Page_directory (\textit{directory}) shifteando a la derecha 22 bits la direcci\'on virtual pasada por par\'ametro.
+\item[$\triangleright$] Obtener el offset del Page_table (\textit{table}) shifteando a la derecha 12 bits la direcci\'on virtual pasada por par\'ametro luego de haberle hecho un \emph{and} con 0x003FF000 as\'i obtengo s\'olo los bits de inter\'es.
+\item[$\triangleright$] Si el \'indice \textit{directory} del Page Directory tiene el bit presente = 0, entonces debemos setear la base obteniendo una nueva Page Table (con la funci\'on get_page_table), d\'andole permismos de escritura y nivel acorde a lo pasado por par\'ametro y seteando el bit de presente.
+\item[$\triangleright$] Obtener el puntero a la Page Table (\textit{pt}), accediendo al \'indice \textit{directory} del Page Directory pasado por par\'ametro, lo shifteamos a la izquierda 12 bits as\'i tenemos la direcci\'on de la p\'agina donde se encuentra la Page Table.
+\item[$\triangleright$] En el \'indice \textit{table} de la Page Table apuntada por \textit{pt} le asignamos la direcci\'on f\'isica pasada por par\'ametro shifteada a la derecha 12 bits, asign\'andole permisos de lectura/escritura acorde y nivel a lo pasado por par\'ametro y seteando el bit de presente.
+\item[$\triangleright$] Por \'ultimo, ejecutamos \emph{tlbflush} para que se invalide la cache de traducci\'on de direcciones.
+\end{itemize}
 
-    /* En este for se mapean las nueve páginas correspondientes a un jugador */
-    int i, _x, _y;
-    for(i = 0; i < 9; i++) {
-        _x = y + offset_x[i] * (player ? 1 : -1);  \\ x es la posición x dentro del mapa
-        _y = x + offset_y[i] * (player ? 1 : -1);  \\ y es la posición y dentro del mapa
+\bigskip
 
-        /* La función get_physical_address devuelve la dirección física en memoria
-        a la cual le corresponde el par (x, y) pasado por parámetro */      
-        mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 0);      
-    }
-
-    /* Código para copiar la tarea del Zombie */
-    int address = address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
-    i = 0;
-    unsigned char *code = (unsigned char *) 0x8000000;
-    unsigned char * paddress = (unsigned char*) address;
-    while (i++ < 0x1000) {
-        code[i] = paddress[i];
-    }
-    
-    return pd;
-}
-\end{verbatim}
-\end{codesnippet}
+A veces, vamos a necesitar des-mapear una p\'agina para que, bajo el cr3 actual, no se tenga m\'as permiso de acceso a la misma. Por este motivo, contamos con la funci\'on \textit{mmu_unmapear_pagina}.\\
 
 
-
-{\large c)} La rutina \textit{mmu_mapear_p\'agina} permite mapear la p\'agina f\'isica correspondiente a su f\'isica en la direcci\'on virtual utilizando cr3.
-
-\begin{codesnippet}
-\begin{verbatim}
-void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fisica, 
-   unsigned char rw, unsigned char us) {
-
-    unsigned int directory = (virtual >> 22);
-    unsigned int table     = (virtual & 0x003FF000) >> 12;
-
-    page_table* pt = (page_table*) (pd[directory].base << 12);
-
-    if (pd[directory].p == 0){
-        pd[directory].base = ((unsigned int) get_page_table()) >> 12;
-        pd[directory].rw = rw;
-	    pd[directory].us = us;
-        pd[directory].p = 1;
-    }
-
-    pt = (page_table*) (pd[directory].base << 12);
-    pt[table].base = fisica >> 12;
-    pt[table].rw = rw;
-    pt[table].us = us;
-    pt[table].p = 1;
-
-    tlbflush();
-}
-\end{verbatim}
-\end{codesnippet}
-
-
-\textit{mmu_unmapear_pagina }  borra el mapeo creado en la direcci\'on virtual virtual utilizando cr3. \\
-
-
-\begin{codesnippet}
-\begin{verbatim}
- void mmu_unmapear_pagina(unsigned int virtual,page_directory* cr3){
- 	unsigned int directory = (virtual >> 22);
-    unsigned int table     = (virtual & 0x003FF000) >> 12;
-
-    page_table* pt = (page_table*) (cr3[directory].base << 12);
-
-    if (cr3[directory].p != 0){
-        pt = (page_table*) (cr3[directory].base << 12);
-        pt[table].p = 0;
-    }
-
-    tlbflush();
- }
-\end{verbatim}
-\end{codesnippet}
+La funci\'on \textbf{mmu_unmapear_pagina} va a recibir como par\'ametro una direcci\'on virtual y el cr3 actual. El comportamiento de esta funci\'on, si el bit de presente del Page Directory al que apunta al cr3 est\'a seteado, va a consistir en el simple acceso al Page Directory apuntado por el cr3, accediendo al \'indice descripto en la direcci\'on virtual pasada por par\'ametro. Luego dirigirse al Page Table apuntado por este, accediendo al \'indice que se encuentra en la direcci\'on virtual y una vez ah\'i limpiar el bit de presente. En otro caso, no es necesario tomar ninguna acci\'on.
 
 \newpage
 \section{Ejercicio 5}
 
-{\large a)} Completamos las entradas necesarias en la IDT para asociar una rutina a la interrupci\'on del
-reloj, otra a la interrupci\'on de teclado y por \'ultimo una a la interrupci\'on de software 0x66. Es decir las posiciones 32,33 y 66.
+{\large a)} \underline{Entradas necesarias en la IDT.}\\
 
+Completamos las entradas necesarias en la IDT para asociar una rutina a la interrupci\'on del
+reloj, otra a la interrupci\'on de teclado y por \'ultimo una a la interrupci\'on de software 0x66. Es decir las posiciones 32, 33 y 102.
+
+Las primeras dos van a ser de privilegio 0 y la \'ultima de privilegio 3, asign\'andoselo mediante sus atributos.\\
+
+\textcolor{red}{HASTA ACA LLEGUE, NO DOY FE DE LO DE ABAJO. IGUAL ARRIBA TAMBIEN HAY ANOTACIONES EN ROJO!}\\
 
 {\large b)} A continuación, la rutina asociada a la interrupci\'on del reloj, para que por cada tick llame a la
 funci\'on screen pr\'oximo reloj. La misma se encarga de mostrar cada vez que se llame, la
