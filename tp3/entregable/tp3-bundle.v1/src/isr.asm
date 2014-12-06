@@ -49,12 +49,12 @@ _isr%1:
     mov [registers_snapshot+52],ss
     mov eax,0
     lea ebx,[registers_snapshot+52]
-.stack
+.stack:
     cmp eax,10
     je .endstack
     mov [ebx+eax*4],ebp
     jmp .stack
-.endstack
+.endstack:
     mov eax, %1
     push registers_snapshot
     push eax
