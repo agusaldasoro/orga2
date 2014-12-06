@@ -139,7 +139,7 @@ void print_map() {
 
     text = "x x x x x x x x x x",0;
     print_string(text, 4, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
-    print_string(text, 55, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
+    print_string(text, 55, 48, getFormat(C_FG_BLUE, 0, C_BG_BLACK  , 0));
 
     /** Imprime puntajes */
     text = "00",0;
@@ -224,7 +224,7 @@ void print_debugger(unsigned int player, unsigned char class){
     }
 
 //La barra de estado de que jugador y zombie es
-    for (x = 25; x < 55; ++x){
+    for (x = 26; x < 54; ++x){
         screen[8][x] = (player ? azul : rojo);
     }
     u8 attr = getFormat(C_FG_WHITE, 0, (player ? C_BG_BLUE : C_BG_RED), 0);
