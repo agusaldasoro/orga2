@@ -73,8 +73,12 @@
 
 %\normalsize
 \newpage
-\section{Ejercio 1}
-{\large a)} Armamos los cuatro segmentos de la GDT, llam\'andolos: 
+\section{Ejercicio 1}
+{\large a)} \underline{Tabla de descriptores de la GDT.} \\
+
+Al momento de armar la GDT, acorde a lo dispuesto en el enunciado, dejamos las primeras siete entradas de la tabla de descriptores libres. Luego, a partir de la posici\'on 8 dejamos los descriptores de segmento pedidos: c\'odigo y datos nivel 0 y c\'odigo y datos nivel 3.
+
+Armamos los cuatro segmentos de la GDT, llam\'andolos: 
 \begin{codesnippet}
 \begin{verbatim}
     [GDT_IDX_CODE_0] = (gdt_entry) ; 
@@ -84,57 +88,36 @@
 \end{verbatim}
 \end{codesnippet}
     
-A los cuatro les seteamos el mismo \emph{l\'imite}: 0x26EFF = ... , y la misma \emph{base} en 0. El \emph{segment type} var\'ia depende el segmento: CODE_0: 0x0A= ... , CODE_3: 0x0F= ... , DATA_0 y DATA_3: 0x02= ... . El \emph{Descriptor type} va en todos para system, por lo tanto es 0. El \emph{Descriptor privilege level} coincide con el nombre del descriptor (0 para CODE_0 y DATA_0; 3 para CODE_3 y DATA_3). El bit de \emph{Present} va para todos en 1 y los bit de \emph{Available for use by system software} y \emph{l} van para todos en 0. El bit de \emph{Default operation size} va para todos en 1 porque es un c\'odigo de 32bits. El bit de \emph{Granularity} va para todos en 1.\\
+A los cuatro les seteamos el mismo \emph{l\'imite}: \textbf{0x26EFF} y la misma \emph{base} en \textbf{0}, de este modo los cuatro descriptores de segmento direccionan a los primeros \emph{623MB} de memoria. El \emph{segment type} var\'ia depende el segmento: CODE_0: \textbf{0x0A} (code execute/read), CODE_3: \textbf{0x0F} (code execute/read, conforming, accesed), DATA_0 y DATA_3: \textbf{0x02} (data read/write). El \emph{Descriptor type} va en todos para system, por lo tanto es \textbf{0}. El \emph{Descriptor privilege level} coincide con el nombre del descriptor (\textbf{0} para CODE_0 y DATA_0; \textbf{3} para CODE_3 y DATA_3). El bit de \emph{Present} va para todos en \textbf{1} y los bit de \emph{Available for use by system software} y \emph{l} van para todos en \textbf{0}. El bit de \emph{Default operation size} va para todos en \textbf{1} porque es un c\'odigo de 32bits. El bit de \emph{Granularity} va para todos en \textbf{1}.\\
     
 
 
-{\large b)} Se adjunta el c\'odigo necesario para pasar a modo protegido y setear la pila del kernel en
-la direcci\'on 0x27000.
+{\large b)} \underline{Pasaje a modo protegido y seteo de la pila del kernel.}\\
+
+Para pasar a modo protegido los pasos que debemos llevar a cabo son:
 
 
+\begin{itemize}
+\item[$\triangleright$] Completar la GDT (resuelto en el inciso A).
+\item[$\triangleright$] Deshabilitar interrupciones (para ello se ejecuta la instrucci\'on \emph{cli}).
+\item[$\triangleright$] Habilitar A20 (en nuestro caso se resuelve haciendo \emph{call habilitar_A20}).
+\item[$\triangleright$] Cargar el registro GDTR con la direcci\'on base de la GDT (lo hacemos con la instrucci\'on  \\ \emph{lgdt} \emph{ [GDT_DESC]} la etiqueta GDT_DESC apunta al descriptor de la GDT en el c\'odigo).
+\item[$\triangleright$] Una vez hecho esto, estamos en condiciones de setear el bit PE del registro CR0 (debemos hacer: \emph{mov eax,cr0 ; or eax,1 ; mov cr0,eax}).
+\item[$\triangleright$] Lo siguiente a realizar es el \emph{jump far} a la siguiente instrucci\'on (utilizamos el selector de segmento \emph{0x50} y de offset la etiqueta \emph{modo_protegido} \textcolor{red}{por que el selector es 0x50??}).
+\item[$\triangleright$] Una vez ya en modo protegido, nos encontramos trabajando en 32 bits y ahora es cuando cargamos los registros de segmento (a los registros  \emph{es, ds, ss y gs} les asignamos el valor de \emph{0x40} y al registro \emph{fs} le asignamos el valor \emph{0x60} \textcolor{red}{aca habr\'ia que poner el porque de estos valores??}).
+\end{itemize}
+ \bigskip	
+Para setear la pila del kernel en la direcci\'on 0x27000 debemos llevar a cabo la siguiente instrucci\'on: 
 \begin{codesnippet}
 \begin{verbatim}
-    ; Deshabilitar interrupciones
-    cli
-  
-    ; Habilitar A20
-    call habilitar_A20
-	
-    ; Cargar la GDT
-    lgdt [GDT_DESC]
-
-    ; Setear el bit PE del registro CR0
-    mov eax,cr0
-    or eax,1
-    mov cr0,eax
-
-    jmp 0x50:modo_protegido
-\end{verbatim}
-\end{codesnippet}
-\begin{codesnippet}
-\begin{verbatim}
-BITS 32
-modo_protegido:
-
-    ; Establecer selectores de segmentos
-    xor eax, eax
-    mov ax, 0x40
-     
-    mov es, ax
-    mov ds, ax
-    mov ss, ax    
-    mov gs, ax
-
-    mov ax, 0x60 
-    mov fs, ax
-    
-    ; Establecer la base de la pila
     mov ebp, 0x27000
 \end{verbatim}
 \end{codesnippet}
 
-{\large c)} Segmento adicional que describe el \'area de la pantalla en memoria que puede
-ser utilizado solo por el kernel:
+{\large c)} \underline{Segmento adicional que describe el \'area de la pantalla en memoria que puede ser utilizado} \\ \underline{s\'olo por el kernel.}
+\\
+\textcolor{red}{HELP! aca no se que ponerrrrrrrr}
+
 \begin{codesnippet}
 \begin{verbatim}
     ; Cambiar modo de video a 80 X 50
@@ -147,142 +130,101 @@ ser utilizado solo por el kernel:
 \end{codesnippet}
 
 
-{\large d)} La siguiente es la rutina que se encarga de limpiar la pantalla y pintar el \'area del mapa
-un fondo de color verde, junto con las dos barras laterales para cada uno de
-los jugadores (rojo y azul).
+{\large d)} \underline{Rutina que se encarga de limpiar la pantalla y pintar el \'area del mapa}
+\\
+
+En este punto debemos establecer un fondo de color verde, junto con las dos barras laterales para cada uno de los jugadores (una roja y otra azul). Para esto, debemos contar con una funci\'on que limpie la pantalla en un primer momento: \emph{clear_screen}.\\
+
+La funci\'on \textbf{\textit{clear_screen}}, implementada en lenguaje C, se va a encargar de: 
+
+\begin{itemize}
+\item[$\triangleright$] Guardar en una variable local: \emph{size} el tama\~no de la pantalla (VIDEO_COLS * VIDEO_FILS).
+\item[$\triangleright$] Luego va a hacer un while desde \emph{0} hasta \emph{size} que, empezando por la direcci\'on donde est\'a almacenada la memoria de video, vaya guardando el caracter que es todo negro.
+\end{itemize}
+
+De este  modo, logramos hacer que toda el \'area de la pantalla quede ``pintada'' de negro. \\
+
+\bigskip
+
+En segunda instancia, armamos la funci\'on \emph{print_map}. La funci\'on \textbf{\textit{print_map}}, tambi\'en implementada en lenguaje C, con el fin de pintar el \'area del mapa con los colores deseados, posee el siguiente comportamiento:
+
+\begin{itemize}
+\item[$\triangleright$] En un primer momento, llama a la funci\'on \emph{clear_screen}.
+\item[$\triangleright$] Se arman cuatro variables locales: blue, red, green y black. Cada una de ellas es un caracter completamente de su color.
+\item[$\triangleright$] Mediante dos \textit{fors} anidados recorremos toda el \'area del mapa, y dependiendo de la posici\'on en la que se encuentre es el color que le va a ser asignado (rojo a las primeras dos columnas de la izquierda, azul a las \'ultimas dos, negro a las \'ultimas cinco filas y el resto en verde).
+\end{itemize}
+
+Luego este c\'odigo fue complejizado para que pueda imprimir los puntos de los jugadores y sus respectivos puntajes por zombie tal cual debe ser cuando comienza el juego.
+\newpage
+\section{Ejercicio 2}
+%{\large a)} 
+\textcolor{red}{ESTO HAY QUE HACERLO!!!!!!!!} \\
+%Inicializamos las entradas 0-19 en la IDT.
+
+
+
+
+%{\large b)} \textcolor{red}{Para probar lo programado anteriormente hicimos:}
+
+%\begin{codesnippet}
+%\begin{verbatim}
+%    ; Inicializar la IDT
+ %   call idt_inicializar
+ %   ; Cargar IDT
+  %  lidt [IDT_DESC]
+%
+ %   ; test para que salte la divide by 0 exception (0)
+  %  mov edx,0
+   % mov ecx,0
+   % mov eax,3
+    %div ecx
+%\end{verbatim}
+%\end{codesnippet}
+
+\newpage
+\section{Ejercicio 3}
+\textcolor{red}{Limpiar el buffer de video es hacer clear_screen???... Asumo que s\'i.}\\
+
+
+{\large a)} \underline{Implementaci\'on completa de print_map.} \\
+
+En el ejercicio 1 ya hab\'iamos logrado armar \textbf{clear_screen} y \textbf{print_map}, esta \'ultima contaba con una funcionalidad acotada. S\'olo armaba cuatro bloques de colores. Ahora lo que vamos a hacer es extender la funci\'on \textbf{print_map} para que escriba los puntos de los jugadores y marque el estado de los zombies, tal como aparece en la \textit{figura 9} del enunciado.\\
+
+
+La funci\'on print_map la vamos a extender sum\'andole las siguientes instrucciones:
+
+\begin{itemize}
+\item[$\triangleright$] Debemos armar los \emph{cuadrados de puntaje} para el jugador rojo y para el jugador azul. Nos movemos entre las \'ultimas cinco filas, desde la columna 35 hasta la 39 se pintan con el caracter completamente rojo y desde la columna 40 hasta la 44 se pintan con el caracter completamente azul.
+\item[$\triangleright$] Escribimos en el centro de cada cuadrado el puntaje inicial: 0. Para ello creamos dos caracteres que sean 0 y cada uno con los atributos necesarios para que sean: fondo rojo, letra blanca y fondo azul, letra blanca.
+\item[$\triangleright$] Luego escribimos la cantidad de zombies restantes, para lo cual se utilizan dos caracteres id\'enticos a los mencionados arriba. Estos puntajes se ubican cada uno a un costado de su cuadrado respectivo.
+\item[$\triangleright$] Por \'ultimo, resta escribir el estado de los zombies. Generamos un char* que sean todos los n\'umeros de zombies y d\'andole formato de fondo negro, caracter blanco los copiamos dos veces: uno para el jugador azul y otro para el jugador rojo. Como todos los zombies se encuentran disponibles, generamos otro char* que sean diez `x' y ubicamos en su posici\'on correspondiente uno que posea los atributos de fondo negro, caracter azul y otro de fondo negro, caracter rojo.
+\end{itemize}
+
+Con el objetivo de hacer que lo descripto anteriormente sea una tarea m\'as simple contamos con las funciones: \emph{print_string} y \emph{get_format}.\\
+
+La funci\'on \textbf{print_string} recibe una posici\'on en el mapa (x,y), un char* con el texto que queremos imprimir en pantalla y un short con los atributos deseados. \textcolor{red}{PONER ALGO DE AVOID PRINT BUG}. Dentro de un \textit{for} que recorre horizontalmente la posici\'on en memoria a partir de la posici\'on (x,y), se va avanzando el char* y en cada iteraci\'on se le asigna a esa posici\'on de memoria el char actual con los atributos pasados por par\'ametro.\\
+%    // avoid black print bug
+%    unsigned char a = (unsigned char) attr;
+%    if (a == 0) {
+%        a = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
+%    }
+
+La funci\'on \textbf{get_format} es una funci\'on simple la cual recibe como par\'ametro los atributos deseados y los devuelve con el formato de un s\'olo char, que es el que debemos utilizar.
 \begin{codesnippet}
 \begin{verbatim}
-    ; Inicializar pantalla
-    call clear_screen
-    call print_map ;código que va a pintar el mapa de los colores deseados
-\end{verbatim}
-\end{codesnippet}
-\begin{codesnippet}
-\begin{verbatim}
-void clear_screen() {
-    int size = VIDEO_COLS * VIDEO_FILS;    
-    ca (*p) = (ca (*)) VIDEO; 
-    int i = 0;
-    ca empty;
-    empty.c = 0;
-    empty.a = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
-    while(i < size) {
-        p[i] = empty;
-        i++;
-    }
+unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned char back_color, 
+                        char blink) {
+    return fore_color | fore_bright | back_color | blink; 
 }
 \end{verbatim}
 \end{codesnippet}
 
-\newpage
-\section{Ejercio 2}
-{\large a)} Inicializamos las entradas 0-19 en la IDT.
+\textcolor{red}{HASTA ACA HICE, DE ACA PARA ABAJO NO DOY FE DE NADA...}
+
+{\large b)} \underline{Rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel.}\\
 
 
-
-
-
-{\large b)} Para probar lo programado anteriormente hicimos:
-
-\begin{codesnippet}
-\begin{verbatim}
-    ; Inicializar la IDT
-    call idt_inicializar
-    ; Cargar IDT
-    lidt [IDT_DESC]
-
-    ; test para que salte la divide by 0 exception (0)
-    mov edx,0
-    mov ecx,0
-    mov eax,3
-    div ecx
-\end{verbatim}
-\end{codesnippet}
-
-\newpage
-\section{Ejercio 3}
-{\large a)} La siguiente es la rutina que se encarga de limpiar el buffer de video y pintarlo como indica
-la figura 9. 
-
-\begin{codesnippet}
-\begin{verbatim}
-void print_map() {
-    int cols = VIDEO_COLS;
-    int rows = VIDEO_FILS;
-
-    ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
-
-	/* Defino los colores que voy a usar */
-    ca red;
-    red.c = 0;
-    red.a = getFormat(C_FG_RED, 0, C_BG_RED, 0);
-    ca blue;
-    blue.c = 0;
-    blue.a = getFormat(C_FG_BLUE, 0, C_BG_BLUE, 0);
-    ca green;
-    green.c = 0;
-    green.a = getFormat(C_FG_GREEN, 0, C_BG_GREEN, 0);
-    ca black;
-    black.c = 0;
-    black.a = getFormat(C_FG_BLACK, 0, C_BG_BLACK, 0);
-
-    int y,x;
-
-    clear_screen();
-    
-    for(y = 0; y < rows; y++) {
-        for(x = 0; x < cols; x++) {
-            if (y >= rows-5) {
-                screen[y][x] = black;		//las últimas 5 filas van de negro
-            } else if (x == cols-1) {
-                screen[y][x] = blue;		//el jugador de la derecha es azul
-            } else if (x == 0) {
-                screen[y][x] = red;			//el jugador de la izquierda es rojo
-            } else {
-                screen[y][x] = green;		//el terreno de juego es verde
-            }
-        }
-    }
-    /*Armo el cuadrado para el puntaje rojo */
-    for(y = rows-5; y < rows; y++) {
-        for(x = 35; x < 40; x++) {
-            screen[y][x] = red;
-        }
-    }
-    /*Armo el cuadrado para el puntaje azul */
-    for(y = rows-5; y < rows; y++) {
-        for(x = 40; x < 45; x++) {
-            screen[y][x] = blue;
-        }
-    }
-
-\end{verbatim}
-\end{codesnippet}
-
-\begin{codesnippet}
-\begin{verbatim}
-    /** Escribe a los numeritos de los zombies de cada jugador con sus cruces*/
-    char * text = "1 2 3 4 5 6 7 8 9 10", 0;
-    print_string(text, 4, 46, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
-    print_string(text, 60, 46, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
-
-    text = "x x x x x x x x x x",0;
-    print_string(text, 4, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
-    print_string(text, 60, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
-
-    /** Imprime puntajes */
-    text = "00",0;
-    print_string(text, 31, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
-    print_string(text, 48, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
-
-    text = "0",0;
-    print_string(text, 37, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
-    print_string(text, 42, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
-}
-\end{verbatim}
-\end{codesnippet}
-
-{\large b)} Se muestran las rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel
+Se muestran las rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel
 (mmu_inicializar_dir_kernel). 
 
 \begin{codesnippet}
@@ -340,7 +282,7 @@ void mmu_inicializar_dir_kernel() {
 \end{codesnippet}
 
 \newpage
-\section{Ejercio 4}
+\section{Ejercicio 4}
 {\large a)} Para administrar la memoria en el área libre, tenemos un contador de páginas utilizadas denoninándolo \textit{páginas}. Luego contamos con las funciones \textit{get_page_directory} y \textit{get_page_table} las cuales nos brindan un nuevo page directory o una nueva page table correspondientemente.
 
 
@@ -486,7 +428,7 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
 \end{codesnippet}
 
 \newpage
-\section{Ejercio 5}
+\section{Ejercicio 5}
 
 {\large a)} Completamos las entradas necesarias en la IDT para asociar una rutina a la interrupci\'on del
 reloj, otra a la interrupci\'on de teclado y por \'ultimo una a la interrupci\'on de software 0x66. Es decir las posiciones 32,33 y 66.
@@ -573,7 +515,7 @@ _isr33:
 \end{codesnippet}
 
 \newpage
-\section{Ejercio 6}
+\section{Ejercicio 6}
 {\large a)} Definimos tres entradas en la GDT que consideramos necesarias para ser usadas como descriptores
 de TSS: una para ser utilizada por la tarea inicial, otra para la tarea actual y una \'ultima para la tarea siguiente.\\
 
@@ -673,7 +615,7 @@ idle:
 \end{codesnippet}
 
 \newpage
-\section{Ejercio 7}
+\section{Ejercicio 7}
 %{\large a)} Construir una funci\'on para inicializar las estructuras de datos del scheduler.\\
 
 %\textcolor{red}{COMPLETAR!}\\
