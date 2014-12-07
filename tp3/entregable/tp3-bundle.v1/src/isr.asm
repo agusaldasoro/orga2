@@ -110,7 +110,7 @@ _isr32:
 
     mov [sched_tarea_selector], ax
     call fin_intr_pic1
-    ;popad
+    popad
     xchg bx, bx
     jmp far [sched_tarea_offset]
     jmp .end
@@ -164,8 +164,8 @@ _isr33:
 
 global _isr102
 extern game_move_current_zombi
-extern entrarEnIdl
-extern salirDeIdl
+;extern entrarEnIdl
+;extern salirDeIdl
 _isr102:
     xchg bx, bx
     pushad
@@ -173,10 +173,10 @@ _isr102:
     call game_move_current_zombi
     pop eax
     xchg bx, bx
-    call entrarEnIdl
+    ;call entrarEnIdl
     popad
     jmp 0x80:0
-    call salirDeIdl
+    ;call salirDeIdl
 
     ; pd:eax,delta_x:edi,delta_y:esi, tipo: dx
     xchg bx, bx

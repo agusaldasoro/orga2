@@ -23,7 +23,7 @@ extern resetear_pic
 extern tss_inicializar
 extern GDT_TSS_IDLE
 
-extern entrarEnIdl
+;extern entrarEnIdl
 ;; Saltear seccion de datos
 
 %define GDT_TSS_SELEC (GDT_TSS_IDLE * 8)
@@ -175,7 +175,7 @@ modo_protegido:
     ; Habilitar interrupciones
     sti
     ; Saltar a la primera tarea: Idle
-    call entrarEnIdl
+    ;call entrarEnIdl
     jmp 0x80:0
 
     ; Ciclar infinitamente (por si algo sale mal...)
