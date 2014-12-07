@@ -81,6 +81,10 @@ El objetivo de este Trabajo Práctico es evaluar la eficiencia del modelo de pro
 
 \section{Contexto}
 
+\input{enunciado}
+
+
+\newpage
 Abordando el objetivo de este trabajo, realizamos una experimentaci\'on enfocada en reducir el tiempo de c\'omputo de un programa basado en dos sucesos que tienen la capacidad de afectarlo. \\
 \indent Por un lado se encuentra la \textit{capacidad de c\'omputo}, la cual limita la cantidad de operaciones aritm\'eticas que el procesador puede paralelizar. Si el programa ejecuta un uso intensivo en operaciones aritm\'eticas, al añadirle nuevas operaciones de esta \'indole se van a necesitar m\'as ciclos de clock para ejecutarlas. \\
 \indent El otro cuello de botella importante es el \textit{ancho de banda de la memoria}. Cuando el programa ejecuta una instrucci\'on que implica un acceso a memoria, se precisan m\'as ciclos de clock para que la memoria responda, en particular si el dato no se encuentra en el cache.\\
@@ -822,7 +826,7 @@ A continuaci\'on comienza la rutina a llevar a cabo en caso de que el p\'ixel a 
 \newpage
 \section{Enunciado y soluci\'on} 
 
-\input{enunciado}
+%\input{enunciado}
 
 \section{Conclusiones y trabajo futuro}
 \indent\emph{ \textcolor{red}{Si bien un lenguaje ensamblador solo es utilizable en determinada gama de procesadores (ESTO HAY QUE SACARLO DIJO MATIAS)}}, los resultados de nuestras mediciones han demostrado que la implementación de los filtros en este lenguaje han logrado una performance que el gcc no logro conseguir. \\

@@ -50,7 +50,7 @@ objdump -Mintel -D cropflip_c.o
 \end{codesnippet}
 
 ¿Cómo es el código generado? 
-Indicar
+Indicar\\
 \begin{inparaenum}[\itshape a\upshape)]
     \item Por qué cree que hay otras funciones además de \verb|cropflip_c|
     \item Cómo se manipulan las variables locales
@@ -68,11 +68,11 @@ Indicar
 
 Compile el código de C con flags de optimización. Por ejemplo, pasando el flag 
 \verb|-O1|\footnote{agregando este flag a \texttt{CCFLAGS64} en el makefile}. 
-Indicar
+Indicar\\
 \begin{inparaenum}
-    \item Qué optimizaciones observa que realizó el compilador
-    \item Qué otros flags de optimización brinda el compilador
-    \item Los nombres de tres optimizaciones que realizan los compiladores.
+    \item Qué optimizaciones observa que realizó el compilador\\
+    \item Qué otros flags de optimización brinda el compilador\\
+    \item Los nombres de tres optimizaciones que realizan los compiladores.\\
 \end{inparaenum}\\
 \\
 \indent GCC provee un arsenal de optimizaciones disponibles para que podamos usar cuando lo creamos conveniente, asímismo provee unos flags para poder compilar el código con un conjunto de optimizaciones, estos son O1, O2, O3, Os, entre otros. O1, O2 y O3 son optimizaciones generales no agresivas, es decir, no deberían modificar el funcionamiento del programa. Otras optimizaciones podrían asumir que todas las operaciones aritméticas son sin signo o que están bien implementadas y no es necesario chequear la consistencia de los resultados (fno-math-errno). Estas optimizaciones tienen como objetivo mejorar la performance del programa, sin embargo Os tiene como objetivo reducir el tamaño del ejecutable, es decir, activa todas las optimizaciones que contribuyen a reducir la cantidad de instrucciones regardless del impacto que esto pueda tener en la performance del programa. \\
@@ -113,35 +113,46 @@ Luego de ejecutar 10 veces el filtro Cropflip obtuvimos los siguientes resultado
 		\hline
 	\textbf{Esperanza}	\\
 		\hline
-59.684 & 1.020.752,5	\\
+59.684 & 1.020.752,5 \\
 		\hline
-		\textbf{Desvío standard}	\\
+		\textbf{Desvío est\'andar}	\\
 		\hline
-13.720,5329 & 203.626,443	\\
+13.720,5329 & 203.626,443 \\
 		\hline
 	\end{tabular}\\\\
-	
-	\textcolor{red}{Aca puso Matias que el desvio standar en c no le da, VOLVER A CALCULARLO.} \\
+
+
 	El cuadro denota la cantidad de ciclos de clock utilizada por cada ejecuci\'on del programa. \\
 	\\
+	Se puede apreciar que la esperanza (promedio de las mediciones) bajo Lenguaje C es notablemente mayor para las diez mediciones llevadas a cabo. Adem\'as poseen una desviaci\'on est\'andar tambi\'en mayor. La desviación estándar mide el grado de dispersión o variabilidad, por lo que demuestra menor estabilidad en las mediciones bajo Lenguaje C. Por lo tanto podemos afirmar que bajo el contexto de nuestras mediciones el tiempo de ejecuci\'on del mismo programa en lenguaje ASM posee un tiempo de c\'omputo menor. \\
+\\	
+	
 	Luego de eliminar los dos valores m\'as altos y los dos valores m\'as bajos, recalculamos obteniendo los siguientes datos: \\
-	\textbf{Esperanza}: 62.869,166
- (ASM) y 1.087.346,333(C)\\
-	\textbf{Desvío standard}:	9.719,205 (ASM) y 145.528,202(C)\\
-	Se puede ver que al eliminar los outliers, la esperanza comienza a converger a su valor esperado y el desvío standard disminuye. \\
-\\
-\newpage
-\begin{figure}
+	\textbf{Esperanza}: 62.869,16667(ASM) y 1.087.346,333(C)\\
+	\textbf{Desvío est\'andar}:	9.719,205547(ASM) y 145.528,2027(C)\\
+
+	Se puede ver que al eliminar los outliers, el valor de la esperanza aumenta en ambos casos. Al haber hecho una medici\'on tan peque\~na, los c\'alculos de la esperanza no son tan estables y no son los m\'as ``parecidos'' a la realidad. Lo que s\'i ocurre es que al eliminar los valores mas alejados del promedio, como era de esperar, disminuye la desviaci\'on est\'andar al haber dejado s\'olo las mediciones m\'as cercanas entre s\'i.\\
+
+\begin{figure}[h!]
   \begin{center}
 	\includegraphics[width=0.7\textwidth]{imagenes/13/asm1.jpg}
 	\caption{Assembler}
+      \end{center}
+\end{figure}
+
+\newpage 
+\begin{figure}[h!]
+  \begin{center}
 %	\label{nombreparareferenciar}
 	\includegraphics[width=0.7\textwidth]{imagenes/13/C1.jpg}
 	\caption{C}
   \end{center}
 \end{figure}
-\newpage
-\indent Siendo el Caso 1 las mediciones de esperanza y Desvío standard para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers.\\
+
+\textcolor{red}{Volver a hacer los graficos con los valores que quedaron!!!!!!!}\\
+\indent Siendo el Caso 1 las mediciones de esperanza y Desvío est\'andar para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers.\\
+
+\bigskip
     \item Implementar un programa en C que no haga más que ciclar infinitamente sumando 1 a una variable. Lanzar este programa tantas veces como \emph{cores lógicos} tenga su procesador. Medir otras 10 veces mientras estos programas corren de fondo. Realizar los mismos casos de experimentaci\'on que en el ejercicio anterior.\\
 \end{enumerate}
 Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteriores: \\
@@ -174,44 +185,38 @@ Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteri
 		\hline
 33.750,6 & 565.221,6	\\		
 		\hline
-		\textbf{Desvío standard}	\\
+		\textbf{Desvío est\'andar}	\\
 		\hline
 465,49 & 65.049,34\\
 		\hline
 	\end{tabular}\\\\
 	Luego de eliminar los dos valores m\'as altos y los dos valores m\'as bajos, recalculamos obteniendo los siguientes datos: \\
 	\textbf{Esperanza}: 33.680,5 (ASM) y 543.604(C)\\
-	\textbf{Desvío standard}:	235,364 (ASM) y 462,615(C)\\
-	Ac\'a tambi\'en se puede apreciar que al eliminar los outliers, el Desvío standard disminuye su valor. \\
-\newpage
-\begin{figure}
-  \begin{center}
-	\includegraphics[width=0.7\textwidth]{imagenes/13/asm2.jpg}
-	\caption{Assembler}
-%	\label{nombreparareferenciar}
-	\includegraphics[width=0.7\textwidth]{imagenes/13/C2.jpg}
-	\caption{C}
-  \end{center}
-\end{figure}
-\newpage
-\indent Siendo el Caso 1 las mediciones de esperanza y Desvío standard para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers. Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que fue ejecutado en una computadora con un procesador i5. \textcolor{red}{Podria explicarse un poco mas que pasa con los is}\\
+	\textbf{Desvío est\'andar}:	235,364 (ASM) y 462,615(C)\\
+	Ac\'a tambi\'en se puede apreciar que al eliminar los outliers, el Desvío est\'andar disminuye su valor. \\
+
+Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que fue ejecutado en una computadora con un procesador i5. \textcolor{red}{Podria explicarse un poco mas que pasa con los is}\\
 \\
 \indent Por este motivo, volvimos a ejecutar este caso una mayor cantidad de veces para que el procesador no modifique la frecuencia de clock, obteniendo los siguientes resultados: \\
 \textbf{Esperanza:} 269.945,590 (ASM) y 9.524.152,001 (C) \\
-\textbf{Desv\'io Standard:} 3.801,837 y 7.774.736,417 (C) \\
-\textcolor{red}{El grafico mas importante es este, HACERLO Y SACAR EL OTRO.}
-\\
+\textbf{Desv\'io est\'andar:} 3.801,837 y 7.774.736,417 (C) \\
+\textcolor{red}{Hacer el grafico de este.}\\
+\bigskip
+
 \textit{A partir de aquí todos los experimentos de mediciones deberán hacerse igual 
 que en el presente ejercicio: tomando 10 mediciones, luego descartando 
-outliers y finalmente calculando promedio y Desvío standard.}\\
+outliers y finalmente calculando promedio y Desvío est\'andar.}\\
 \\
 Decidimos: \\
-Realizar 12000 mediciones por experimento, eliminando los primeros mil casos que hayan llevado menos ciclos de clock y los mil casos que hayan llevado la mayor cantidad de ciclos de clock. \\
-Lo determinamos de esta manera, ya que dejar dos mediciones afuera, como dice el enunciado, no tiene influencia en los c\'alculos de la esperanza y la varianza para muestras tan grandes. \\
+
+Realizar 12000 mediciones por experimento, eliminando los primeros dos mil quinientos casos que hayan llevado menos ciclos de clock y los dos mil quinientos casos que hayan llevado la mayor cantidad de ciclos de clock. 
+
+Lo determinamos de esta manera, ya que dejar dos mediciones afuera, como dice el enunciado, no tiene influencia en los c\'alculos de la esperanza y la varianza para muestras tan grandes. 
+
 Luego de experimentar distintas cantidades de casos de testeo, notamos que elegir 7000 valores pertenecientes a la franja del medio de los 12000 es una soluci\'on lo suficientemente estable, por lo cual es la que llevamos a cabo. \\
 \\
 % ******************************************************************************
-%\newpage
+\newpage
 \noindent\textbf{Experimento 1.4 - secuencial vs. vectorial}
 
 En este experimento deberá realizar una medición de las diferencias de 
@@ -223,7 +228,7 @@ Reflejando las siguientes magnitudes: \\
 \\
  \begin{tabular}[c]{|c|c|c|}
 	\hline
-		 & Esperanza & Desv\'io Standard\\
+		 & Esperanza & Desv\'io est\'andar\\
 		\hline
 C -o0 & 6.761.044,5 & 131,463 \\
 \hline
@@ -236,9 +241,12 @@ C -o3 & 266.688 & 0,287 \\
 ASM & 362.232 & 2,079\\
 \hline
 	\end{tabular}\\\\
-Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. Adem\'as, es notorio c\'omo el correr el programa con la orden de -o0 no efect\'ua ninguna optimizaci\'on. Tambi\'en se puede observar que el c\'odigo corrido en C bajo el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler.
-\newpage
-\begin{figure}
+
+
+Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. Adem\'as, es notorio c\'omo el correr el programa con la orden de -o0 no efect\'ua ninguna optimizaci\'on. Tambi\'en se puede observar que el c\'odigo corrido en C bajo el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. \textcolor{red}{Esto se debe a que el flag de optimizaci\'on -o3 lo que hace es blablablaba y por eso es una buena optimizaci\'on para el c\'odigo.}
+
+
+\begin{figure}[h!]
   \begin{center}
 	\includegraphics[width=0.7\textwidth]{imagenes/14.jpg}
   \end{center}
@@ -272,12 +280,14 @@ Realizar un único gráfico que compare:
     \item Las versiones con más instrucciones aritméticas
     \item Las versiones com más accesos a memoria
 \end{inparaenum}
-\textcolor{red}{Poner que instrucciones usamos!!!}\\
+\\
 Acompañar al gráfico con una tabla que indique los valores graficados. \\
+\\
+\textcolor{red}{Las instrucciones aritm\'eticas usadas son: BLA BLA BLA repetidas la cantidad de veces necesitada y los accesos a memoria realizados fueron: BLA BLA BLA.}\\
 \\
  \begin{tabular}[c]{|c|c|c|}
 	\hline
-		Cropflip & Esperanza & Desv\'io Standard\\
+		Cropflip & Esperanza & Desv\'io est\'andar\\
 		\hline
 Versi\'on com\'un & 157.236,897 & 5.334,414 \\
 \hline
@@ -295,18 +305,17 @@ Con 16 accesos a memoria & 342.023,334 & 12.136,799 \\
 \hline
 	\end{tabular}\\\\
 \\
-Se puede percibir c\'omo se ve afectado el tiempo de ejecuci\'on frente al incremento de instrucciones aritm\'eticas m\'as que por los accesos a Memoria.
-\newpage
-\begin{figure}
+
+\begin{figure}[h!]
   \begin{center}
 %	\includegraphics[width=0.7\textwidth]{imagenes/15.jpg}
+ \textcolor{red}{volver a hacer el gr\'afico.'}
   \end{center}
 \end{figure}
-\textcolor{red}{Esta conclusion no se desprende inmediatamente del grafico. Con 4 y 8 accesos a memoria, el programa es m\'as lento. Con 16 accesos pasa algo no intuitivo, que al menos deber\'ia mencionarse (y para intentar entenderlo es clave que pongan qu\'e accesos usaron). \\
-El pico de 16 instrucciones aritm\'eticas tampoco me resulta intuitivo a simple vista.}
-  \newpage
-% ------------------------------------------------------------------------------
+\textcolor{red}{Con 4 y 8 accesos a memoria, el programa es m\'as lento. Con 16 accesos pasa algo no intuitivo, que al menos deber\'ia mencionarse. El pico de 16 instrucciones aritm\'eticas tampoco me resulta intuitivo a simple vista.}
 
+% ------------------------------------------------------------------------------
+  \newpage
 \subsection{Filtro \textit{Sierpinski}}
 
 Programar el filtro \textit{Sierpinski} en lenguaje C y en en ASM haciendo 
@@ -319,12 +328,12 @@ uso de las instrucciones vectoriales (\textbf{SSE}).
 Analizar cuales son las diferencias de performace entre las versiones de C 
 y ASM de este filtro, de igual modo que para el experimento 1.4. \\
 \\
-El siguiente gr\'afico indica la esperanza de la cantidad de ciclos de clock que toma ejecutar el filtro Sierpinski en ASM y en C variando los flags de o0 a o3. \\
+El gr\'afico a continuaci\'on indica la esperanza y el desv\'io est\'andar de la cantidad de ciclos de clock que toma ejecutar el filtro Sierpinski en ASM y en C variando los flags de o0 a o3. \\
 Reflejando las siguientes magnitudes: \\
 \\
  \begin{tabular}[c]{|c|c|c|}
 	\hline
-		 & Esperanza & Desv\'io Standard\\
+		 & Esperanza & Desv\'io est\'andar\\
 		\hline
 C -o0 & 28.801.586,5 & 78,016 \\
 \hline
@@ -338,25 +347,30 @@ ASM & 3.661.626 & 115,583 \\
 \hline
 	\end{tabular}\\\\
 \\
-Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. Donde correr el c\'odigo en C bajo el comando -o0 sigue siendo el caso con mayor esperanza y adem\'as la esperanza del c\'odigo Assembler es menor a la del c\'odigo C con -o3.\\
-\newpage
-\begin{figure}
+
+\begin{figure}[h!]
   \begin{center}
 	\includegraphics[width=0.7\textwidth]{imagenes/21.jpg}
   \end{center}
 \end{figure}
-\newpage
+
+Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. Donde correr el c\'odigo en C bajo el comando -o0 sigue siendo el caso con mayor esperanza (peor caso) y adem\'as la esperanza del c\'odigo Assembler es menor a la del c\'odigo C con -o3. Las optimizaciones -o2 y -o3 arrojan resultados similares, ambos por encima de los valores en ASM. En este caso, notablemente es m\'as eficaz el filtro programado en Assembler.
+
+
 
 % ******************************************************************************
+\newpage
 \vspace*{0.3cm} \noindent
 \textbf{Experimento 2.1 - cpu vs. bus de memoria}
 
 ¿Cuál es el factor que limita la performance en este filtro?
 Repetir el experimento 1.5 para este filtro. \\
+
+Las instrucciones utilizadas son las mismas que en el caso anterior, lo mismo con los accesos a memoria.\\
 \\
  \begin{tabular}[c]{|c|c|c|}
 	\hline
-		 & Esperanza & Desv\'io Standard\\
+		 & Esperanza & Desv\'io est\'andar\\
 		\hline
 Versi\'on com\'un & 2.936.302,152 & 26.416,331 \\
 \hline
@@ -373,16 +387,20 @@ Con 8 accesos a memoria & 2.936.432,138 & 56.870,171 \\
 Con 16 accesos a memoria & 3.051.926,505 & 40.964,812 \\
 \hline
 	\end{tabular}\\\\
-\\
-En este caso, los accesos a memoria influyen m\'as notoriamente la esperanza que las operaciones aritm\'eticas l\'ogicas.
-\newpage
-\begin{figure}
+
+
+\begin{figure}[h!]
   \begin{center}
 %	\includegraphics[width=0.7\textwidth]{imagenes/21B.jpg}
+\textcolor{red}{Aca tambien falta el grafico!}
   \end{center}
 \end{figure}
+
+En este caso, los accesos a memoria influyen m\'as notoriamente en la esperanza que las operaciones aritm\'eticas l\'ogicas. En este caso, se observa un desv\'io est\'andar elevado teniendo en cuenta el tama\~no de las mediciones.\\
+
 \textcolor{red}{Algo parecido al experimento 1.5 \\
-Adem\'as se podr\'ia mencionar que el desv\'io standard es elevado.}
+Adem\'as se podr\'ia mencionar que el desv\'io est\'andar es elevado.}
+
 
 \newpage
 
@@ -404,15 +422,18 @@ Por más que la imagen resultante no sea correcta, será posible tomar una
 medida aproximada del impacto de los saltos condicionales.
 Analizar como varía la performance. \\
 \\
-En la siguiente figura se ve c\'omo var\'ia la esperanza y el desv\'io standard entre dos corridas de C con el flag -o1 ambas:
-\newpage
-\begin{figure}
+En la siguiente figura se ve c\'omo var\'ia la esperanza y el desv\'io est\'andar entre dos corridas de C con el flag -o1 ambas:
+
+\begin{figure}[h!]
   \begin{center}
 	%\includegraphics[width=0.7\textwidth]{imagenes/31.jpg}
+    \textcolor{red}{Aca tambien me borraron el grafico!!!!!}
   \end{center}
 \end{figure}
-\newpage
-En el gr\'afico anterior se puede ver que la influencia de los saltos condicionables es notable. \\
+
+En el gr\'afico anterior se puede ver que la influencia de los saltos condicionales es notable. \\
+
+\bigskip
 % ******************************************************************************
 \vspace*{0.3cm} \noindent
 \textbf{Experimento 3.2 - secuencial vs. vectorial}
@@ -424,7 +445,7 @@ Reflejando las siguientes magnitudes: \\
 \\
  \begin{tabular}[c]{|c|c|c|}
 	\hline
-		 & Esperanza & Desv\'io Standard\\
+		 & Esperanza & Desv\'io est\'andar\\
 		\hline
 C -o0 & 17.472.791 & 120,620 \\
 \hline
@@ -437,17 +458,18 @@ C -o3 & 3.259.767 & 117,391  \\
 ASM & 3.703.203,5 & 115,659 \\
 \hline
 	\end{tabular}\\\\
-Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. En este caso, el tiempo de ejecuci\'on del c\'odigo con el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. \textcolor{red}{y -o2 tambien, por que?}
-\newpage
-\begin{figure}
+
+Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. En este caso, el tiempo de ejecuci\'on del c\'odigo con el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. \textcolor{red}{y -o2 tambien, por que?}
+
+\begin{figure}[h!]
   \begin{center}
 	\includegraphics[width=0.7\textwidth]{imagenes/32.jpg}
   \end{center}
 \end{figure}
-\newpage
+
 
 % ------------------------------------------------------------------------------
-
+\newpage
 \subsection{Filtro \textit{Motion Blur}}
 Programar el filtro \textit{mblur} en lenguaje C y en ASM haciendo uso de 
 las instrucciones \textbf{SSE}.
@@ -463,7 +485,7 @@ Reflejando las siguientes magnitudes: \\
 \\
  \begin{tabular}[c]{|c|c|c|}
 	\hline
-		 & Esperanza & Desv\'io Standard\\
+		 & Esperanza & Desv\'io est\'andar\\
 		\hline
 C -o0 & 24.652.732,5 & 117,738 \\
 \hline
@@ -477,7 +499,7 @@ ASM & 2.993.980,5 & 118,245 \\
 \hline
 	\end{tabular}\\\\
 \\
-Aqu\'i tambi\'en el valor del desv\'io standard es despreciable. Donde las optimizaciones del compilador en la versi\'on -o3 no son suficientes para tener una esperanza menor a la esperanza obtenida bajo el c\'odigo Assembler.\\
+Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. Donde las optimizaciones del compilador en la versi\'on -o3 y la versi\'on -o2' no son suficientes para tener una esperanza menor a la esperanza obtenida bajo el c\'odigo Assembler.\\
 \newpage
 \begin{figure}
   \begin{center}
