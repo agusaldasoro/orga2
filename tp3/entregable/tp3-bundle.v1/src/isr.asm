@@ -102,7 +102,7 @@ global _isr32
 _isr32:
      xchg bx, bx
     pushad
-    call proximo_reloj
+    ;call proximo_reloj
     call proximo_indice
 
     cmp ax,0

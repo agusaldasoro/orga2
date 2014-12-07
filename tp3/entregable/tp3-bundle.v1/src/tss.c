@@ -82,8 +82,8 @@ void tss_inicializar_tarea_idle() {
 	tss_idle.eflags = 0x202;
 	tss_idle.iomap = 0xffff;
 
-	//tss_idle.esp0 = 0x27000;
-	//tss_idle.ss0 = 0x40;
+	tss_idle.esp0 = 0x27000;
+	tss_idle.ss0 = 0x40;
 }
 
 
@@ -237,7 +237,7 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	
 	tss->eflags = eflags;
 	tss->iomap = 0xffff;
-	tss->esp0 = 0x27000;
+	tss->esp0 = 0x800A000;
 	tss->ss0 = 0x40;
 	tss->eip = 0x8000000;
 }

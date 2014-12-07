@@ -64,7 +64,6 @@ page_directory* get_page_directory() {
 	return pd;
 }
 
-
 page_table* get_page_table() {
 	page_table* pd = (page_table*) PAGES;
 	pd += paginas * 0x1000;
@@ -184,6 +183,8 @@ page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char cl
 
 	//lcr3((unsigned int)pd);
 	//breakpoint();
+
+	mmu_mapear_pagina(0x8009000,pd,(unsigned int)get_page_table,1,0);
 
 	return pd;
 }
