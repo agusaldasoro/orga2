@@ -8,7 +8,6 @@
 #include "mmu.h"
 #define ANCHO_MAPA 78
 
-
 void mmu_inicializar_dir_kernel() {
 	page_directory *pd = (page_directory *) 0x27000;
 
@@ -42,6 +41,7 @@ void mmu_inicializar_dir_kernel() {
 
 void mmu_inicializar() {
 	mmu_inicializar_dir_kernel();
+	paginas = 0;
 	//mmu_inicializar_dir_zombie(1, 3, 0);
 }
 
@@ -64,10 +64,7 @@ page_directory* get_page_directory() {
 	return pd;
 }
 
-/**
-page_table* dame_pt();
-Bastante sugestivo, no?
-**/
+
 page_table* get_page_table() {
 	page_table* pd = (page_table*) PAGES;
 	pd += paginas * 0x1000;
@@ -130,14 +127,31 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
     tlbflush();
 }
 
+
+ void mmu_unmapear_pagina(unsigned int virtual,page_directory* cr3){
+ 	unsigned int directory = (virtual >> 22);
+    unsigned int table     = (virtual & 0x003FF000) >> 12;
+
+    page_table* pt = (page_table*) (cr3[directory].base << 12);
+
+    if (cr3[directory].p != 0){
+        pt = (page_table*) (cr3[directory].base << 12);
+        pt[table].p = 0;
+    }
+
+    tlbflush();
+ }
+
+
 /**
 	Guerrero = 0
 	Mago = 1
 	Clerigo = 2
 */
 page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y) {
+	
 	page_directory* pd = get_page_directory();
-breakpoint();
+	breakpoint();
 
 	unsigned int x = (player ? 79 : 2);
 // player = 0 es A
@@ -151,7 +165,6 @@ breakpoint();
 		_x = y + offset_x[i] * (player ? 1 : -1);
 		_y = x + offset_y[i] * (player ? 1 : -1);
 
-		// TODO : No debería tener permisos de usuario?
 		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
 	}
 
@@ -189,19 +202,6 @@ void desplazar_fisica(unsigned int virtual, page_directory* pd, int x, int y) {
     tlbflush();
 }
 
- void mmu_unmapear_pagina(unsigned int virtual,page_directory* cr3){
- 	unsigned int directory = (virtual >> 22);
-    unsigned int table     = (virtual & 0x003FF000) >> 12;
-
-    page_table* pt = (page_table*) (cr3[directory].base << 12);
-
-    if (cr3[directory].p != 0){
-        pt = (page_table*) (cr3[directory].base << 12);
-        pt[table].p = 0;
-    }
-
-    tlbflush();
- }
 
 void copy_code(u32 fisica, page_directory* cr3, u8 class, u8 player) {
 	breakpoint();
