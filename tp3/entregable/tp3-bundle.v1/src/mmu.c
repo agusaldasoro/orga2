@@ -142,6 +142,21 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
  }
 
 
+void mapear_zombie(u32 x, u32 y, u32 player, page_directory* pd) {
+	unsigned int offset_x[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
+	unsigned int offset_y[9] = {0, 0, -1, 1, -1, 1, 0, 1, -1};
+
+	int i, _x, _y;
+	for(i = 0; i < 9; i++) {
+		_x = x + offset_x[i] * (player ? 1 : -1);
+		_y = y + offset_y[i] * (player ? 1 : -1);
+
+		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
+	}
+
+}
+
+
 /**
 	Guerrero = 0
 	Mago = 1
@@ -156,17 +171,7 @@ page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char cl
 // player = 0 es A
 // player = 1 es B
 
-	unsigned int offset_x[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
-	unsigned int offset_y[9] = {0, 0, -1, 1, -1, 1, 0, 1, -1};
-
-	int i, _x, _y;
-	for(i = 0; i < 9; i++) {
-		_x = y + offset_x[i] * (player ? 1 : -1);
-		_y = x + offset_y[i] * (player ? 1 : -1);
-
-		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
-	}
-
+	mapear_zombie(x, y, player, pd);
 
 	//unsigned int address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
 	breakpoint();

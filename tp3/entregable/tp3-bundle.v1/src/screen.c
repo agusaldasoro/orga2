@@ -171,6 +171,14 @@ void print_exception(int number, registers* regs) {
     printf(45, 14, "%s: %h", "ebp", regs->ebp);
     printf(45, 15, "%s: %h", "esp", regs->esp);
 
+
+    printf(45, 17, "%s: %h", "cs", regs->cs);
+    printf(45, 18, "%s: %h", "ds", regs->ds);
+    printf(45, 19, "%s: %h", "es", regs->es);
+    printf(45, 20, "%s: %h", "fs", regs->fs);
+    printf(45, 21, "%s: %h", "gs", regs->gs);
+    printf(45, 22, "%s: %h", "ss", regs->ss);
+
 }
 
 char* getClassName(u8 class) {
