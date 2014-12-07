@@ -110,16 +110,19 @@ _isr32:
 
     mov [sched_tarea_selector], ax
     call fin_intr_pic1
+    popad
     xchg bx, bx
     jmp far [sched_tarea_offset]
     jmp .end
 
 .nojump:
     call fin_intr_pic1
+    popad
 
 .end:
     ; switchear tareas.
-    popad
+    ;popad
+    xchg bx, bx
     iret
 
 ;;
@@ -161,17 +164,22 @@ _isr33:
 
 global _isr102
 extern game_move_current_zombi
+extern entrarEnIdl
+extern salirDeIdl
 _isr102:
     xchg bx, bx
     pushad
     push eax
     call game_move_current_zombi
     pop eax
-    ;jmp 0x80:0
+    xchg bx, bx
+    call entrarEnIdl
+    popad
+    jmp 0x80:0
+    call salirDeIdl
 
     ; pd:eax,delta_x:edi,delta_y:esi, tipo: dx
     xchg bx, bx
-    popad
     iret
 
 ;; Funciones Auxiliares

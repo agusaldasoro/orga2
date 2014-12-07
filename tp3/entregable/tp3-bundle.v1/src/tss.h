@@ -61,6 +61,8 @@ tss* get_free_tss(u8 player);
 tss* _get_next_tss(u8 player);
 tss* get_next_tss();
 int proximo_indice();
+void entrarEnIdl();
+void salirDeIdl();
 
 tss tss_inicial;
 tss tss_idle;

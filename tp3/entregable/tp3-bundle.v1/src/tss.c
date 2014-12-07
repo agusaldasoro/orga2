@@ -12,6 +12,7 @@
 
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
+char noEstoyEnLaIdl;
 
 u8 inUseA[CANT_ZOMBIS] = {};
 u8 inUseB[CANT_ZOMBIS] = {};
@@ -24,7 +25,7 @@ u8 currentPlayer;
 u8 current_selector;
 
 void tss_inicializar() {
-
+	noEstoyEnLaIdl = 1;
 	int i = 0;
 	while(i < CANT_ZOMBIS) {
 		inUseA[i] = 0;
@@ -196,13 +197,21 @@ int proximo_indice() {
 	tss* next_tss = get_next_tss();
 
 	// Si es el proximo tss es igual al ya seteado devolvemos 0.
-	if ((u32) &next_tss == tss_get_base(&gdt[next_selector])) {
+	if ((u32) &next_tss == tss_get_base(&gdt[next_selector]) && !noEstoyEnLaIdl) {
 		return 0;
 	}
 
 	tss_set_base(&(gdt[next_selector]), (u32) next_tss);
 	current_selector = next_selector;
+	noEstoyEnLaIdl = 1;
 	return next_selector * 8;
+}
+
+void entrarEnIdl(){
+	noEstoyEnLaIdl = 0;
+}
+void salirDeIdl(){
+	noEstoyEnLaIdl = 1;
 }
 
 
