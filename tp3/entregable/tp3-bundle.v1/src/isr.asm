@@ -12,9 +12,9 @@ sched_tarea_offset:     dd 0x00
 sched_tarea_selector:   dw 0x00
 
 registers_snapshot dd 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+debuggerOn: dd 0x0
 
 keyboard_str:   db "Teclado: %h",0
-
 
 ;; PIC
 extern fin_intr_pic1
@@ -27,6 +27,33 @@ extern proximo_indice
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
+
+%macro TAKE_SNAPSHOT 1
+    mov [registers_snapshot],eax
+    mov [registers_snapshot+4],ebx
+    mov [registers_snapshot+8],ecx
+    mov [registers_snapshot+12],edx
+    mov [registers_snapshot+16],edi
+    mov [registers_snapshot+20],esi
+    mov [registers_snapshot+24],ebp
+    mov [registers_snapshot+28],esp
+    mov [registers_snapshot+32],cs
+    mov [registers_snapshot+36],ds
+    mov [registers_snapshot+40],es
+    mov [registers_snapshot+44],fs
+    mov [registers_snapshot+48],gs
+    mov [registers_snapshot+52],ss
+    mov eax,0
+    lea ebx,[registers_snapshot+56]
+.stack:
+    cmp eax,10
+    je .endstack
+    mov [ebx+eax*4],ebp
+    inc eax
+    jmp .stack
+.endstack:
+
+%endmacro
 
 %macro ISR 1
 global _isr%1 
@@ -105,8 +132,14 @@ ISR 19 ; _isr0
 ;; -------------------------------------------------------------------------- ;;
 global _isr32
 _isr32:
-     ; xchg bx, bx
+    xchg bx, bx
     pushad
+    mov eax,[debuggerOn] 
+    cmp eax, 1
+    jne .nodebug
+    TAKE_SNAPSHOT 0
+    jmp .nojump
+.nodebug:
     call proximo_reloj
     call proximo_indice
 
@@ -141,10 +174,15 @@ _isr33:
     pushad
     xor eax,eax
     in al, 0x60
-
+    cmp al,0x95
+    jne .nodebug
+    mov dword [debuggerOn],1
+    jmp .end
+.nodebug:
     mov dword [esp], eax
-    call fin_intr_pic1
     call handle_keyboard_interrumption
+.end:
+    call fin_intr_pic1
 
     popad
     iret

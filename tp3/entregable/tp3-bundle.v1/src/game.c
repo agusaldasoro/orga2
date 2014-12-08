@@ -54,6 +54,7 @@ void game_init() {
 
 	zombiesActivosA = 0;
 	zombiesActivosB = 0;
+	debuggerOn = 0;
 }
 
 void mostrar_cursores(u8 player,s8 d){

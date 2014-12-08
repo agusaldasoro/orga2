@@ -195,5 +195,9 @@ void handle_keyboard_interrumption(u8 scancode) {
         game_move_zombie(PLAYER_B, 1);
     } else if (sc == 0xB6) {
         game_lanzar_zombi(PLAYER_B);
+    // } else if (sc == 0x95) {
+    //   __asm __volatile("xchg %%bx, %%bx" : :);
+    //    debuggerOn = !debuggerOn;
     }
+
 }
