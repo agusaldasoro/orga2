@@ -88,16 +88,16 @@ ISR 10 ; _isr0
 ISR 11 ; _isr0
 ISR 12 ; _isr0
 ISR 13 ; _isr0
-; ISR 14 ; _isr0
+ISR 14 ; _isr0
 ISR 15 ; _isr0
 ISR 16 ; _isr0
 ISR 17 ; _isr0
 ISR 18 ; _isr0
 ISR 19 ; _isr0
 
-global _isr14
-_isr14:
-    jmp 0x80:0
+; global _isr14
+; _isr14:
+;     jmp 0x80:0
 
 
 ;;
@@ -138,7 +138,6 @@ extern printf
 extern print_int
 extern handle_keyboard_interrumption
 _isr33:
-    ; xchg bx, bx
     pushad
     xor eax,eax
     in al, 0x60
