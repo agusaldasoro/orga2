@@ -130,7 +130,7 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
 
 
     tlbflush();
-}
+//}
 
 
  void mmu_unmapear_pagina(unsigned int virtual,page_directory* cr3){
