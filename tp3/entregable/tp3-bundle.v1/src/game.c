@@ -58,11 +58,11 @@ void game_init() {
 
 void mostrar_cursores(u8 player,s8 d){
 	if(!player){
-		print_string(" ",0,currentPosA, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
-		print_string(get_zombie_type(zombieClassA),0,currentPosA+d, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
+		print_string(" ",0,currentPosA+1, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
+		print_string(get_zombie_type(zombieClassA),0,currentPosA+d+1, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
 	}else{
-		print_string(" ",79,currentPosB, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
-		print_string(get_zombie_type(zombieClassB),79,currentPosB+d, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
+		print_string(" ",79,currentPosB+1, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
+		print_string(get_zombie_type(zombieClassB),79,currentPosB+d+1, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
 	}
 }
 
@@ -123,13 +123,12 @@ void game_change_class(u8 player, s8 d) {
 }
 
 void game_move_zombie(u8 player, s8 d) {
-	//TODO
 	if (player) {
-		if (currentPosB <= 0 || currentPosB >= ALTO_MAPA-1) return;
+		if (currentPosB+d < 0 || currentPosB+d > ALTO_MAPA-1) return;
 		mostrar_cursores(player,d);
 		currentPosB = currentPosB + d;
 	} else {
-		if (currentPosA <= 0 || currentPosA >= ALTO_MAPA-1) return;
+		if (currentPosA+d < 0 || currentPosA+d > ALTO_MAPA-1) return;
 		mostrar_cursores(player,d);
 		currentPosA = currentPosA + d;
 	}
@@ -168,11 +167,13 @@ void mover_soldado(int x2, int y2,unsigned int player, page_directory* pd) {
 void mover_pantalla(int x, int y, int x2, int y2, u8 tipo){
 	x+=1;
 	x2+=1;
+	y++;
+	y2++;
 	print_string("X", x, y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
-	if (y2<0){
+	if (y2<=0){
 		y2 += ALTO_MAPA;
 	}
-	if (y2>=ALTO_MAPA){
+	if (y2>=ALTO_MAPA+1){
 		y2 -= ALTO_MAPA;
 	}
 	if (tipo == 0)
