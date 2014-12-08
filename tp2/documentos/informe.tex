@@ -81,40 +81,14 @@ El objetivo de este Trabajo Práctico es evaluar la eficiencia del modelo de pro
 
 \section{Contexto}
 
-\input{enunciado}
 
-
-\newpage
 Abordando el objetivo de este trabajo, realizamos una experimentaci\'on enfocada en reducir el tiempo de c\'omputo de un programa basado en dos sucesos que tienen la capacidad de afectarlo. \\
 \indent Por un lado se encuentra la \textit{capacidad de c\'omputo}, la cual limita la cantidad de operaciones aritm\'eticas que el procesador puede paralelizar. Si el programa ejecuta un uso intensivo en operaciones aritm\'eticas, al añadirle nuevas operaciones de esta \'indole se van a necesitar m\'as ciclos de clock para ejecutarlas. \\
 \indent El otro cuello de botella importante es el \textit{ancho de banda de la memoria}. Cuando el programa ejecuta una instrucci\'on que implica un acceso a memoria, se precisan m\'as ciclos de clock para que la memoria responda, en particular si el dato no se encuentra en el cache.\\
 \indent Diseñamos nuestros casos de testeo con el fin de observar para cada programa cu\'al es el factor que determina el tiempo de c\'omputo.\\
 \\
-\indent Nuestra experimentaci\'on se centra en la cantidad de ciclos de clock que transcurren desde el inicio hasta el final de la ejecuci\'on del programa. Se adjunta con la documentaci\'on los archivos *.py utilizados para calcular la esperanza y la varianza de cada una de las mediciones.\\
-\\
-\textcolor{red}{Si lo vamos a rearmar, habria que explicar un poquito mas que hace el codigo, cuantas iteraciones y que descarta los maximos y minimos}\\
+\indent Nuestra experimentaci\'on se centra en la cantidad de ciclos de clock que transcurren desde el inicio hasta el final de la ejecuci\'on del programa. \\
 
-%\begin{figure}
-%  \begin{center}
-%	\includegraphics[scale=0.66]{imagenes/logouba.jpg}
-%	\caption{Descripcion de la figura}
-%	\label{nombreparareferenciar}
-%  \end{center}
-%\end{figure}
-
-
-%\paragraph{\textbf{Titulo del parrafo} } Bla bla bla bla.
-%Esto se muestra en la figura~\ref{nombreparareferenciar}.
-%\begin{codesnippet}
-%\begin{verbatim}
-%
-%struct Pepe {
-%
-%    ...
-%
-%};
-%\end{verbatim}
-%\end{codesnippet}
 \newpage
 \section{Implementaci\'on en Assembler}
 
@@ -466,7 +440,7 @@ magic_shuffle db 8,8,8,8,10,10,10,10,0,0,0,0,2,2,2,2
 \end{verbatim}
 \end{codesnippet}
 
-\indent Comienza el ciclo de \emph{x}, el cual termina cuando \textbf{r15} alcanza el valor m\'aximo de columnas el cual est\'a almacenado en \textbf{edx}. Luego, en \textbf{rax} vamos a calcular el offset dentro de la matriz imagen sumando el valor de \emph{y} actual multiplicado por el row_size de destino con el valor de \emph{x} actual multiplicado por cuatro porque por cada p\'ixel hay cuatro bytes.
+\indent Comienza el ciclo de \emph{x}, el cual termina cuando \textbf{r15} alcanza el valor m\'aximo de columnas el cual est\'a almacenado en \textbf{edx}. Luego, en \textbf{rax} vamos a calcular el offset dentro de la matriz imagen sumando el valor de \emph{y} actual multiplicado por el row_size_fuente con el valor de \emph{x} actual multiplicado por cuatro porque por cada p\'ixel hay cuatro bytes.
 \begin{codesnippet}
 \begin{verbatim}
 .loop_x:
@@ -484,9 +458,7 @@ magic_shuffle db 8,8,8,8,10,10,10,10,0,0,0,0,2,2,2,2
 \end{verbatim}
 \end{codesnippet}
 
-\indent Luego de haber calculado el offset actual, leemos de memoria 16 Bytes y los almacenamos en \textbf{xmm1}, copi\'andolos tambi\'en en \textbf{xmm2}. Para evitar inconvenientes, ponemos en cero al canal alpha mediante el \textit{pand} y la etiqueta definida antes \textit{rgb_only_mask}. De la lectura que hicimos, guardamos en \textbf{xmm1} la parte baja y en \textbf{xmm2} la parte alta desempaquetando.
-
-\textcolor{red}{No entiendo la parte del codigo que sigue... que hace? porque lo hace?}
+\indent Luego de haber calculado el offset actual, leemos de memoria 16 Bytes y los almacenamos en \textbf{xmm1}, copi\'andolos tambi\'en en \textbf{xmm2}. Para evitar sumar n\'umero que no correspondan, ponemos en cero al canal alpha mediante el \textit{pand} y la etiqueta definida antes \textit{rgb_only_mask}. De la lectura que hicimos, guardamos en \textbf{xmm1} la parte baja y en \textbf{xmm2} la parte alta desempaquetando. Luego de eso, debemos ejecutar la suma horizontal mediante la instrucci\'on \textit{phaddw}, as\'i podemos sumar los cuatro bits de cada p\'ixel. Para esto debemos ejecutarlas dos veces, lo hacemos en distinto orden as\'i luego quedan intercalados entre los registros \textbf{xmm1} y \textbf{xmm2} y podemos trabajar con los 4 p\'ixeles a la vez si los sumamos.
 \begin{codesnippet}
 \begin{verbatim}
     movdqu xmm1,[rdi+rax] ; agarro 16 bytes del source
@@ -515,30 +487,38 @@ magic_shuffle db 8,8,8,8,10,10,10,10,0,0,0,0,2,2,2,2
 \end{verbatim}
 \end{codesnippet}
 
-\indent Copiamos en los registros \textbf{xmm14}, \textbf{xmm13} y \textbf{xmm12} las etiquetas predefinidas. Luego en \textbf{xmm15} vamos a ir copiando la etiqueta que necesitemos.
+\indent Copiamos en los registros \textbf{xmm14}, \textbf{xmm13} y \textbf{xmm12} las etiquetas predefinidas. Luego en \textbf{xmm15} vamos a ir copiando la etiqueta que necesitemos en cada uno de los cuatro casos. El comportamiento en cada uno de los cuatro casos va a ser similar:
+\begin{itemize}
+\item[$\triangleright$] Hacemos una copia de la suma original obtenida.
+\item[$\triangleright$] En el registro \textbf{xmm15} guardamos el valor m\'aximo para cada banda.
+\item[$\triangleright$] Comparamos para cada uno de los cuatro valores mediante la instrucci\'on \textit{pcmpgtw}. Si pertenece a la banda actual, va a poner en uno el valor del n\'umero.
+\item[$\triangleright$] Los valores que hayan dado \emph{true} le ponemos todos sus bits en 1, as\'i despu\'es podemos hacer un \textit{pand}.
+\item[$\triangleright$] Hacemos el and con el \emph{color_bound} as\'i quedan los p\'ixeles de la banda del color que deban ser y el resto en cero.
+\item[$\triangleright$] Acumulamos lo obtenido en distintos registros.
+\end{itemize}
+Al finalizar estas cuatro ejecuciones, sumamos los cuatro acumuladores con el fin de tener la versi\'on final.
 
-\textcolor{red}{Despues no se que hace... jeje}
 \begin{codesnippet}
 \begin{verbatim}
     movdqu xmm14,[all_64w]
     movdqu xmm13,[all_1_mask]
     movdqu xmm12,[color1]
 
-    movdqu xmm15,[color1_bound]
-    movdqu xmm0,xmm1 
-    pcmpgtw xmm15,xmm1
-    pandn xmm15,xmm13
+    movdqu xmm0,xmm1   ;  salvo una copia
+    movdqu xmm15,[color1_bound] 
+    pcmpgtw xmm15,xmm1 ; greater than.
+    pandn xmm15,xmm13  ; deja todos 1 en los lugares que va el color_1
     pand xmm15,xmm12
 
-    movdqu xmm1,xmm15
+    movdqu xmm1,xmm15  ; acumulo lo que tengo en xmm1
 
-    movdqu xmm2,xmm0
+    movdqu xmm2,xmm0   ;  salvo una copia
     movdqu xmm15,[color2_bound]
     pcmpgtw xmm15,xmm2
     pandn xmm15,xmm13
     pand xmm15,xmm12
 
-    movdqu xmm2,xmm15
+    movdqu xmm2,xmm15  
 
     movdqu xmm3,xmm0
     movdqu xmm15,[color3_bound]
@@ -555,16 +535,16 @@ magic_shuffle db 8,8,8,8,10,10,10,10,0,0,0,0,2,2,2,2
     pand xmm15,xmm12
 
     movdqu xmm4,xmm15
-\end{verbatim}
-\end{codesnippet}
 
-\indent \textcolor{red}{Completar}
-\begin{codesnippet}
-\begin{verbatim}
     paddusb xmm1,xmm2
     paddusb xmm1,xmm3
     paddusb xmm1,xmm4
+\end{verbatim}
+\end{codesnippet}
 
+Como para agilizar el comportamiento debimos mezclar los p\'ixeles, debemos reodenarlos como estaban originalmente. En este momento usamos la etiqueta \emph{magic_shuffle} y mediante la instrucci\'on \textit{pshufb} quedan almacenados en el registro \textbf{xmm1}. S\'olo resta calcular el offset de la imagen de destino en \textbf{rax}, lo hacemos de manera an\'aloga al c\'alculo del offset_fuente, s\'olo que ahora tenemos en cuenta el row_size_dest. Guardamos lo calculado en la memoria de la foto del destino, aumentamos 4 el contador de \emph{x} y volvemos al ciclo de \emph{x}.
+\begin{codesnippet}
+\begin{verbatim}
     ; reordeno los bytes a como estaba original
     movdqu xmm15,[magic_shuffle] 
     pshufb xmm1,xmm15
@@ -574,7 +554,7 @@ magic_shuffle db 8,8,8,8,10,10,10,10,0,0,0,0,2,2,2,2
     mov r12d,r14d ; r12 = y
     mov r13d,r15d ; r13 = x
     imul r12d,r8d ; y * row_size_dest
-    imul r13d,4   ; x * 4 (esto puede ser un shift left)
+    imul r13d,4   ; x * 4 
     mov eax,r12d  ; 
     add eax,r13d  ; rax = y*row_size_dest + x*4 
 
@@ -585,7 +565,7 @@ magic_shuffle db 8,8,8,8,10,10,10,10,0,0,0,0,2,2,2,2
 \end{verbatim}
 \end{codesnippet}
 
-\indent \textcolor{red}{Completar}
+El ciclo de \emph{x} finaliza cuando \emph{x} ya alcanz\'o el valor m\'aximo de columnas. Por esto, incrementamos en uno la fila y reiniciamos \emph{x} a cero, volviendo a empezar el ciclo de \emph{y}.
 \begin{codesnippet}
 \begin{verbatim}
 .endloop_x:
@@ -595,15 +575,11 @@ magic_shuffle db 8,8,8,8,10,10,10,10,0,0,0,0,2,2,2,2
 \end{verbatim}
 \end{codesnippet}
 
-\indent \textcolor{red}{Completar}
+Al finalizar el ciclo de \emph{y}, no resta hacer nada. Por lo tanto, para respetar la convenci\'on C, hacemos pop de los registros usados y retornas con \textit{ret}.
 \begin{codesnippet}
 \begin{verbatim}
 .endloop_y:
-
-	pop r15
-	pop r14
-	pop r13
-	pop rbp
+    Pop de los registros usados
     ret
 \end{verbatim}
 \end{codesnippet}
@@ -826,11 +802,13 @@ A continuaci\'on comienza la rutina a llevar a cabo en caso de que el p\'ixel a 
 \newpage
 \section{Enunciado y soluci\'on} 
 
-%\input{enunciado}
+\input{enunciado}
 
 \section{Conclusiones y trabajo futuro}
-\indent\emph{ \textcolor{red}{Si bien un lenguaje ensamblador solo es utilizable en determinada gama de procesadores (ESTO HAY QUE SACARLO DIJO MATIAS)}}, los resultados de nuestras mediciones han demostrado que la implementación de los filtros en este lenguaje han logrado una performance que el gcc no logro conseguir. \\
-\indent Dada la popularidad de la arquitectura de 64 bits de intel, se puede concluir que la implementación del SIMD en assembler tiene un precio razonable frente a la perfomance alcanzada.\\
+
+Los resultados de nuestras mediciones han demostrado que la implementación de los filtros en Lenguaje Assembler han logrado una performance de alto nivel de rendimiento ya que el tiempo necesario para su ejecuci\'on fue en la mayor\'ia de los casos el menor. Si bien, hubo casos donde usando un flag de optimizaci\'on adecuado al momento de compilar se lograron resultados con un tiempo de ejecuci\'on menor, no eran valores muy lejanos a los arrojados bajo el Lenguaje Assembler. \\
+
+Dada la popularidad de la arquitectura de 64 bits de intel, se puede concluir que la implementación del SIMD en assembler tiene un precio razonable frente a la perfomance alcanzada.\\
 
 
 \end{document}

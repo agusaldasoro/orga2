@@ -135,7 +135,7 @@ Luego de ejecutar 10 veces el filtro Cropflip obtuvimos los siguientes resultado
 
 \begin{figure}[h!]
   \begin{center}
-	\includegraphics[width=0.7\textwidth]{imagenes/13/asm1.jpg}
+	\includegraphics[width=0.7\textwidth]{imagenes/asm1}
 	\caption{Assembler}
       \end{center}
 \end{figure}
@@ -144,12 +144,12 @@ Luego de ejecutar 10 veces el filtro Cropflip obtuvimos los siguientes resultado
 \begin{figure}[h!]
   \begin{center}
 %	\label{nombreparareferenciar}
-	\includegraphics[width=0.7\textwidth]{imagenes/13/C1.jpg}
+	\includegraphics[width=0.7\textwidth]{imagenes/C1}
 	\caption{C}
   \end{center}
 \end{figure}
 
-\textcolor{red}{Volver a hacer los graficos con los valores que quedaron!!!!!!!}\\
+
 \indent Siendo el Caso 1 las mediciones de esperanza y Desvío est\'andar para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers.\\
 
 \bigskip
@@ -197,12 +197,16 @@ Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteri
 
 Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que fue ejecutado en una computadora con un procesador i5. \textcolor{red}{Podria explicarse un poco mas que pasa con los is}\\
 \\
-\indent Por este motivo, volvimos a ejecutar este caso una mayor cantidad de veces para que el procesador no modifique la frecuencia de clock, obteniendo los siguientes resultados: \\
-\textbf{Esperanza:} 269.945,590 (ASM) y 9.524.152,001 (C) \\
-\textbf{Desv\'io est\'andar:} 3.801,837 y 7.774.736,417 (C) \\
-\textcolor{red}{Hacer el grafico de este.}\\
-\bigskip
+\textcolor{red}{Volver a hacer las mediciones de esto, o buscar las viejas porque no me van los valores que hay, ademas hay una sola esperanza y varianza cuando tendr\'ia que haber dos casos.}
 
+% \indent Por este motivo, volvimos a ejecutar este caso una mayor cantidad de veces para que el procesador no modifique la frecuencia de clock, obteniendo los siguientes resultados: \\
+% \textbf{Esperanza:} 269.945,590 (ASM) y 9.524.152,001 (C) \\
+% \textbf{Desv\'io est\'andar:} 3.801,837 y 7.774.736,417 (C) \\
+% \textcolor{red}{Hacer el grafico de este.}\\
+% \\
+% Ahora s\'i ocurre algo m\'as intuitivo que es que aumentaron los valores de la esperanza en proporciones notables. '
+
+ \bigskip
 \textit{A partir de aquí todos los experimentos de mediciones deberán hacerse igual 
 que en el presente ejercicio: tomando 10 mediciones, luego descartando 
 outliers y finalmente calculando promedio y Desvío est\'andar.}\\
@@ -242,15 +246,15 @@ ASM & 362.232 & 2,079\\
 \hline
 	\end{tabular}\\\\
 
-
-Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. Adem\'as, es notorio c\'omo el correr el programa con la orden de -o0 no efect\'ua ninguna optimizaci\'on. Tambi\'en se puede observar que el c\'odigo corrido en C bajo el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. \textcolor{red}{Esto se debe a que el flag de optimizaci\'on -o3 lo que hace es blablablaba y por eso es una buena optimizaci\'on para el c\'odigo.}
-
-
 \begin{figure}[h!]
   \begin{center}
 	\includegraphics[width=0.7\textwidth]{imagenes/14.jpg}
   \end{center}
 \end{figure}
+
+
+Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. Adem\'as, es notorio c\'omo el correr el programa con la orden de -o0 no efect\'ua ninguna optimizaci\'on. Tambi\'en se puede observar que el c\'odigo corrido en C bajo el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. \textcolor{red}{Esto se debe a que el flag de optimizaci\'on -o3 lo que hace es blablablaba y por eso es una buena optimizaci\'on para el c\'odigo.}
+
 \newpage
 
 % ******************************************************************************
@@ -283,7 +287,7 @@ Realizar un único gráfico que compare:
 \\
 Acompañar al gráfico con una tabla que indique los valores graficados. \\
 \\
-\textcolor{red}{Las instrucciones aritm\'eticas usadas son: BLA BLA BLA repetidas la cantidad de veces necesitada y los accesos a memoria realizados fueron: BLA BLA BLA.}\\
+Las instrucciones aritm\'eticas usadas son:  \emph{add eax,8 sub eax 8} repetidas la cantidad de veces necesitada y los accesos a memoria realizados fueron siempre a la imagen fuente o la de destino, ya que tenemos la certeza de poseer el permiso para acceder a esas direcciones.\\
 \\
  \begin{tabular}[c]{|c|c|c|}
 	\hline
@@ -308,11 +312,11 @@ Con 16 accesos a memoria & 342.023,334 & 12.136,799 \\
 
 \begin{figure}[h!]
   \begin{center}
-%	\includegraphics[width=0.7\textwidth]{imagenes/15.jpg}
- \textcolor{red}{volver a hacer el gr\'afico.'}
+	\includegraphics[width=0.8\textwidth]{imagenes/15}
   \end{center}
 \end{figure}
-\textcolor{red}{Con 4 y 8 accesos a memoria, el programa es m\'as lento. Con 16 accesos pasa algo no intuitivo, que al menos deber\'ia mencionarse. El pico de 16 instrucciones aritm\'eticas tampoco me resulta intuitivo a simple vista.}
+
+Como era de esperar, la versión original es la que menos tiempo demanda. Al agregarle 4 y 8 instrucciones aritméticas, se observa un incremento gradual que se condice con la cantidad de instrucciones. Al agregarle 16 instrucciones se puede observar un pico en la medición, el cual nos hace pensar que la forma en que se aumenta el tiempo de ejecución no es lineal respecto de la cantidad instrucciones, aunque no hay que omitir que de 4 a 8 y a 16 se va incrementando en potencia de dos (lo cual tampoco es lineal).  En el caso de los accesos a memoria no sucede lo mismo que lo descripto anteriormente, cuando se agregan 4 accesos aumenta la cantidad de tiempo respecto de la original, también es así cuando se realizan 8 accesos, pero al realizar 16 accesos en nuestras mediciones disminuye el valor de su esperanza e incluso el de la varianza. Esto no es un indicador con el que podamos afirmar que siempre al realizar 16 accesos a memoria va a tardar menos que al hacer 8. Lo que intuímos que puede suceder es que, el aumento tampoco acá es lineal y para ese intervalo (8,16) el incremento es paulatino. Tampoco hay que dejar de lado que toda medición contiene cierto error y no es exacta y que, a pesar de haber eliminado los outliers, el resultado obtenido se aleje un poco de la ``realidad''.
 
 % ------------------------------------------------------------------------------
   \newpage
@@ -391,15 +395,15 @@ Con 16 accesos a memoria & 3.051.926,505 & 40.964,812 \\
 
 \begin{figure}[h!]
   \begin{center}
-%	\includegraphics[width=0.7\textwidth]{imagenes/21B.jpg}
-\textcolor{red}{Aca tambien falta el grafico!}
+	\includegraphics[width=0.9\textwidth]{imagenes/21B}
   \end{center}
 \end{figure}
 
-En este caso, los accesos a memoria influyen m\'as notoriamente en la esperanza que las operaciones aritm\'eticas l\'ogicas. En este caso, se observa un desv\'io est\'andar elevado teniendo en cuenta el tama\~no de las mediciones.\\
+En este caso, lo primero que nos parece necesario destacar es la magnitud del desv\'io est\'andar en todos los casos; son desv\'ios est\'andar grandes, dados los valores de la esperanza. Esto nos indica que los resultados de las mediciones obtenidas pueden no ser tan precisos como necesitamos ya que hay mucha dispersi\'on.\\
 
-\textcolor{red}{Algo parecido al experimento 1.5 \\
-Adem\'as se podr\'ia mencionar que el desv\'io est\'andar es elevado.}
+Teniendo en cuenta lo mencionado arriba, se puede explicar porqu\'e al sumarle al programa 4 instrucciones aritm\'eticas aumenta la cantidad de tiempo necesaria respecto de la versi\'on original, al igual que al sumarle 16 instrucciones pero no sucede lo mismo en el caso de las 8 instrucciones, ya que la esperanza es muy cercana num\'ericamente a la versi\'on original. Observando el gr\'afico, queda expuesto notablemente que el desv\'io est\'andar de este caso es el mayor (siendo m\'as del doble que en la versi\'on com\'un). Asumimos que en el caso ``ideal'' el crecimiento es paulatino y el tiempo necesario para ejecutar las 8 instrucciones queda por encima del caso anterior y por debajo del siguiente.\\
+
+En el caso de los accesos a memoria, si bien tambi\'en presentan un notoriamente elevado valor de desv\'io est\'andar para todos los casos, el comportamiento es m\'as intuitivo. Se puede apreciar en el gr\'afico que el incremento del tiempo es acorde al aumento de los accesos a memoria y se da de manera pareja sin presentar ning\'un tipo de ``pico''.
 
 
 \newpage
@@ -427,14 +431,14 @@ En la siguiente figura se ve c\'omo var\'ia la esperanza y el desv\'io est\'anda
 \begin{figure}[h!]
   \begin{center}
 	%\includegraphics[width=0.7\textwidth]{imagenes/31.jpg}
-    \textcolor{red}{Aca tambien me borraron el grafico!!!!!}
+    \textcolor{red}{Aca tambien me borraron el grafico!!!!! Y NO TENGO LOS VALORESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS}
   \end{center}
 \end{figure}
 
 En el gr\'afico anterior se puede ver que la influencia de los saltos condicionales es notable. \\
 
-\bigskip
 % ******************************************************************************
+\newpage
 \vspace*{0.3cm} \noindent
 \textbf{Experimento 3.2 - secuencial vs. vectorial}
 
@@ -459,13 +463,13 @@ ASM & 3.703.203,5 & 115,659 \\
 \hline
 	\end{tabular}\\\\
 
-Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. En este caso, el tiempo de ejecuci\'on del c\'odigo con el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. \textcolor{red}{y -o2 tambien, por que?}
-
 \begin{figure}[h!]
   \begin{center}
-	\includegraphics[width=0.7\textwidth]{imagenes/32.jpg}
+	\includegraphics[width=0.6\textwidth]{imagenes/32.jpg}
   \end{center}
 \end{figure}
+
+Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. En este caso, podemos notar una vez m\'as que el comando -o0 no ejerce ninguna optimizaci\'on para este programa, ya que es el que tiene mayor tiempo de ejecuci\'on. Bajo el flag -o1 presenta una mejor\'ia, pero sigue requiriendo un tiempo mayor que el programa en Lenguaje Assembler para su ejecuci\'on. Sin embargo, sucede algo llamativo que es que corriendo el lenguaje en lenguaje C tanto bajo el flag -o2 como para -o3 present\'o una esperanza menor que el c\'odigo en Assembler. \textcolor{red}{Asumismo que ocurre esto porque estos flagas est\'an dise\~nados para casos como este, donde ensamblan un c\'odigo fuente mejor que el nuestro en Assembler.}
 
 
 % ------------------------------------------------------------------------------
@@ -499,11 +503,12 @@ ASM & 2.993.980,5 & 118,245 \\
 \hline
 	\end{tabular}\\\\
 \\
-Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. Donde las optimizaciones del compilador en la versi\'on -o3 y la versi\'on -o2' no son suficientes para tener una esperanza menor a la esperanza obtenida bajo el c\'odigo Assembler.\\
-\newpage
-\begin{figure}
+
+\begin{figure}[h!]
   \begin{center}
 	\includegraphics[width=0.7\textwidth]{imagenes/41.jpg}
   \end{center}
 \end{figure}
+Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. Donde las optimizaciones del compilador en la versi\'on -o3 y la versi\'on -o2 no son suficientes para tener una esperanza menor a la esperanza obtenida bajo el c\'odigo Assembler.\\
+
 \newpage
