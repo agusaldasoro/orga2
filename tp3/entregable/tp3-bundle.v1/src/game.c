@@ -62,6 +62,7 @@ void game_jugador_mover(unsigned int jugador, unsigned int value) {
 }
 
 void game_lanzar_zombi(u8 player) {
+	breakpoint();
 	if (player) {
 		start_zombie(player, zombieClassB, currentPosB);
 	} else {
@@ -94,10 +95,10 @@ void mover_pantalla(int x,int y,int x2,int y2,u8 tipo){
 	x2+=1;
 	print_string("X",x, y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 	if(y2<0){
-		y2 = ALTO_MAPA-1;
+		y2 += ALTO_MAPA;
 	}
 	if(y2>=ALTO_MAPA){
-		y2 = 0;
+		y2 -= ALTO_MAPA;
 	}
 	if (tipo==0)
 		print_string("G",x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));

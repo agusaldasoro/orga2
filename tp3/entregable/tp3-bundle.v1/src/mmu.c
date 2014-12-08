@@ -87,10 +87,10 @@ page_table* get_page_table() {
 
 unsigned int get_physical_address(int x, int y) {
 
-	if (y==-1) {
-		y= ALTO_MAPA-1;
-	} else if (y==ALTO_MAPA) {
-		y = 0;
+	if (y<0) {
+		y+= ALTO_MAPA;
+	} else if (y>=ALTO_MAPA) {
+		y -= ALTO_MAPA;
 	}
 	unsigned int ret;
 	ret = (x + y*ANCHO_MAPA) * 0x1000;
@@ -192,19 +192,19 @@ unsigned int recuperar_fisica(unsigned int virtual, page_directory* pd) {
 
 void setear_paginas (unsigned int player, int x, int y, page_directory* pd) {
 	
-	breakpoint();
+	//breakpoint();
 	int i = 0;
 	int _x, _y;
-	breakpoint();
+	//breakpoint();
 	while(i < 9) {
-		breakpoint();
+		//breakpoint();
 		_x = x + offset_x_q[i] * (player ? 1 : -1);
 		_y = y + offset_y_q[i] * (player ? 1 : -1);
 
 		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
 		i++;
 	}
-	breakpoint();
+	//breakpoint();
 	return;
 }
 

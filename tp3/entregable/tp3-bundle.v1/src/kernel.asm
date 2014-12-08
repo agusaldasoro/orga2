@@ -172,10 +172,10 @@ modo_protegido:
 
     extern game_lanzar_zombi
 
-    mov eax,0
-    push eax
-    call game_lanzar_zombi
-    pop eax
+    ;mov eax,0
+    ;push eax
+    ;call game_lanzar_zombi
+    ;pop eax
 
     ;xchg bx, bx
     ;jmp 0x80:modo_protegido

@@ -121,7 +121,6 @@ _isr32:
 
 .end:
     ; switchear tareas.
-    ;popad
     xchg bx, bx
     iret
 
