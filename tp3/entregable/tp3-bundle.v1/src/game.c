@@ -128,6 +128,7 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
     	y2 += delta_y;
     }else{
     	y2 -= delta_y;
+    	x2 -= delta_x;
     }
 
 
