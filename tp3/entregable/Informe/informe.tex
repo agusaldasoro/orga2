@@ -155,32 +155,65 @@ En segunda instancia, armamos la funci\'on \emph{print_map}. La funci\'on \textb
 \end{itemize}
 
 Luego este c\'odigo fue complejizado para que pueda imprimir los puntos de los jugadores y sus respectivos puntajes por zombie tal cual debe ser cuando comienza el juego.
+
 \newpage
 \section{Ejercicio 2}
-%{\large a)} 
-\textcolor{red}{ESTO HAY QUE HACERLO!!!!!!!!} \\
-%Inicializamos las entradas 0-19 en la IDT.
+{\large a)} \underline{Entradas en la IDT.}\\
 
+Inicializamos las entradas 0-19 en la IDT (todas con privilegio 0). Creamos un arreglo de strings, que contenga los nombres de cada excepci\'on para luego mostrarlo en pantalla como se ve a continuaci\'on:
 
+\begin{codesnippet}
+\begin{verbatim}
+static char *exceptions[] = {
+    "Division by zero",
+    "Debugger",
+    "NMI",
+    "Breakpoint",
+    "Overflow",
+    "Bounds",
+    "Invalid Opcode",
+    "Coprocessor not available",
+    "Double fault",
+    "Coprocessor Segment Overrun (386 or earlier only)",
+    "Invalid Task State Segment",
+    "Segment not present",
+    "Stack Fault",
+    "General protection fault",
+    "Page fault",
+    "reserved",
+    "Math Fault",
+    "Alignment Check",
+    "Machine Check",
+    "SIMD Floating-Point Exception"
+};
+\end{verbatim}
+\end{codesnippet}
 
+El c\'odigo de cada rutina de excepci\'on lo que va a hacer es:
 
-%{\large b)} \textcolor{red}{Para probar lo programado anteriormente hicimos:}
+Guardar en memoria el estado de los registros de la tss actual para luego pushearlos y llamar a la funci\'on \emph{print_exception}. Esta funci\'on va a estar encargada de imprimir el nombre del problema que se produjo, conjunto a todos estos registros que nos hab\'iamos almacenado. \\
+\bigskip
 
-%\begin{codesnippet}
-%\begin{verbatim}
-%    ; Inicializar la IDT
- %   call idt_inicializar
- %   ; Cargar IDT
-  %  lidt [IDT_DESC]
-%
- %   ; test para que salte la divide by 0 exception (0)
-  %  mov edx,0
-   % mov ecx,0
-   % mov eax,3
-    %div ecx
-%\end{verbatim}
-%\end{codesnippet}
+{\large b)} \underline{Prueba de lo armado en el punto A.}\\
 
+Para que el procesador utilice la IDT creada anteriormente, generamos la excepci\'on ``Divisi\'on por cero'' para probarla:
+
+\begin{codesnippet}
+\begin{verbatim}
+    ; Inicializar la IDT
+    call idt_inicializar
+    ; Cargar IDT
+    lidt [IDT_DESC]
+
+    ; test para que salte la divide by 0 exception (0)
+    mov edx,0
+    mov ecx,0
+    mov eax,3
+    div ecx
+\end{verbatim}
+\end{codesnippet}
+
+Efectivamente, anduvo acorde a lo esperado.
 \newpage
 \section{Ejercicio 3}
 \textcolor{red}{Limpiar el buffer de video es hacer clear_screen???... Asumo que s\'i.}\\
@@ -241,56 +274,24 @@ Por \'ultimo resta setear el bit PG del cr0, lo hacemos mediante un or.
 
 \newpage
 \section{Ejercicio 4}
-{\large a)} \underline{inicializar_mmu.}\\
+{\large a)} \underline{Administraci\'on de la memoria en el \'area libre.}\\
+
+Como conocemos las limitaciones de memoria que se poseen y acorde el contexto de uso, nunca vamos a pedir m\'as p\'aginas de las existentes porque antes terminar\'ia el juego. Por este motivo, implementamos un contador llamado \textit{p\'aginas} que denota la cantidad de p\'aginas utilizadas de modo que administra la memoria en el \'area libre.\\
+
+Luego contamos con las funciones \textit{get_page_directory} y \textit{get_page_table} las cuales nos brindan un nuevo page directory o una nueva page table correspondientemente. Ambas se basan en esta variable que poseemos. \\
+
+La funci\'on \textbf{get_page_directory} toma la variable global \textit{p\'aginas} y la multiplica por 4096 (el tama\~no) y se lo suma a la direcci\'on PAGES (que es 0x100000), siendo el n\'umero obtenido el puntero al nuevo Page Directory. Se inicializa en 0 cada \'indice de los 1024 que son y luego a la primer posici\'on se le da como base 0x28, se le da permiso de lectura/escritura y se setea el bit de presente \textcolor{red}{(por que hacemos esto con la primer posicion?)}. Por \'ultimo se incrementa en uno el contador de p\'aginas.\\
+
+La funci\'on \textbf{get_page_table} tiene un comportamiento similar: adquiere el puntero a la nueva p\'agina de la misma manera, inicializa en cero sus 1024 entradas y por \'ultimo incrementa en uno el contador de \textit{p\'aginas}.\\
 
 
-Para administrar la memoria en el área libre, tenemos un contador de páginas utilizadas denoninándolo \textit{páginas}. Luego contamos con las funciones \textit{get_page_directory} y \textit{get_page_table} las cuales nos brindan un nuevo page directory o una nueva page table correspondientemente.
-
-\textcolor{red}{Todo esto aca del punto A esta re turbio...mirar que onda... ACA HAY QUE PONER GET_PAGE_TABLE Y GET_PAGE_DIRECTORY???}\\
+Es decir, a partir de la direcci\'on 0x100000 se arman todos los Page Directories y Page Tables.\\
 
 
 
-% \begin{codesnippet}
-% \begin{verbatim}
-% page_directory* get_page_directory() {
-%     page_directory* pd = (page_directory*) PAGES;
-%     pd += paginas * 4096;
-%     int i;
-%     for (i = 0; i < 1024; i++) {
-%         pd[i] = (page_directory) {};
-%     }
+La funci\'on \textbf{inicializar_mmu} tiene un comportamiento simple: llama a la funci\'on \\ \textit{mmu_inicializar_dir_kernel()} y luego pone en cero el contador\textit{ p\'aginas}.\\
 
-%     pd[0] = (page_directory) {
-%         .base = 0x28,
-%         .rw = 0x1,
-%         .p = 1
-%     };
-
-%     paginas++;
-
-%     return pd;
-% }
-% \end{verbatim}
-% \end{codesnippet}
-
-
-% \begin{codesnippet}
-% \begin{verbatim}
-% page_table* get_page_table() {
-%     page_table* pgt = (page_table*) PAGES;
-%     pgt += paginas * 0x1000;
-%     int i;
-%     for (i = 0; i < 1024; i++) {
-%         pgt[i] = (page_table) {};
-%     }
-
-%     paginas++;
-
-%     return pgt
-%     };
-% }
-% \end{verbatim}
-% \end{codesnippet}
+\bigskip
 
 {\large b)} \underline{mmu_inicializar_dir_zombi}\\
 
@@ -299,8 +300,19 @@ de p\'aginas y tablas de p\'aginas para una tarea, respetando la figura 6. Copia
 el c\'odigo de la tarea a su \'area asignada, es decir la posici\'on indicada por el jugador dentro
 del mapa y mapea dichas p\'aginas a partir de la direcci\'on virtual 0x08000000(128MB).\\
 
-\textcolor{red}{Este punto B tambien esta re turbio...}\\
+La funci\'on \textbf{mmu_inicializar_dir_zombie} recibe como par\'ametro el jugador (si es A o B), la clase y su posici\'on en el eje de las \emph{y}. 
 
+\begin{itemize}
+\item[$\triangleright$] Va a pedir un nuevo Page Directory mediante la funci\'on explicada anteriormente: \textit{get_page_directory}.
+\item[$\triangleright$] El valor de x va a ser ANCHO_MAPA-2 si el jugador es B, 1 si el jugador es A.
+\item[$\triangleright$] Luego de eso, se mapean las nueve p\'aginas correspondientes utilizando mmu_mapear_pagina y como funci\'on auxiliar get_physical_address. Esta \'ultima nos permite pasarle un (x,y) en el mapa y nos da la direcci\'on f\'isica del mismo.
+\item[$\triangleright$] Consecuentemente, copiamos el c\'odigo en la p\'agina central.
+\item[$\triangleright$] Devolvemos el pd creado.
+\end{itemize}
+
+
+
+\bigskip
 
 {\large c)} \underline{Mapear y Des-Mapear p\'agina.}\\
 
@@ -334,241 +346,123 @@ reloj, otra a la interrupci\'on de teclado y por \'ultimo una a la interrupci\'o
 
 Las primeras dos van a ser de privilegio 0 y la \'ultima de privilegio 3, asign\'andoselo mediante sus atributos.\\
 
-\textcolor{red}{HASTA ACA LLEGUE, NO DOY FE DE LO DE ABAJO. IGUAL ARRIBA TAMBIEN HAY ANOTACIONES EN ROJO!}\\
+\bigskip
 
-{\large b)} A continuación, la rutina asociada a la interrupci\'on del reloj, para que por cada tick llame a la
-funci\'on screen pr\'oximo reloj. La misma se encarga de mostrar cada vez que se llame, la
-animaci\'on de un cursor rotando en la esquina inferior derecha de la pantalla. 
+{\large b)} \underline{Rutina asociada a la interrupci\'on de reloj.}\\
 
-\begin{codesnippet}
-\begin{verbatim}
-;; Rutina de atención del RELOJ
+La rutina asociada a la interrupci\'on del reloj por cada tick llama a la funci\'on \textit{pr\'oximo_reloj}. La misma se encarga de mostrar cada vez que se llame, la animaci\'on de un cursor rotando en la esquina inferior derecha de la pantalla. \\
 
-global _isr32
-_isr32:
-    pushad
-    call proximo_reloj 	 ; Ya definida en isr.asm
-    call proximo_indice  ;Devuelve el próximo índice en la GDT a ejecutar
+Su funcionamiento consiste en pushear los registros, llamar a \textit{proximo_reloj} que se encarga de cambiar el caracter en pantalla y a proximo_indice el cual indica qu\'e \'indice en la \emph{GDT} es el pr\'oximo a ejecutar. Si debemos cambiar de \emph{tss}, realiza el \textit{jump far}, sino termina. En ambos casos, llama previamente a \\
+\textit{fin_intr_pic1} y luego hace \textit{popad} de los registros y vuelve con un \textit{iret}.\\
+\bigskip
 
-    cmp ax,0
-    je .nojump
+{\large c)} \underline{Rutina asociada a la interrupci\'on de teclado.}\\
 
-    mov [sched_tarea_selector], ax
-    call fin_intr_pic1
-    jmp far [sched_tarea_offset]
-    jmp .end
+La rutina asociada a la interrupci\'on de teclado fue programada en esta instancia de forma que si se presiona cualquiera de las teclas a utilizar en el juego, se presenta la misma en la esquina superior derecha de la pantalla. \\
 
-.nojump:
-    call fin_intr_pic1
+El comportamiento de este handler consiste en testear qu\'e tecla fue presionada (mediante \textit{in \textbf{al}, 0x60}), llamar a la funci\'on handle_keyboard_interrumption que recibe como par\'ametro \textbf{eax}. Esta funci\'on se encarga de imprimir en pantalla el char que corresponda a la tecla presionada. Luego el handler llama a \textit{fin_intr_pic1} y termina la ejecuci\'on un \textit{iret}. \\
+\bigskip
 
-.end:
-    ; switchear tareas.
-    popad
-    iret
-\end{verbatim}
-\end{codesnippet}
+{\large d)} \underline{Rutina asociada a la interrupci\'on 0x66.}\\
 
 
-{\large c)} Ahora, la rutina asociada a la interrupci\'on de teclado de forma que si se presiona cualquiera
-de las teclas a utilizar en el juego, se presenta la misma en la esquina superior derecha de la pantalla. \\
-
-\begin{codesnippet}
-\begin{verbatim}
-;; Rutina de atención del TECLADO
-
-global _isr33
-extern printf
-extern print_int
-extern handle_keyboard_interrumption
-_isr33:
-    pushad
-    xor eax,eax
-    in al, 0x60
-
-    mov dword [esp], eax
-    call handle_keyboard_interrumption
-    
-    mov dword  [esp + 0x], 0
-    mov dword [esp + 0xc], 67
-    mov dword [esp + 0x8], keyboard_str
-    mov dword [esp + 0x4], eax
-    call printf    ;función implementada por nosotros
-
-    call fin_intr_pic1
-    popad
-    iret
-\end{verbatim}
-\end{codesnippet}
-
-
-{\large d)} Escribimos la rutina asociada a la interrupci\'on 0x66 para que modifique el valor de eax por
-0x42. 
-\begin{codesnippet}
-\begin{verbatim}
-;; Rutina de atención 0x66
-
-global _isr66
-_isr33:
-
-    mov eax,0x42
-  
-    iret
-\end{verbatim}
-\end{codesnippet}
+Escribimos la rutina asociada a la interrupci\'on 0x66 para que modifique el valor de eax por
+0x42, retornando con un \textit{iret}. 
 
 \newpage
 \section{Ejercicio 6}
-{\large a)} Definimos tres entradas en la GDT que consideramos necesarias para ser usadas como descriptores
-de TSS: una para ser utilizada por la tarea inicial, otra para la tarea actual y una \'ultima para la tarea siguiente.\\
+{\large a)} \underline{Entradas en la GDT usadas como descriptores de TSS.}\\
 
-{\large b)} Completamos la entrada de la TSS de la tarea Idle con la informaci\'on de la tarea Idle. La tarea Idle se encuentra en la direcci\'on 0x00016000. La pila se alojar\'a en la misma direcci\'on que la pila del kernel y ser\'a mapeada
-con identity mapping. Esta tarea ocupa 1 pagina de 4KB y debe ser mapeada con identity mapping. Adem\'as la misma comparte el mismo CR3 que el kernel. \\
+Definimos cuatro entradas en la GDT que consideramos necesarias para ser usadas como descriptores
+de TSS: una para ser utilizada por la tarea inicial, una para la tarea Idle, otra para la tarea actual y una \'ultima para la tarea siguiente.\\
+
+Cada una de ellas se encuentra en los siguientes \'indices: 
+\begin{codesnippet}
+\begin{verbatim}
+#define GDT_INITIAL_TSS        0xD
+#define GDT_CURRENT_TSS        0xE
+#define GDT_NEXT_TSS           0xF
+#define GDT_TSS_IDLE           0x10
+\end{verbatim}
+\end{codesnippet}
+\bigskip
+
+
+
+{\large b)} \underline{Entrada de la TSS de la tarea Idle.}\\
+
+Completamos la entrada de la TSS de la tarea Idle con la informaci\'on de la tarea Idle. La tarea Idle se encuentra en la direcci\'on 0x00016000. La pila se aloja en la misma direcci\'on que la pila del kernel y es mapeada con identity mapping. Esta tarea ocupa 1 pagina de 4KB y est\'a mapeada con identity mapping. Adem\'as la misma comparte el mismo CR3 que el kernel. \\
+
+Se le asigna de base 0xFFFFFFFF \textcolor{red}{POR QUE???????}. Al \textbf{eip} se le asigna el valor de 0x00016000, al \textbf{cr3} se le asigna el cr3 del kernel. Como la pila se setea en la posici\'on 0x27000 se les adjudica a \textbf{ebp} y \textbf{esp} ese valor. Los registros \textbf{es}, \textbf{ds}, \textbf{ss} y \textbf{gs} se les da el valor de 0x40 mientras que al \textbf{cs} el de 0x50 \textcolor{red}{Aca habria que explicar porque, no??}. Los \textbf{eflags} se ponen en 0x202 \textcolor{red}{as\'i quedan habilitadas las interrupciones (es por eso?)}. Y por \'ultimo se le asigna a \textbf{esp0} tambi\'en 0x27000 y a \textbf{ss0} 0x40.\\
+\bigskip
+
+{\large c)} \underline{Completar una TSS libre con una tarea (Zombie).}\\
+
+\textcolor{red}{Construir una funci\'on que complete una TSS libre con los datos correspondientes a una
+tarea (zombi). El c\'odigo de las tareas se encuentra a partir de la direcci\'on 0x00010000
+ocupando una pagina de 4kb cada una seg\'un indica la figura 1. Para la direcci\'on de la
+pila se debe utilizar el mismo espacio de la tarea, la misma crecer\'a desde la base de la tarea. 
+Para el mapa de memoria se debe construir uno nuevo utilizando la funci\'on mmu inicializar dir zombi. 
+Adem\'as, tener en cuenta que cada tarea utilizar\'a una pila distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin.} \\
+\bigskip
+
+
+{\large d)} \underline{Primera ejecuci\'on de la Tarea Idle.}\\
+
+El c\'odigo necesario para saltar a la tarea Idle desde la ejecuci\'on de la tarea inicial se realiza con un salto cambiando las tss. \textcolor{red}{Es llevado a cabo con el siguiente c\'odigo?.}\\
 
 \begin{codesnippet}
 \begin{verbatim}
-void tss_inicializar() {
-    int i = 0;
-    while(i < CANT_ZOMBIS) {
-        inUseA[i] = 0;
-        inUseB[i] = 0;
-        i++;
-    }
-    currentZombieA = 0;
-    currentZombieB = 0;
-
-    // inicializar tss_idle
-    tss_inicializar_tarea_idle();
-
-    memcpy(&tss_idle, &tss_inicial, sizeof(tss));
-    memcpy(&tss_idle, &current_task, sizeof(tss));
-    memcpy(&tss_idle, &next_task, sizeof(tss));
-
-    gdt[GDT_INITIAL_TSS].base_31_24 = ((u32) (&tss_inicial) & 0xFF000000) >> 24;
-    gdt[GDT_INITIAL_TSS].base_23_16 = ((u32) (&tss_inicial) & 0x00FF0000) >> 16;
-    gdt[GDT_INITIAL_TSS].base_0_15  = (u32) (&tss_inicial) & 0x0000FFFF;
-
-    gdt[GDT_CURRENT_TSS].base_31_24 = ((u32) (&current_task) & 0xFF000000) >> 24;
-    gdt[GDT_CURRENT_TSS].base_23_16 = ((u32) (&current_task) & 0x00FF0000) >> 16;
-    gdt[GDT_CURRENT_TSS].base_0_15  = (u32) (&current_task) & 0x0000FFFF;
-}
+jmp 0x80:0
 \end{verbatim}
 \end{codesnippet}
 
 
-\begin{codesnippet}
-\begin{verbatim}
-void tss_inicializar_tarea_idle() {
-
-    tss_idle = (tss) {};
-
-    tss_idle.eip = 0x00016000;
-    tss_idle.cr3 = 0x27000;
-    
-    tss_idle.ebp = 0x27000;
-    tss_idle.esp = 0x27000;
-
-    tss_idle.es = 0x40;
-    tss_idle.ds = 0x40;
-    tss_idle.ss = 0x40;
-    tss_idle.gs = 0x40;
-    tss_idle.cs = 0x50;
-
-    tss_idle.eflags = 0x202;
-    tss_idle.iomap = 0xffff;
-}
-\end{verbatim}
-\end{codesnippet}
-
-%{\large c)} Construir una funci\'on que complete una TSS libre con los datos correspondientes a una
-%tarea (zombi). El c\'odigo de las tareas se encuentra a partir de la direcci\'on 0x00010000
-%ocupando una pagina de 4kb cada una seg\'un indica la figura 1. Para la direcci\'on de la
-%pila se debe utilizar el mismo espacio de la tarea, la misma crecer\'a desde la base de la tarea. 
-%Para el mapa de memoria se debe construir uno nuevo utilizando la funci\'on mmu inicializar dir zombi. 
-%Adem\'as, tener en cuenta que cada tarea utilizar\'a una pila distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin. \\
-
-%\textcolor{red}{Y aca que onda?}\\
-
-{\large d)} C\'odigo necesario para ejecutar la tarea Idle, es decir, saltar intercambiando las
-TSS, entre la tarea inicial y la tarea Idle:
-
-\begin{codesnippet}
-\begin{verbatim}
-idle:
-    .loopear:
-        inc dword [numero]
-        cmp dword [numero], 0x4
-        jb .imprimir
-
-    .reset_contador:
-        mov dword [numero], 0x0
-
-    .imprimir:
-        ; Imprimir 'reloj'
-        mov ebx, dword [numero]
-        add ebx, message1
-        imprimir_texto_mp ebx, 1, 0x0f, 49, 76
-        mov ebx, chirimbolo_open
-        imprimir_texto_mp ebx, 1, 0x0f, 49, 76-1
-        mov ebx, chirimbolo_close
-        imprimir_texto_mp ebx, 1, 0x0f, 49, 76+1
-
-    jmp .loopear
-\end{verbatim}
-\end{codesnippet}
 
 \newpage
 \section{Ejercicio 7}
-%{\large a)} Construir una funci\'on para inicializar las estructuras de datos del scheduler.\\
 
-%\textcolor{red}{COMPLETAR!}\\
 
-%{\large b)} Crear la funci\'on sched pr\'oximo indice() que devuelve el \'indice en la GDT de la pr\'oxima
+{\large a)} \underline{Inicializar las estructuras de datos del scheduler.}\\
+
+\textcolor{red}{Completar.}\\
+\bigskip
+
+{\large b)} \underline{Implementaci\'on pr\'oximo \'indice.}\\
+%Crear la funci\'on sched pr\'oximo indice() que devuelve el \'indice en la GDT de la pr\'oxima
 %tarea a ser ejecutada. Construir la rutina de forma devuelva una tarea de cada jugador
 %por vez seg\'un se explica en la secci\'on 3.2\\
 
+\textcolor{red}{Completar.}\\
+\bigskip
 
-%\textcolor{red}{COMPLETAR!}\\
-
-{\large c)} Se muestra la rutina de la interrupci\'on 0x66, para que implemente el servicio mover seg\'un
-se indica en la secci\'on 3.1.1.\\
-
-\begin{codesnippet}
-\begin{verbatim}
-global _isr66
-extern movimiento
-_isr66:
-    pushad
-    
-    push dx
-    push esi
-    push edi
-    push eax
-    call movimiento
-
-    popad
-    iret
-\end{verbatim}
-\end{codesnippet}
+{\large c)} \underline{Rutina de atenci\'on a la interrupci\'on 0x66.}\\
 
 
-%{\large d)} Modificar el c\'odigo necesario para que se realice el intercambio de tareas por cada ciclo de
+\textcolor{red}{Completar.}\\
+\bigskip
+
+{\large d)} \underline{Rutina de atenci\'on a la interrupci\'on del Clock.}\\
+%Modificar el c\'odigo necesario para que se realice el intercambio de tareas por cada ciclo de
 %reloj. El intercambio se realizar\'a seg\'un indique la funci\'on sched proximo \'indice().\\
 
+\textcolor{red}{Completar.}\\
+\bigskip
 
-%\textcolor{red}{COMPLETAR!}\\
-
-
-%{\large e)} Modificar las rutinas de excepciones del procesador para que desalojen a la tarea que
+{\large e)} \underline{Rutina de atenci\'on a las excepciones del procesador.}\\
+%Modificar las rutinas de excepciones del procesador para que desalojen a la tarea que
 %estaba corriendo y corran la pr\'oxima.\\
 
-%\textcolor{red}{COMPLETAR!}\\
 
-%{\large f)} Implementar el mecanismo de debugging explicado en la secci\'on 3.4 que indicar\'a en pantalla
+\textcolor{red}{Completar.}\\
+\bigskip
+
+{\large f)} \underline{Mecanismo de Debugging.}\\
+%Implementar el mecanismo de debugging explicado en la secci\'on 3.4 que indicar\'a en pantalla
 %la raz\'on del desalojo de una tarea.
 
 
-%\textcolor{red}{COMPLETAR!}\\
-
+\textcolor{red}{Completar.}\\
 \end{document}
 
 
