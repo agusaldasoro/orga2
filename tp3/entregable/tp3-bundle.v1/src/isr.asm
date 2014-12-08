@@ -29,6 +29,7 @@ extern proximo_indice
 ;; -------------------------------------------------------------------------- ;;
 
 %macro TAKE_SNAPSHOT 1
+    ; xchg bx, bx
     mov [registers_snapshot],eax
     mov [registers_snapshot+4],ebx
     mov [registers_snapshot+8],ecx
@@ -52,7 +53,7 @@ extern proximo_indice
     inc eax
     jmp .stack
 .endstack:
-
+    
 %endmacro
 
 %macro ISR 1
@@ -130,14 +131,19 @@ ISR 19 ; _isr0
 ;;
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
+extern show_debugger
 global _isr32
 _isr32:
-    xchg bx, bx
+    ; xchg bx, bx
     pushad
     mov eax,[debuggerOn] 
-    cmp eax, 1
-    jne .nodebug
+    cmp eax, 0
+    je .nodebug
     TAKE_SNAPSHOT 0
+    ; xchg bx, bx
+    push registers_snapshot
+    call show_debugger
+    pop eax
     jmp .nojump
 .nodebug:
     call proximo_reloj
@@ -169,6 +175,7 @@ _isr32:
 global _isr33
 extern printf
 extern print_int
+extern toggle_debugger
 extern handle_keyboard_interrumption
 _isr33:
     pushad
@@ -176,7 +183,12 @@ _isr33:
     in al, 0x60
     cmp al,0x95
     jne .nodebug
-    mov dword [debuggerOn],1
+    ; xchg bx, bx
+    call toggle_debugger
+    not dword [debuggerOn]
+    ; mov eax, dword [debuggerOn]
+    ; not eax
+    ; mov [debuggerOn], eax
     jmp .end
 .nodebug:
     mov dword [esp], eax

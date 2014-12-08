@@ -150,7 +150,7 @@ void print_map() {
     print_string(text, 37, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
     print_string(text, 42, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
 
-    print_debugger(0, 0);
+   // print_debugger(0, 0);
 }
 
 
@@ -189,7 +189,7 @@ char* getClassName(u8 class) {
     return "invalid class";
 }
 
-void print_debugger(unsigned int player, unsigned char class){
+void print_debugger(unsigned int player, unsigned char class, registers* registers){
 
     // TODO: copiar_mapa() en algun espacio de memoria libre
     ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
@@ -239,28 +239,47 @@ void print_debugger(unsigned int player, unsigned char class){
     print_string((player ? "Zombie B" : "Zombie A"), 26, 8, attr);
     print_string(getClassName(class), 36, 8, attr);
 
-    print_string("eax           cr0", 27, 10, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string("ebx           cr2", 27, 12, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string("ecx           cr3", 27, 14, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string("edx           cr4", 27, 16, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string("esi", 27, 18, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string("edi", 27, 20, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string("ebp", 27, 22, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string("esp", 27, 24, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string("eip", 27, 26, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    u8 grey = getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0);
 
-    print_string("stack", 41, 27, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    printfc(27, 10, grey, "eax %h", registers->eax);
+    printfc(27, 12, grey, "ebx %h", registers->ebx);
+    printfc(27, 14, grey, "ecx %h", registers->ecx);
+    printfc(27, 16, grey, "edx %h", registers->edx);
+    printfc(27, 18, grey, "esi %h", registers->esi);
+    printfc(27, 20, grey, "edi %h", registers->edi);
+    printfc(27, 22, grey, "ebp %h", registers->ebp);
+    printfc(27, 24, grey, "esp %h", registers->esp);
+    // printfc(27,26, grey, "eip %h          cr0", registers->e);
 
-    print_string(" cs", 27, 28, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string(" ds", 27, 30, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string(" es", 27, 32, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string(" fs", 27, 34, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string(" gs", 27, 36, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string(" ss", 27, 38, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
-    print_string(" eflags", 27, 40, getFormat(C_FG_BLACK, 0, C_BG_LIGHT_GREY , 0));
+    printfc(42, 10, grey, "cr0 %h", registers->eax);
+    printfc(42, 12, grey, "cr1 %h", registers->eax);
+    printfc(42, 14, grey, "cr2 %h", registers->eax);
+    printfc(42, 16, grey, "cr3 %h", registers->eax);
+    printfc(42, 18, grey, "cr4 %h", registers->eax);
+
+
+    print_string("stack", 41, 27, grey);
+
+    printfc(27, 28, grey, "cs %h", registers->cs);
+    printfc(27, 30, grey, "ds %h", registers->ds);
+    printfc(27, 32, grey, "es %h", registers->es);
+    printfc(27, 34, grey, "fs %h", registers->fs);
+    printfc(27, 36, grey, "gs %h", registers->gs);
+    printfc(27, 38, grey, "ss %h", registers->ss);
+    printfc(27, 40, grey, "eflags %h", registers->eax);
 
 
 /** TODO: Imprimir los valores de los registros
 
     // pegar_mapa() que teniamos guardado */
+}
+
+void toggle_debugger() {
+    debugger = !debugger;
+    if (debugger) {
+        memcpy((void*) 0xb8000, (void*) map, 8000);
+    } else {
+        memcpy((void*) map, (void*) 0xb8000, 8000);
+
+    }
 }
