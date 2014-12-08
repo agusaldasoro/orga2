@@ -198,6 +198,14 @@ int proximo_indice() {
 
 	tss* next_tss = get_next_tss();
 
+	if(next_tss==&tss_idle){
+		if(is_busy(&gdt[GDT_TSS_IDLE])){
+			return 0;
+		}else{
+			return 0x80;
+		}
+	}
+
 	// Si es el proximo tss es igual al ya seteado devolvemos 0.
 	if ((u32) &next_tss == tss_get_base(&gdt[next_selector]) && !is_busy(&gdt[GDT_TSS_IDLE]) ) {
 		return 0;
