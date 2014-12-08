@@ -114,10 +114,10 @@ char* get_zombie_type(u32 type) {
 
 void game_change_class(u8 player, s8 d) {
 	if (player) {
-		zombieClassB = (zombieClassB+d) % 3;
+		zombieClassB = (u8) ((zombieClassB+d+3) % 3);
 		print_string(get_zombie_type(zombieClassB), 79, currentPosB, getFormat(C_FG_WHITE, 0,C_BG_BLUE,0));
 	} else {
-		zombieClassA = (zombieClassA+d) % 3;
+		zombieClassA = (u8) ((zombieClassA+d+3) % 3);
 		print_string(get_zombie_type(zombieClassA), 0, currentPosA, getFormat(C_FG_WHITE,0,C_BG_RED,0));
 	}
 }
