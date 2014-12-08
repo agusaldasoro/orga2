@@ -144,6 +144,7 @@ tss* get_next_tss() {
 		//print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 
 		ret = &tss_idle;
+		//ret = 0;
 	}
 
 	return ret;

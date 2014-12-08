@@ -157,7 +157,7 @@ void handle_keyboard_interrumption(u8 scancode) {
         game_move_zombie(PLAYER_B, -1);
     } else if (sc == 159) {
         game_move_zombie(PLAYER_B, 1);
-    } else if (sc == 170) {
+    } else if (sc == 182) {
        game_lanzar_zombi(PLAYER_B);
     } else if (sc == 203) {
         game_change_class(PLAYER_A, -1);
@@ -167,7 +167,7 @@ void handle_keyboard_interrumption(u8 scancode) {
         game_move_zombie(PLAYER_A, -1);
     } else if (sc == 208) {
         game_move_zombie(PLAYER_A, 1);
-    } else if (sc == 182) {
+    } else if (sc == 170) {
        game_lanzar_zombi(PLAYER_A);
     }
 }

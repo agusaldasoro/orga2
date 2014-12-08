@@ -155,18 +155,27 @@ modo_protegido:
     call habilitar_pic
     ; Cargar tarea inicial
 
+    extern game_init
+    call game_init
 
     extern start_zombie
 
-    xchg bx, bx
-    xor ax,ax
-    mov ax,0
-    push ax
-    push ax
-    mov ax,0
-    push ax
-    xchg bx, bx
-    call start_zombie
+    ;xchg bx, bx
+    ;xor ax,ax
+    ;mov ax,0
+    ;push ax
+    ;push ax
+    ;mov ax,0
+    ;push ax
+    ;xchg bx, bx
+    ;call start_zombie
+
+    extern game_lanzar_zombi
+
+    ;mov eax,0
+    ;push eax
+    ;call game_lanzar_zombi
+    ;pop eax
 
     ;xchg bx, bx
     ;jmp 0x80:modo_protegido
