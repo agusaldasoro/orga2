@@ -7,6 +7,13 @@
 
 #include "mmu.h"
 #define ANCHO_MAPA 78
+#define ALTO_MAPA 44
+
+//TODO borrar luego
+ #include "sched.h"
+
+  int offset_x_q[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
+	int offset_y_q[9] = {0, 0, -1, 1, -1, 1, 0, 1, -1};
 
 void mmu_inicializar_dir_kernel() {
 	page_directory *pd = (page_directory *) 0x27000;
@@ -78,25 +85,25 @@ page_table* get_page_table() {
 }
 
 
-unsigned int get_physical_address(unsigned int x, unsigned int y) {
+unsigned int get_physical_address(int x, int y) {
 
 	if (y==-1) {
-		return get_physical_address(x, 44);
-	} else if (y==45) {
-		return get_physical_address(x, 0);
-	} else {
-	    unsigned int ret;
-		ret = (x + y*ANCHO_MAPA) * 0x1000;
-		ret = ret + 0x400000;
-		return ret;
+		y= ALTO_MAPA-1;
+	} else if (y==ALTO_MAPA) {
+		y = 0;
 	}
+	unsigned int ret;
+	ret = (x + y*ANCHO_MAPA) * 0x1000;
+	ret = ret + 0x400000;
+	return ret;
+	
 }
 
 void get_position(unsigned int* x, unsigned int* y,unsigned int dir){
 	int y2 = 0;
 	dir = dir-0x400000;
 	dir = dir/0x1000;
-	while(dir<ANCHO_MAPA){
+	while(dir>=ANCHO_MAPA){
 		dir = dir-ANCHO_MAPA;
 		y2++;
 	}
@@ -147,42 +154,29 @@ void mmu_mapear_pagina(unsigned int virtual, page_directory* pd, unsigned int fi
 	Mago = 1
 	Clerigo = 2
 */
+
+// player = 0 es A
+// player = 1 es B
+
 page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char class, unsigned int y) {
 	
 	page_directory* pd = get_page_directory();
 	breakpoint();
 
-	unsigned int x = (player ? 79 : 2);
-// player = 0 es A
-// player = 1 es B
-
-	unsigned int offset_x[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
-	unsigned int offset_y[9] = {0, 0, -1, 1, -1, 1, 0, 1, -1};
+	int x = (player ? ANCHO_MAPA-2 : 1);
 
 	int i, _x, _y;
 	for(i = 0; i < 9; i++) {
-		_x = y + offset_x[i] * (player ? 1 : -1);
-		_y = x + offset_y[i] * (player ? 1 : -1);
+		_x = x + offset_x_q[i] * (player ? 1 : -1);
+		_y = y + offset_y_q[i] * (player ? 1 : -1);
 
 		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
 	}
 
-
-	//unsigned int address = 0x10000 + (player ? 0 : 1)  * 0x3000 + class * 0x1000;
 	breakpoint();
-	copy_code(get_physical_address(x,y),(page_directory*)rcr3(),class,player);
+	copy_code(get_physical_address(x,y),class,player);
 	breakpoint();
-	//breakpoint();
-	//i = 0;
-	//unsigned char *code = (unsigned char *) 0x8000000;
-	//unsigned char * paddress = (unsigned char*) address;
-	//while (i++ < 0x1000) {
-	//	code[i] = paddress[i];
-	//}
 
-
-	//lcr3((unsigned int)pd);
-	//breakpoint();
 
 	mmu_mapear_pagina(0x8009000,pd,(unsigned int)get_page_table,1,0);
 
@@ -195,22 +189,33 @@ unsigned int recuperar_fisica(unsigned int virtual, page_directory* pd) {
     return (pt[table].base << 12);
 }
 
-void desplazar_fisica(unsigned int virtual, page_directory* pd, int x, int y) {
-    page_table* pt = (page_table*) (pd[virtual >> 22].base << 12);
-    unsigned int table  = (virtual & 0x003FF000) >> 12;
-    pt[table].base += x;
-    pt[table].base += y*ANCHO_MAPA;
-    tlbflush();
+
+void setear_paginas (unsigned int player, int x, int y, page_directory* pd) {
+	
+	breakpoint();
+	int i = 0;
+	int _x, _y;
+	breakpoint();
+	while(i < 9) {
+		breakpoint();
+		_x = x + offset_x_q[i] * (player ? 1 : -1);
+		_y = y + offset_y_q[i] * (player ? 1 : -1);
+
+		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
+		i++;
+	}
+	breakpoint();
+	return;
 }
 
 
-void copy_code(u32 fisica, page_directory* cr3, u8 class, u8 player) {
+void copy_code(u32 fisica, u8 class, u8 player) {
 	breakpoint();
-	mmu_mapear_pagina(0x4000000, cr3, fisica, 1, 0);
+	mmu_mapear_pagina(0x4000000, (page_directory*)rcr3(), fisica, 1, 0);
 	breakpoint();
-	memcpy((void*) 0x10000 + ((player ? 0 : 1)  * 0x3000 + class * 0x1000), (void*) 0x4000000, 0x1000);
+	memcpy((void*) 0x10000 + ((player ? 1 : 0)  * 0x3000 + class * 0x1000), (void*) 0x4000000, 0x1000);
 	breakpoint();
-	mmu_unmapear_pagina(0x4000000, cr3);
+	mmu_unmapear_pagina(0x4000000, (page_directory*)rcr3());
 }
 
 

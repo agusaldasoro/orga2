@@ -9,6 +9,9 @@
 #include "screen.h"
 #include "mmu.h"
 
+#define ANCHO_MAPA 78
+#define ALTO_MAPA 44
+
 u8 puntajeA;
 u8 puntajeB;
 
@@ -41,7 +44,7 @@ void game_change_class(u8 player, u8 d) {
 }
 
 void game_move_zombie(u8 player, u8 d) {
-
+	//TODO
 	if (player) {
 		if (currentPosB <= 1 || currentPosB >= 40) return;
 		currentPosB = currentPosB + d;
@@ -58,7 +61,7 @@ void game_jugador_mover(unsigned int jugador, unsigned int value) {
 
 }
 
-void game_lanzar_zombi(unsigned int player) {
+void game_lanzar_zombi(u8 player) {
 	if (player) {
 		start_zombie(player, zombieClassB, currentPosB);
 	} else {
@@ -67,61 +70,64 @@ void game_lanzar_zombi(unsigned int player) {
 
 }
 
-void mover_soldado(int delta_x, int delta_y, page_directory* pd) {
-	//desplazar_fisica(0x8000000, pd, delta_x, delta_y);
+u8 mover_soldado(int x2, int y2,unsigned int player, page_directory* pd) {
 	char* text;
-    if(/*(recuperar_fisica(0x8001000,pd) >> 3)%(50*0x1000)==0*/0){
+
+    if(x2<=0){
     	text = "me declaro spectrum",0;
     	print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
     	sumarPuntoB();
-    }else if(0/*(recuperar_fisica(0x8001000,pd) >> 3)%(49 * 0x1000)*/){
+    	return 0;
+    }else if(x2>=ANCHO_MAPA-1){
     	text = "me declaro spectrum15",0;
     	print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
     	sumarPuntoA();
+    	return 0;
     }else{
-    	int i = 0;
-    	while(i<9){
-        	desplazar_fisica(0x8000000+i*0x1000, pd, delta_x, delta_y);
-        	i++;
-    	}
+    	setear_paginas (player, x2, y2, pd);
+    	return 1;
     }
 }
 
-void mover_pantalla(int x,int y,int delta_x,int delta_y,u8 tipo){
+void mover_pantalla(int x,int y,int x2,int y2,u8 tipo){
+	x+=1;
+	x2+=1;
 	print_string("X",x, y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
-	if(y+delta_y<0){
-		delta_y += 10;
+	if(y2<0){
+		y2 = ALTO_MAPA-1;
 	}
-	if(y+delta_y>9){
-		delta_y += -10;
+	if(y2>=ALTO_MAPA){
+		y2 = 0;
 	}
 	if (tipo==0)
-		print_string("G",x+delta_x, y+delta_y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+		print_string("G",x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 	if (tipo==1)
-		print_string("M",x+delta_x, y+delta_y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+		print_string("M",x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 	if (tipo==2)
-		print_string("C",x+delta_x, y+delta_y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+		print_string("C",x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 }
 
 /* pd:eax,delta_x:edi,delta_y:esi, tipo: dx */
 void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
-	mover_soldado(delta_x,delta_y,pd);
+
 	unsigned int x;
 	unsigned int y;
 	get_position(&x,&y,recuperar_fisica(0x8000000,pd));
-	mover_pantalla(x,y,delta_x,delta_y,tipo);
-}
 
-void movimiento_direccional(direccion d){
-	if(d==ADE){
-		movimiento((page_directory*)rcr3(),1,0,0);
-	}else if(d==DER){
-		movimiento((page_directory*)rcr3(),0,1,0);
-	}else if(d==ATR){
-		movimiento((page_directory*)rcr3(),-1,0,0);
-	}else{
-		movimiento((page_directory*)rcr3(),0,-1,0);
-	}
+    unsigned int player = (recuperar_fisica(0x8001000,pd)<recuperar_fisica(0x8000000,pd));
+    int x2 = (int) x;
+    int y2 = (int) y;
+    if(!player){
+    	x2 += delta_x;
+    	y2 += delta_y;
+    }else{
+    	x2 -= delta_x;
+    	y2 -= delta_y;
+    }
+
+
+	u8 se_movio = mover_soldado(x2,y2,player,pd);
+	if(se_movio)mover_pantalla(x,y,x2,y2,tipo);
 }
 
 
