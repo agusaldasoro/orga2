@@ -157,11 +157,14 @@ tss* get_free_tss(u8 player) {
 	int i = 0;
 
 	if (player) {
-		while(inUseB[i]) i++;
+		while(i<CANT_ZOMBIS && inUseB[i]) i++;
 	} else {
-		while(inUseA[i]) i++;
+		while(i<CANT_ZOMBIS && inUseA[i]) i++;
 
 	}
+
+	if(i==CANT_ZOMBIS) return 0;
+
 	if(player){
 		inUseB[i] = 1;
 	}else{
