@@ -99,11 +99,20 @@ void sumarPuntoB(){
 	if(puntajeB==15){/*TODO terminoElJuego*/}
 }
 
+char* get_zombie_type(u32 type) {
+	if (type == 0) return "G";
+	if (type == 1) return "M";
+	if (type == 2) return "C";
+	return "T";
+}
+
 void game_change_class(u8 player, s8 d) {
 	if (player) {
 		zombieClassB = (zombieClassB+d) % 3;
+		print_string(get_zombie_type(zombieClassB), 79, currentPosB, getFormat(C_FG_WHITE, 0,C_BG_BLUE,0));
 	} else {
 		zombieClassA = (zombieClassA+d) % 3;
+		print_string(get_zombie_type(zombieClassA), 0, currentPosA, getFormat(C_FG_WHITE,0,C_BG_RED,0));
 	}
 }
 
@@ -111,11 +120,11 @@ void game_move_zombie(u8 player, s8 d) {
 	//TODO
 	if (player) {
 		if (currentPosB <= 0 || currentPosB >= ALTO_MAPA-1) return;
-		mostrar_cursores(player,d);
+		mostrar_cursores(player, d);
 		currentPosB = currentPosB + d;
 	} else {
 		if (currentPosA <= 0 || currentPosA >= ALTO_MAPA-1) return;
-		mostrar_cursores(player,d);
+		mostrar_cursores(player, d);
 		currentPosA = currentPosA + d;
 	}
 }
