@@ -15,6 +15,20 @@
 u8 puntajeA;
 u8 puntajeB;
 
+u8 cantZombiesA;
+u8 cantZombiesB;
+
+void convertir_a_string_de_dos_digitos(unsigned int n, char* res) {
+    unsigned int decena;
+    unsigned int unidadades;
+    n = n % 100;
+
+    decena = n/10;
+    unidadades = n%10;
+    res[1] = unidadades + '0';
+    res[0] = decena + '0';
+}
+
 
 void game_init() {
 	puntajeA = 0;
@@ -25,6 +39,12 @@ void game_init() {
 	zombieClassB = MAGO;
 	mostrar_cursores(1,0);
 	mostrar_cursores(0,0);
+
+	cantZombiesA = 20;
+	cantZombiesB = 20;
+
+	reimprimirCantidadZombies(0);
+	reimprimirCantidadZombies(1);
 }
 
 void mostrar_cursores(u8 player,s8 d){
@@ -35,6 +55,18 @@ void mostrar_cursores(u8 player,s8 d){
 		print_string(" ",79,currentPosB, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
 		print_string("G",79,currentPosB+d, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
 	}
+}
+
+void reimprimirCantidadZombies(u8 player){
+	char* text;
+	text = "00",0;
+	if(player){
+		convertir_a_string_de_dos_digitos(cantZombiesB,text);
+		print_string(text, 48, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
+	}else{
+		convertir_a_string_de_dos_digitos(cantZombiesA,text);
+		print_string(text, 31, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
+	}   
 }
 
 void sumarPuntoA(){
@@ -81,9 +113,17 @@ void game_jugador_mover(unsigned int jugador, unsigned int value) {
 void game_lanzar_zombi(u8 player) {
 	breakpoint();
 	if (player) {
-		start_zombie(player, zombieClassB, currentPosB);
+		if(cantZombiesB >0){
+			cantZombiesB--;
+			reimprimirCantidadZombies(player);
+			start_zombie(player, zombieClassB, currentPosB);
+		}
 	} else {
-		start_zombie(player, zombieClassA, currentPosA);
+		if(cantZombiesA > 0){
+			cantZombiesA--;
+			reimprimirCantidadZombies(player);
+			start_zombie(player, zombieClassA, currentPosA);
+		}
 	}
 
 }
