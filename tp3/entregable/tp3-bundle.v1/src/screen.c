@@ -9,6 +9,8 @@
 #include "util.h"
 #include "colors.h"
 
+static char caracteres_de_reloj [4] = {'\\','|','-','/' };
+
 // http://en.wikipedia.org/wiki/Interrupt_descriptor_table
 static char *exceptions[] = {
     "Division by zero",
@@ -133,11 +135,11 @@ void print_map() {
     }
         /** Escribe a los numeritos de los zombies de cada jugador con sus cruces*/
     char * text;
-    text = "1 2 3 4 5 6 7 8 9 10",0;
+    text = "1 2 3 4 5 6 7 8",0;
     print_string(text, 4, 46, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
     print_string(text, 55, 46, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 
-    text = "x x x x x x x x x x",0;
+    text = "x x x x x x x x",0;
     print_string(text, 4, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
     print_string(text, 55, 48, getFormat(C_FG_BLUE, 0, C_BG_BLACK  , 0));
 
@@ -146,7 +148,7 @@ void print_map() {
     print_string(text, 31, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
     print_string(text, 48, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
 
-    text = "0",0;
+    text = "00",0;
     print_string(text, 37, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
     print_string(text, 42, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
 
@@ -263,4 +265,24 @@ void print_debugger(unsigned int player, unsigned char class){
 /** TODO: Imprimir los valores de los registros
 
     // pegar_mapa() que teniamos guardado */
+}
+
+void print_clock_zombie(u8 player,unsigned i,unsigned int clock){
+    unsigned int clock_m = clock % 4;
+    char* text;
+    text = "0",0;
+    text[0] = caracteres_de_reloj[clock_m];
+    if(player){
+        print_string(text, 55+i*2, 48, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+    }else{
+        print_string(text, 4+i*2, 48, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+    } 
+}
+
+void reset_clock_zombie(u8 player,unsigned i){
+    if(player){
+        print_string("x", 55+i*2, 48, getFormat(C_FG_BLUE, 0, C_BG_BLACK  , 0));
+    }else{
+        print_string("x", 4+i*2, 48, getFormat(C_FG_RED, 0, C_BG_BLACK  , 0));
+    } 
 }

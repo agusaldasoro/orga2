@@ -34,5 +34,7 @@ void clear_screen();
 void print_map();
 void print_exception(int number, registers* regs);
 void print_debugger(unsigned int player, unsigned char class);
+void print_clock_zombie(u8 player,unsigned i,unsigned int clock);
+void reset_clock_zombie(u8 player,unsigned i);
 
 #endif  /* !__SCREEN_H__ */

@@ -21,6 +21,9 @@ u8 inUseB[CANT_ZOMBIS] = {};
 u8 tiposA[CANT_ZOMBIS] = {};
 u8 tiposB[CANT_ZOMBIS] = {};
 
+unsigned int clock_de_zombiesA [CANT_ZOMBIS] = {};
+unsigned int clock_de_zombiesB [CANT_ZOMBIS] = {};
+
 int currentZombieA;
 int currentZombieB;
 
@@ -104,14 +107,15 @@ tss* _get_next_tss(u8 player) {
 		 	i++;
 			currentZombieB++;
 			currentZombieB = currentZombieB % 8;
-			//print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseB[currentZombieB] && i <= CANT_ZOMBIS);
 
 		if (inUseB[currentZombieB]){
 			ret = &tss_zombisB[currentZombieB];
 			claseActual = tiposB[currentZombieB];
+			clock_de_zombiesB[currentZombieB]++;
+			print_clock_zombie(1,currentZombieB,clock_de_zombiesB[currentZombieB]);
+
 		}
-		//if (!inUseB[currentZombieB]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
 
 	} else {
 		i = currentZombieA;
@@ -119,15 +123,14 @@ tss* _get_next_tss(u8 player) {
 		 	i++;
 			currentZombieA++;
 			currentZombieA = currentZombieA % 8;
-			//print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseA[currentZombieA] && i <= CANT_ZOMBIS);
 
 		if (inUseA[currentZombieA]){
 			ret = &tss_zombisA[currentZombieA];
 			claseActual = tiposA[currentZombieA];
+			clock_de_zombiesA[currentZombieA]++;
+			print_clock_zombie(0,currentZombieA,clock_de_zombiesA[currentZombieA]);
 		}
-		//if (!inUseB[currentZombieA]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
-
 	}
 
 	return ret;
@@ -177,9 +180,11 @@ tss* get_free_tss(u8 player,u8 class) {
 	if(player){
 		inUseB[i] = 1;
 		tiposB[i] = class;
+		clock_de_zombiesB[i] = 0;
 	}else{
 		inUseA[i] = 1;
 		tiposA[i] = class;
+		clock_de_zombiesA[i] = 0;
 	}
 
 	return (player ? &tss_zombisB[i] : &tss_zombisA[i]);
@@ -246,12 +251,16 @@ u8 desalojarTarea(){
 	while(i< CANT_ZOMBIS && aDesalojar != &(tss_zombisA[i]))i++;
 	if(i<CANT_ZOMBIS){
 		inUseA[i] = 0;
+		clock_de_zombiesA[i] = 0;
+		reset_clock_zombie(0,i);
 		return 0;
 	}else{
 		i = 0;
 		while(i< CANT_ZOMBIS && aDesalojar != &(tss_zombisB[i]))i++;
 		if(i<CANT_ZOMBIS){
 			inUseB[i] = 0;
+			clock_de_zombiesB[i] = 0;
+			reset_clock_zombie(1,i);
 			return 1;
 		}
 	}
