@@ -13,6 +13,8 @@ sched_tarea_selector:   dw 0x00
 
 registers_snapshot dd 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 debuggerOn: dd 0x0
+; i have no idea what i am doing
+debuggerOn2: dd 0x0
 
 keyboard_str:   db "Teclado: %h",0
 
@@ -140,10 +142,14 @@ _isr32:
     mov eax,[debuggerOn] 
     cmp eax, 0
     je .nodebug
+    mov eax,[debuggerOn2]
+    cmp eax,5
+    je .nojump
     TAKE_SNAPSHOT 0
     ; xchg bx, bx
     push registers_snapshot
     call show_debugger
+    mov dword [debuggerOn2],5
     pop eax
     jmp .nojump
 .nodebug:
@@ -188,6 +194,8 @@ _isr33:
     ; xchg bx, bx
     call toggle_debugger
     not dword [debuggerOn]
+    mov dword [debuggerOn2], 0
+
     ; mov eax, dword [debuggerOn]
     ; not eax
     ; mov [debuggerOn], eax

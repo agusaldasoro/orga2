@@ -258,7 +258,14 @@ void print_debugger(unsigned int player, unsigned char class, registers* registe
     printfc(42, 18, grey, "cr4 %h", registers->eax);
 
 
-    print_string("stack", 41, 27, grey);
+    printfc(42, 27, grey, "%s", "Stack");
+    printfc(42, 29, grey, "%h", registers->stack0);
+    printfc(42, 30, grey, "%h", registers->stack1);
+    printfc(42, 31, grey, "%h", registers->stack2);
+    printfc(42, 32, grey, "%h", registers->stack3);
+    printfc(42, 33, grey, "%h", registers->stack4);
+    printfc(42, 34, grey, "%h", registers->stack5);
+
 
     printfc(27, 28, grey, "cs %h", registers->cs);
     printfc(27, 30, grey, "ds %h", registers->ds);
