@@ -54,13 +54,10 @@ void game_init() {
 
 	zombiesActivosA = 0;
 	zombiesActivosB = 0;
-<<<<<<< HEAD
 	debugger = 0;
-=======
 
 	termino_el_juego = 0;
 	contadorDeInactividad = 0;
->>>>>>> 9509ec012ef0882aadc764456fb06b1476314776
 }
 
 void mostrar_cursores(u8 player,s8 d){
