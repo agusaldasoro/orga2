@@ -48,7 +48,6 @@ void mmu_inicializar_dir_kernel() {
 void mmu_inicializar() {
 	mmu_inicializar_dir_kernel();
 	paginas = 0;
-	//mmu_inicializar_dir_zombie(1, 3, 0);
 }
 
 page_directory* get_page_directory() {

@@ -8,9 +8,12 @@
 #include "sched.h"
 #include "screen.h"
 #include "mmu.h"
+#include "tss.h"
 
 #define ANCHO_MAPA 78
 #define ALTO_MAPA 44
+
+#define ZOMBIE_MUERTO 5
 
 u8 puntajeA;
 u8 puntajeB;
@@ -87,16 +90,19 @@ void reimprimirPuntaje(u8 player){
 	}
 }
 
-void sumarPuntoA(){
-	puntajeA++;
-	reimprimirPuntaje(0);
-	if(puntajeA==15){/*TODO terminoElJuego*/}
-}
-
-void sumarPuntoB(){
-	puntajeB++;
-	reimprimirPuntaje(1);
-	if(puntajeB==15){/*TODO terminoElJuego*/}
+void sumarPunto(u8 player){
+	if(player){
+		puntajeB++;
+	}else{
+		puntajeA++;
+	}
+	reimprimirPuntaje(player);
+	u8 zombie_player = desalojarTarea();
+	if(zombie_player==1){
+		zombiesActivosB--;
+	}else if(zombie_player==0){
+		zombiesActivosA--;
+	}
 }
 
 char* get_zombie_type(u32 type) {
@@ -120,11 +126,11 @@ void game_move_zombie(u8 player, s8 d) {
 	//TODO
 	if (player) {
 		if (currentPosB <= 0 || currentPosB >= ALTO_MAPA-1) return;
-		mostrar_cursores(player, d);
+		mostrar_cursores(player,d);
 		currentPosB = currentPosB + d;
 	} else {
 		if (currentPosA <= 0 || currentPosA >= ALTO_MAPA-1) return;
-		mostrar_cursores(player, d);
+		mostrar_cursores(player,d);
 		currentPosA = currentPosA + d;
 	}
 }
@@ -154,26 +160,9 @@ void game_lanzar_zombi(u8 player) {
 
 }
 
-u8 mover_soldado(int x2, int y2,unsigned int player, page_directory* pd) {
-	// char* text;
+void mover_soldado(int x2, int y2,unsigned int player, page_directory* pd) {
 	breakpoint();
-    if(x2<=0){
-    	// text = "me declaro spectrum";
-    	// print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0));
-		// breakpoint();
-    	sumarPuntoB();
-    	return 0;
-    }else if(x2>=ANCHO_MAPA-1){
-    	// text = "me declaro spectrum15";
-    	// print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
-    	// breakpoint();
-		sumarPuntoA();
-    	return 0;
-    }else{
-    	breakpoint();
-		setear_paginas(player, x2, y2, pd);
-    	return 1;
-    }
+	setear_paginas(player, x2, y2, pd);
 }
 
 void mover_pantalla(int x, int y, int x2, int y2, u8 tipo){
@@ -192,6 +181,8 @@ void mover_pantalla(int x, int y, int x2, int y2, u8 tipo){
 		print_string("M", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 	if (tipo == 2)
 		print_string("C", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if(tipo == ZOMBIE_MUERTO)
+		print_string("X", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 }
 
 /* pd:eax,delta_x:edi,delta_y:esi, tipo: dx */
@@ -202,6 +193,8 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
 	get_position(&x,&y,recuperar_fisica(0x8000000,pd));
 
 	// TODO : Por dios, explicar la magia atrás de esta línea.
+	//Es para determinar cual jugador es: si la fisica correspondiente a adelante es mas chica que la del centro
+	// entonces es el 1 y viceversa
     unsigned int player = (recuperar_fisica(0x8001000, pd) < recuperar_fisica(0x8000000, pd));
     int x2 = (int) x;
     int y2 = (int) y;
@@ -213,9 +206,16 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
     	x2 -= delta_x;
     }
 
-
-	u8 se_movio = mover_soldado(x2, y2, player, pd);
-	if (se_movio) mover_pantalla(x, y, x2, y2, tipo);
+    if(x2<=0){
+    	mover_pantalla(x, y, x2, y2, ZOMBIE_MUERTO);
+    	sumarPunto(1);
+    }else if(x2>=ANCHO_MAPA-1){
+    	mover_pantalla(x, y, x2, y2, ZOMBIE_MUERTO);
+		sumarPunto(0);
+    }else{
+		mover_soldado(x2, y2, player, pd);    
+		mover_pantalla(x, y, x2, y2, tipo);
+	}
 }
 
 

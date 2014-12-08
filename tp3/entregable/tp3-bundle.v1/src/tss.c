@@ -220,12 +220,32 @@ int proximo_indice() {
 	return next_selector * 8;
 }
 
-//void entrarEnIdl(){
-	//noEstoyEnLaIdl = 0;
-//}
-//void salirDeIdl(){
-//	noEstoyEnLaIdl = 1;
-//}
+tss* recuperarBase(unsigned int indice){
+	return (tss*)(gdt[indice].base_0_15 + (gdt[indice].base_23_16 << 16) + (gdt[indice].base_31_24 << 24));
+}
+
+u8 desalojarTarea(){
+	tss* aDesalojar;
+	if(is_busy(&gdt[GDT_NEXT_TSS])){
+		aDesalojar = recuperarBase(GDT_NEXT_TSS);
+	}else{
+		aDesalojar = recuperarBase(GDT_CURRENT_TSS);
+	}
+	int i = 0;
+	while(i< CANT_ZOMBIS && aDesalojar != &(tss_zombisA[i]))i++;
+	if(i<CANT_ZOMBIS){
+		inUseA[i] = 0;
+		return 0;
+	}else{
+		i = 0;
+		while(i< CANT_ZOMBIS && aDesalojar != &(tss_zombisB[i]))i++;
+		if(i<CANT_ZOMBIS){
+			inUseB[i] = 0;
+			return 1;
+		}
+	}
+	return 2;
+}
 
 
 void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags) {
