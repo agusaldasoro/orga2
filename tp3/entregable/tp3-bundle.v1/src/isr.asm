@@ -132,6 +132,7 @@ ISR 19 ; _isr0
 ;; Rutina de atención del RELOJ
 ;; -------------------------------------------------------------------------- ;;
 extern show_debugger
+extern revisarTerminacion
 global _isr32
 _isr32:
     ; xchg bx, bx
@@ -147,6 +148,7 @@ _isr32:
     jmp .nojump
 .nodebug:
     call proximo_reloj
+    call revisarTerminacion
     call proximo_indice
 
     cmp ax,0

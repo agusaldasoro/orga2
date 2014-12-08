@@ -24,6 +24,8 @@ void* memset(void* src, int c, int n);
 
 void handle_keyboard_interrumption(u8 scancode);
 
+u8 termino_el_juego;
+
 // sizeof(registers= 14*4 + 10*4 = 56 + 40
 typedef struct registers {
 	int eax;

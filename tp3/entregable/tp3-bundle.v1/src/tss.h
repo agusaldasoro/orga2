@@ -63,6 +63,7 @@ tss* get_next_tss();
 int proximo_indice();
 u8 desalojarTarea();
 u8 claseActual;
+u8 termino_el_juego;
 
 tss tss_inicial;
 tss tss_idle;

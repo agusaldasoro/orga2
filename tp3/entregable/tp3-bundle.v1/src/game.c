@@ -8,12 +8,12 @@
 #include "sched.h"
 #include "screen.h"
 #include "mmu.h"
-#include "tss.h"
 
 #define ANCHO_MAPA 78
 #define ALTO_MAPA 44
 
 #define ZOMBIE_MUERTO 5
+#define LIMITE_DE_TIEMPO_INACTIVIDAD 30
 
 u8 puntajeA;
 u8 puntajeB;
@@ -54,7 +54,13 @@ void game_init() {
 
 	zombiesActivosA = 0;
 	zombiesActivosB = 0;
+<<<<<<< HEAD
 	debugger = 0;
+=======
+
+	termino_el_juego = 0;
+	contadorDeInactividad = 0;
+>>>>>>> 9509ec012ef0882aadc764456fb06b1476314776
 }
 
 void mostrar_cursores(u8 player,s8 d){
@@ -227,6 +233,7 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
 
 void game_move_current_zombi(direccion dir) {
 	breakpoint();
+	contadorDeInactividad = 0;
 	if(dir==ADE){
 		memcpy((void*)0x8000000,(void*)0x8001000,0x1000);
 		movimiento((page_directory*)rcr3(),1,0,claseActual);
@@ -241,5 +248,49 @@ void game_move_current_zombi(direccion dir) {
 		movimiento((page_directory*)rcr3(),0,-1,claseActual);
 	} else {
 		printf(1, 1, "%s", "GUACHOS FORROS");		
+	}
+}
+
+void revisarTerminacion(){
+	if(!termino_el_juego){
+		if((cantZombiesA == 0 && zombiesActivosA==0) && (cantZombiesB == 0 && zombiesActivosB==0)){
+			terminar_juego();
+		}else{
+			revisar_terminar_por_inactividad();
+		}
+	}
+}
+
+void mostrarCartelDeFin(char* text){
+	print_string(text,32,22,getFormat(C_FG_WHITE,0,C_BG_RED,0));
+}
+
+void terminar_juego(){
+	if(puntajeA==puntajeB){
+		mostrarCartelDeFin("    EMPATE    ");
+	}else if(puntajeA>puntajeB){
+		mostrarCartelDeFin("GANO JUGADOR A");
+	}else{
+		mostrarCartelDeFin("GANO JUGADOR B");
+	}
+	termino_el_juego = 1;
+}
+
+u8 puedeLanzarZombies(u8 player){
+	if(player){
+		return (zombiesActivosB != 8 && cantZombiesB > 0);
+	}else{
+		return (zombiesActivosA != 8 && cantZombiesA > 0);
+	}
+}
+
+void revisar_terminar_por_inactividad(){
+	if(!puedeLanzarZombies(0) && !puedeLanzarZombies(1)){
+		if(contadorDeInactividad>=LIMITE_DE_TIEMPO_INACTIVIDAD){
+			terminar_juego();
+		}
+		contadorDeInactividad++;
+	}else{
+		contadorDeInactividad = 0;
 	}
 }
