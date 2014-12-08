@@ -106,28 +106,28 @@ void _printf(unsigned int col, unsigned int row, char attr, const char *format, 
                     break;
                 case 'h':
                     n = va_arg(args,int);
-                    print_string("0x", col, row, 0);
+                    print_string("0x", col, row, attr);
                     print_hex(n, col+2, row, 0);
                     col += digits(n, 16) + 2;
                     break;
                 case 'p':
                     n = va_arg(args, unsigned int);
-                    print_string("0x",col, row,0);
+                    print_string("0x",col, row,attr);
                     print_hex(n, col+2, row, 0);
                     col += digits(n, 16) + 2;
                     break;
                 case 's':
                     s = va_arg(args, char*);
                     if (s == 0) {
-                        print_string("(null)", col, row, 0);
+                        print_string("(null)", col, row, attr);
                         col += 6;
                     } else {
-                        print_string(s, col, row, 0);
+                        print_string(s, col, row, attr);
                         col += strlen(s);
                     }
                     break;
                 default:
-                    print_string("Unknown format!", col, row, 0);
+                    print_string("Unknown format!", col, row, attr);
             }
         }
         
@@ -172,7 +172,7 @@ void* memset(void* src, int c, int n) {
 void handle_keyboard_interrumption(u8 scancode) {
 
     int sc = (int) scancode;
-    printf(67, 0, "Teclado: %h   ", sc);
+    printf(65, 0, "Teclado: %h ", sc);
 
     if (sc == 158) {
         game_change_class(PLAYER_A, -1);

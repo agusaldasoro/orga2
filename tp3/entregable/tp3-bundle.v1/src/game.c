@@ -115,10 +115,10 @@ char* get_zombie_type(u32 type) {
 void game_change_class(u8 player, s8 d) {
 	if (player) {
 		zombieClassB = (u8) ((zombieClassB + d + 3) % 3);
-		printfc(79, currentPosB, getFormat(C_FG_WHITE, 0,C_BG_BLUE,0), "%s", get_zombie_type(zombieClassB));
+		printfc(79, currentPosB+1, getFormat(C_FG_WHITE, 0,C_BG_BLUE,0), "%s", get_zombie_type(zombieClassB));
 	} else {
 		zombieClassA = (u8) ((zombieClassA + d + 3) % 3);
-		printfc(0, currentPosA, getFormat(C_FG_WHITE,0,C_BG_RED,0), "%s", get_zombie_type(zombieClassA));
+		printfc(0, currentPosA+1, getFormat(C_FG_WHITE,0,C_BG_RED,0), "%s", get_zombie_type(zombieClassA));
 	}
 }
 
@@ -224,16 +224,16 @@ void game_move_current_zombi(direccion dir) {
 	breakpoint();
 	if(dir==ADE){
 		memcpy((void*)0x8000000,(void*)0x8001000,0x1000);
-		movimiento((page_directory*)rcr3(),1,0,0);
+		movimiento((page_directory*)rcr3(),1,0,claseActual);
 	}else if(dir==DER){
 		memcpy((void*)0x8000000,(void*)0x8004000,0x1000);
-		movimiento((page_directory*)rcr3(),0,1,0);
+		movimiento((page_directory*)rcr3(),0,1,claseActual);
 	}else if(dir==ATR){
 		memcpy((void*)0x8000000,(void*)0x8006000,0x1000);
-		movimiento((page_directory*)rcr3(),-1,0,0);
+		movimiento((page_directory*)rcr3(),-1,0,claseActual);
 	}else if (dir == IZQ) {
 		memcpy((void*)0x8000000,(void*)0x8005000,0x1000);
-		movimiento((page_directory*)rcr3(),0,-1,0);
+		movimiento((page_directory*)rcr3(),0,-1,claseActual);
 	} else {
 		printf(1, 1, "%s", "GUACHOS FORROS");		
 	}

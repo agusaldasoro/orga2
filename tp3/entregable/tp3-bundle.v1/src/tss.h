@@ -57,11 +57,12 @@ typedef struct str_tss {
 void tss_inicializar();
 void tss_inicializar_tarea_idle();
 void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags);
-tss* get_free_tss(u8 player);
+tss* get_free_tss(u8 player,u8 class);
 tss* _get_next_tss(u8 player);
 tss* get_next_tss();
 int proximo_indice();
 u8 desalojarTarea();
+u8 claseActual;
 
 tss tss_inicial;
 tss tss_idle;

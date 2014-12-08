@@ -15,7 +15,7 @@ unsigned short sched_proximo_indice() {
 void start_zombie(u8 player, u8 class, u32 y) {
 	printf(38,38,"star zombie: %d %d %d",(unsigned int)player,(unsigned int)class,(unsigned int)y);
 	breakpoint();
-	tss* free_tss = get_free_tss(player);
+	tss* free_tss = get_free_tss(player,class);
 	if(free_tss != 0){
 		page_directory* pd =  mmu_inicializar_dir_zombie(player, class, y);
 		breakpoint();

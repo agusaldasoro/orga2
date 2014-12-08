@@ -18,6 +18,9 @@ tss tss_zombisB[CANT_ZOMBIS];
 u8 inUseA[CANT_ZOMBIS] = {};
 u8 inUseB[CANT_ZOMBIS] = {};
 
+u8 tiposA[CANT_ZOMBIS] = {};
+u8 tiposB[CANT_ZOMBIS] = {};
+
 int currentZombieA;
 int currentZombieB;
 
@@ -104,7 +107,10 @@ tss* _get_next_tss(u8 player) {
 			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseB[currentZombieB] && i <= CANT_ZOMBIS);
 
-		if (inUseB[currentZombieB]) ret = &tss_zombisB[currentZombieB];
+		if (inUseB[currentZombieB]){
+			ret = &tss_zombisB[currentZombieB];
+			claseActual = tiposB[currentZombieB];
+		}
 		//if (!inUseB[currentZombieB]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
 
 	} else {
@@ -116,7 +122,10 @@ tss* _get_next_tss(u8 player) {
 			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseA[currentZombieA] && i <= CANT_ZOMBIS);
 
-		if (inUseA[currentZombieA]) ret = &tss_zombisA[currentZombieA];		
+		if (inUseA[currentZombieA]){
+			ret = &tss_zombisA[currentZombieA];
+			claseActual = tiposA[currentZombieA];
+		}
 		//if (!inUseB[currentZombieA]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
 
 	}
@@ -153,7 +162,7 @@ tss* get_next_tss() {
 
 
 
-tss* get_free_tss(u8 player) {
+tss* get_free_tss(u8 player,u8 class) {
 	int i = 0;
 
 	if (player) {
@@ -167,8 +176,10 @@ tss* get_free_tss(u8 player) {
 
 	if(player){
 		inUseB[i] = 1;
+		tiposB[i] = class;
 	}else{
 		inUseA[i] = 1;
+		tiposA[i] = class;
 	}
 
 	return (player ? &tss_zombisB[i] : &tss_zombisA[i]);
