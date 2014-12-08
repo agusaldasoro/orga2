@@ -161,19 +161,17 @@ void handle_keyboard_interrumption(u8 scancode) {
         game_change_class(PLAYER_A, 1);
     } else if (sc == 0x91) {
         game_move_zombie(PLAYER_A, -1);
-    } else if (sc == 0x9f) {
-        game_move_zombie(PLAYER_A, 1);
-    } else if (sc == 182) {
-       game_lanzar_zombi(PLAYER_B);
-    } else if (sc == 203) {
-        game_change_class(PLAYER_B, -1);
-    } else if (sc == 205) {
-        game_change_class(PLAYER_B, 1);
-    } else if (sc == 200) {
-        game_move_zombie(PLAYER_B, -1);
-    } else if (sc == 208) {
-        game_move_zombie(PLAYER_B, 1);
-    } else if (sc == 170) {
+    } else if (sc == 0xAA) {
        game_lanzar_zombi(PLAYER_A);
+    } else if (sc == 0xA4) {
+        game_change_class(PLAYER_B, -1);
+    } else if (sc == 0xA6) {
+        game_change_class(PLAYER_B, 1);
+    } else if (sc == 0x97) {
+        game_move_zombie(PLAYER_B, -1);
+    } else if (sc == 0xA5) {
+        game_move_zombie(PLAYER_B, 1);
+    } else if (sc == 0xB6) {
+       // game_lanzar_zombi(PLAYER_B);
     }
 }
