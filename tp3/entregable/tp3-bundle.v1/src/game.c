@@ -68,7 +68,7 @@ void game_move_zombie(u8 player, s8 d) {
 		if (currentPosA <= 0 || currentPosA >= ALTO_MAPA-1) return;
 		mostrar_cursores(player,d);
 		currentPosA = currentPosA + d;
-	//}
+	}
 
 
 }
