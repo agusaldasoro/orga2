@@ -170,9 +170,9 @@ void handle_keyboard_interrumption(u8 scancode) {
         game_change_class(PLAYER_B, -1);
     } else if (sc == 0xA6) {
         game_change_class(PLAYER_B, 1);
-    } else if (sc == 0x97) {
+    } else if (sc == 0xC8) {
         game_move_zombie(PLAYER_B, -1);
-    } else if (sc == 0xA5) {
+    } else if (sc == 0xD0) {
         game_move_zombie(PLAYER_B, 1);
     } else if (sc == 0xB6) {
         game_lanzar_zombi(PLAYER_B);
