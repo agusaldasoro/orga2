@@ -114,11 +114,11 @@ char* get_zombie_type(u32 type) {
 
 void game_change_class(u8 player, s8 d) {
 	if (player) {
-		zombieClassB = (u8) ((zombieClassB+d+3) % 3);
-		print_string(get_zombie_type(zombieClassB), 79, currentPosB, getFormat(C_FG_WHITE, 0,C_BG_BLUE,0));
+		zombieClassB = (u8) ((zombieClassB + d + 3) % 3);
+		printfc(79, currentPosB, getFormat(C_FG_WHITE, 0,C_BG_BLUE,0), "%s", get_zombie_type(zombieClassB));
 	} else {
-		zombieClassA = (u8) ((zombieClassA+d+3) % 3);
-		print_string(get_zombie_type(zombieClassA), 0, currentPosA, getFormat(C_FG_WHITE,0,C_BG_RED,0));
+		zombieClassA = (u8) ((zombieClassA + d + 3) % 3);
+		printfc(0, currentPosA, getFormat(C_FG_WHITE,0,C_BG_RED,0), "%s", get_zombie_type(zombieClassA));
 	}
 }
 
@@ -126,11 +126,11 @@ void game_move_zombie(u8 player, s8 d) {
 	//TODO
 	if (player) {
 		if (currentPosB <= 0 || currentPosB >= ALTO_MAPA-1) return;
-		mostrar_cursores(player,d);
+		mostrar_cursores(player, d);
 		currentPosB = currentPosB + d;
 	} else {
 		if (currentPosA <= 0 || currentPosA >= ALTO_MAPA-1) return;
-		mostrar_cursores(player,d);
+		mostrar_cursores(player, d);
 		currentPosA = currentPosA + d;
 	}
 }

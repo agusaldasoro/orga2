@@ -13,7 +13,7 @@
 unsigned int strlen(const char *s) {
     unsigned int len = 0;
 
-    while(*s != 0) {
+       while(*s != 0) {
         len++;
         s++;
     }
@@ -59,10 +59,31 @@ void print_int(unsigned int n, unsigned int col, unsigned int row) {
 }
 
 
+void printfc(unsigned int col, unsigned int row, char attr, const char *format, ...) {
+    va_list args;
+    va_start(args, format);
+
+    _printf(col, row, attr, format, args);
+
+    va_end(args);
+}
+
+
 void printf(unsigned int col, unsigned int row, const char *format, ...) {
 
     va_list args;
     va_start(args, format);
+
+    _printf(col, row, getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0), format, args);
+
+    va_end(args);
+}
+
+
+void _printf(unsigned int col, unsigned int row, char attr, const char *format, va_list args) {
+
+    // va_list args;
+    // va_start(args, format);
 
     int nextArg = 0; // find a better name for this.
     int n;
@@ -117,25 +138,23 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
         nextArg = 0;
         format++;
     }
-    va_end(args);
+    // va_end(args);
 }
 
 
 void* memcpy(void* src, void* dst, int length) {
-    if ((u32) dst < 0x10000) {
-        breakpoint();
-        printf(35, 1, "Escribi en %h bytes %h", dst, length);
-        // print_hex(length, 35, 2, 0);
-    }
+    // if ((u32) dst < 0x10000) {
+    //     breakpoint();
+    //     printf(35, 1, "Escribi en %h bytes %h", dst, length);
+    //     // print_hex(length, 35, 2, 0);
+    // }
     char* psrc = (char*) src;
     char* pdst = (char*) dst;
 
     while(length--) {
         *pdst++ = *psrc++;
     }
-    if ((u32) dst < 0x10000) {
-        breakpoint();
-    }
+    // if ((u32) dst < 0x10000) breakpoint();
     return dst;
 }
 

@@ -34,5 +34,4 @@ void game_move_zombie(u8 jugador, s8 d);
 void reimprimirCantidadZombies(u8 player);
 char* get_zombie_type(u32 type);
 
-
 #endif  /* !__GAME_H__ */
