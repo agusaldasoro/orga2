@@ -10,6 +10,7 @@
 #include "defines.h"
 #include "screen.h"
 #include "mmu.h"
+#include "tss.h"
 
 typedef enum direccion_e { IZQ = 0xAAA, DER = 0x441, ADE = 0x83D, ATR = 0x732 } direccion;
 
@@ -33,5 +34,9 @@ void game_move_zombie(u8 jugador, s8 d);
 
 void reimprimirCantidadZombies(u8 player);
 char* get_zombie_type(u32 type);
+void terminar_juego();
+void revisarTerminacion();
+void revisar_terminar_por_inactividad();
+unsigned int contadorDeInactividad;
 
 #endif  /* !__GAME_H__ */

@@ -104,7 +104,7 @@ tss* _get_next_tss(u8 player) {
 		 	i++;
 			currentZombieB++;
 			currentZombieB = currentZombieB % 8;
-			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+			//print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseB[currentZombieB] && i <= CANT_ZOMBIS);
 
 		if (inUseB[currentZombieB]){
@@ -119,7 +119,7 @@ tss* _get_next_tss(u8 player) {
 		 	i++;
 			currentZombieA++;
 			currentZombieA = currentZombieA % 8;
-			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+			//print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 		} while(!inUseA[currentZombieA] && i <= CANT_ZOMBIS);
 
 		if (inUseA[currentZombieA]){
@@ -187,7 +187,7 @@ tss* get_free_tss(u8 player,u8 class) {
 }
 
 u8 is_busy(gdt_entry* tss_selector) {
-	print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+	//print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 	return (tss_selector->type == 11);
 }
 
@@ -212,7 +212,7 @@ int proximo_indice() {
 
 	tss* next_tss = get_next_tss();
 
-	if(next_tss==&tss_idle){
+	if(next_tss==&tss_idle || termino_el_juego){
 		if(is_busy(&gdt[GDT_TSS_IDLE])){
 			return 0;
 		}else{

@@ -13,7 +13,7 @@ unsigned short sched_proximo_indice() {
 }
 
 void start_zombie(u8 player, u8 class, u32 y) {
-	printf(38,38,"star zombie: %d %d %d",(unsigned int)player,(unsigned int)class,(unsigned int)y);
+	printf(3,0,"star zombie: %d %d %d",(unsigned int)player,(unsigned int)class,(unsigned int)y);
 	breakpoint();
 	tss* free_tss = get_free_tss(player,class);
 	if(free_tss != 0){

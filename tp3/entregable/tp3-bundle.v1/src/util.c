@@ -173,7 +173,9 @@ void handle_keyboard_interrumption(u8 scancode) {
 
     int sc = (int) scancode;
     printf(65, 0, "Teclado: %h ", sc);
-
+    if(termino_el_juego){
+        return;
+    }
     if (sc == 158) {
         game_change_class(PLAYER_A, -1);
     } else if (sc == 160) {
