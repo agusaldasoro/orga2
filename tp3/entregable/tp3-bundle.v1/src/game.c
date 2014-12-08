@@ -59,10 +59,10 @@ void game_init() {
 void mostrar_cursores(u8 player,s8 d){
 	if(!player){
 		print_string(" ",0,currentPosA, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
-		print_string("G",0,currentPosA+d, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
+		print_string(get_zombie_type(zombieClassA),0,currentPosA+d, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
 	}else{
 		print_string(" ",79,currentPosB, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
-		print_string("G",79,currentPosB+d, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
+		print_string(get_zombie_type(zombieClassB),79,currentPosB+d, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
 	}
 }
 
