@@ -88,12 +88,17 @@ ISR 10 ; _isr0
 ISR 11 ; _isr0
 ISR 12 ; _isr0
 ISR 13 ; _isr0
-ISR 14 ; _isr0
+; ISR 14 ; _isr0
 ISR 15 ; _isr0
 ISR 16 ; _isr0
 ISR 17 ; _isr0
 ISR 18 ; _isr0
 ISR 19 ; _isr0
+
+global _isr14
+_isr14:
+    jmp 0x80:0
+
 
 ;;
 ;; Rutina de atención del RELOJ
@@ -135,19 +140,12 @@ extern handle_keyboard_interrumption
 _isr33:
     ; xchg bx, bx
     pushad
-;    call proximo_reloj
     xor eax,eax
     in al, 0x60
 
     mov dword [esp], eax
     call fin_intr_pic1
     call handle_keyboard_interrumption
-
-    ; mov dword [esp + 0x], 0
-    ; mov dword [esp + 0xc], 67
-    ; mov dword [esp + 0x8], keyboard_str
-    ; mov dword [esp + 0x4], eax
-    ; call printf
 
     popad
     iret
@@ -163,23 +161,14 @@ _isr33:
 
 global _isr102
 extern game_move_current_zombi
-;extern entrarEnIdl
-;extern salirDeIdl
 _isr102:
-    ; xchg bx, bx
     pushad
     push eax
     
     call game_move_current_zombi
     pop eax
-    ; xchg bx, bx
-    ;call entrarEnIdl
     popad
     jmp 0x80:0
-    ;call salirDeIdl
-
-    ; pd:eax,delta_x:edi,delta_y:esi, tipo: dx
-    ; xchg bx, bx
     iret
 
 ;; Funciones Auxiliares

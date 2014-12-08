@@ -100,12 +100,9 @@ void sumarPuntoB(){
 }
 
 void game_change_class(u8 player, s8 d) {
-     // __asm __volatile("xchg %%bx, %%bx" : :);
-
 	if (player) {
 		zombieClassB = (zombieClassB+d) % 3;
 	} else {
-		// __asm __volatile("xchg %%bx, %%bx" : :);
 		zombieClassA = (zombieClassA+d) % 3;
 	}
 }
@@ -121,8 +118,6 @@ void game_move_zombie(u8 player, s8 d) {
 		mostrar_cursores(player,d);
 		currentPosA = currentPosA + d;
 	}
-
-
 }
 
 
@@ -172,22 +167,22 @@ u8 mover_soldado(int x2, int y2,unsigned int player, page_directory* pd) {
     }
 }
 
-void mover_pantalla(int x,int y,int x2,int y2,u8 tipo){
+void mover_pantalla(int x, int y, int x2, int y2, u8 tipo){
 	x+=1;
 	x2+=1;
-	print_string("X",x, y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
-	if(y2<0){
+	print_string("X", x, y, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if (y2<0){
 		y2 += ALTO_MAPA;
 	}
-	if(y2>=ALTO_MAPA){
+	if (y2>=ALTO_MAPA){
 		y2 -= ALTO_MAPA;
 	}
-	if (tipo==0)
-		print_string("G",x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
-	if (tipo==1)
-		print_string("M",x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
-	if (tipo==2)
-		print_string("C",x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if (tipo == 0)
+		print_string("G", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if (tipo == 1)
+		print_string("M", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+	if (tipo == 2)
+		print_string("C", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 }
 
 /* pd:eax,delta_x:edi,delta_y:esi, tipo: dx */
@@ -196,20 +191,23 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
 	unsigned int x;
 	unsigned int y;
 	get_position(&x,&y,recuperar_fisica(0x8000000,pd));
-    unsigned int player = (recuperar_fisica(0x8001000,pd)<recuperar_fisica(0x8000000,pd));
+
+	// TODO : Por dios, explicar la magia atrás de esta línea.
+    unsigned int player = (recuperar_fisica(0x8001000, pd) < recuperar_fisica(0x8000000, pd));
     int x2 = (int) x;
     int y2 = (int) y;
     if(!player){
     	x2 += delta_x;
     	y2 += delta_y;
     }else{
+    	x2 -= delta_x;
     	y2 -= delta_y;
     	x2 -= delta_x;
     }
 
 
-	u8 se_movio = mover_soldado(x2,y2,player,pd);
-	if(se_movio)mover_pantalla(x,y,x2,y2,tipo);
+	u8 se_movio = mover_soldado(x2, y2, player, pd);
+	if (se_movio) mover_pantalla(x, y, x2, y2, tipo);
 }
 
 
@@ -224,8 +222,10 @@ void game_move_current_zombi(direccion dir) {
 	}else if(dir==ATR){
 		memcpy((void*)0x8000000,(void*)0x8006000,0x1000);
 		movimiento((page_directory*)rcr3(),-1,0,0);
-	}else{
+	}else if (dir == IZQ) {
 		memcpy((void*)0x8000000,(void*)0x8005000,0x1000);
 		movimiento((page_directory*)rcr3(),0,-1,0);
+	} else {
+		printf(1, 1, "%s", "GUACHOS FORROS");		
 	}
 }
