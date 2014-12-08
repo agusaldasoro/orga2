@@ -8,6 +8,7 @@
 #include "tss.h"
 #include "i386.h"
 #include "colors.h"
+#include "mmu.h"
 #include "screen.h"
 
 tss tss_zombisA[CANT_ZOMBIS];
@@ -238,7 +239,7 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	
 	tss->eflags = eflags;
 	tss->iomap = 0xffff;
-	tss->esp0 = 0x800A000;
+	tss->esp0 = 0x300000 - (paginas * 0x1000);
 	tss->ss0 = 0x40;
 	tss->eip = 0x8000000;
 }

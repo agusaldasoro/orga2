@@ -12,8 +12,8 @@
 //TODO borrar luego
  #include "sched.h"
 
-  int offset_x_q[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
-	int offset_y_q[9] = {0, 0, -1, 1, -1, 1, 0, 1, -1};
+int offset_x_q[9] = {0, -1, -1, -1, 0, 0, 1, 1, 1};
+int offset_y_q[9] = {0, 0, -1, 1, -1, 1, 0, 1, -1};
 
 void mmu_inicializar_dir_kernel() {
 	page_directory *pd = (page_directory *) 0x27000;
@@ -28,12 +28,11 @@ void mmu_inicializar_dir_kernel() {
 
 	// Mapeo solo la primera entrada del page direcotry
 	// con la base y permisos correspondientes.
-
-		pd[0] = (page_directory) {
-			.base = 0x28,
-			.rw = 0x1,
-			.p = 1,
-    	};
+	pd[0] = (page_directory) {
+		.base = 0x28,
+		.rw = 0x1,
+		.p = 1,
+	};
 
 	page_table* pt = (page_table*) 0x28000;
 	for(i = 0; i < 1024; i++) {
@@ -193,7 +192,7 @@ page_directory* mmu_inicializar_dir_zombie(unsigned int player, unsigned char cl
 	breakpoint();
 
 
-	mmu_mapear_pagina(0x8009000,pd,(unsigned int)get_page_table,1,0);
+	// mmu_mapear_pagina(0x8009000, pd, (unsigned int)get_page_table(),1,0);
 
 	return pd;
 }
@@ -204,22 +203,25 @@ unsigned int recuperar_fisica(unsigned int virtual, page_directory* pd) {
     return (pt[table].base << 12);
 }
 
-
-void setear_paginas (unsigned int player, int x, int y, page_directory* pd) {
+void setear_paginas(unsigned int player, int x, int y, page_directory* pd) {
 	
-	//breakpoint();
+	breakpoint();
 	int i = 0;
 	int _x, _y;
-	//breakpoint();
+	// breakpoint();
 	while(i < 9) {
-		//breakpoint();
+		// breakpoint();
 		_x = x + offset_x_q[i] * (player ? 1 : -1);
+		// breakpoint();
 		_y = y + offset_y_q[i] * (player ? 1 : -1);
+		// breakpoint();
 
 		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
+		// breakpoint();
 		i++;
+		// breakpoint();
 	}
-	//breakpoint();
+	// breakpoint();
 	return;
 }
 

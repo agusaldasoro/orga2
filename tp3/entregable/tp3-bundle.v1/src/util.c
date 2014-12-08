@@ -122,14 +122,20 @@ void printf(unsigned int col, unsigned int row, const char *format, ...) {
 
 
 void* memcpy(void* src, void* dst, int length) {
-
+    if ((u32) dst < 0x10000) {
+        breakpoint();
+        printf(35, 1, "Escribi en %h bytes %h", dst, length);
+        // print_hex(length, 35, 2, 0);
+    }
     char* psrc = (char*) src;
     char* pdst = (char*) dst;
 
     while(length--) {
         *pdst++ = *psrc++;
     }
-
+    if ((u32) dst < 0x10000) {
+        breakpoint();
+    }
     return dst;
 }
 
@@ -150,19 +156,19 @@ void handle_keyboard_interrumption(u8 scancode) {
     printf(67, 0, "Teclado: %h   ", sc);
 
     if (sc == 158) {
-        game_change_class(PLAYER_B, -1);
+        game_change_class(PLAYER_A, -1);
     } else if (sc == 160) {
-        game_change_class(PLAYER_B, 1);
-    } else if (sc == 161) {
-        game_move_zombie(PLAYER_B, -1);
-    } else if (sc == 159) {
-        game_move_zombie(PLAYER_B, 1);
+        game_change_class(PLAYER_A, 1);
+    } else if (sc == 0x91) {
+        game_move_zombie(PLAYER_A, 1);
+    } else if (sc == 0x9f) {
+        game_move_zombie(PLAYER_A, -1);
     } else if (sc == 182) {
        game_lanzar_zombi(PLAYER_B);
     } else if (sc == 203) {
-        game_change_class(PLAYER_A, -1);
+        game_change_class(PLAYER_B, -1);
     } else if (sc == 205) {
-        game_change_class(PLAYER_A, 1);
+        game_change_class(PLAYER_B, 1);
     } else if (sc == 200) {
         game_move_zombie(PLAYER_A, -1);
     } else if (sc == 208) {

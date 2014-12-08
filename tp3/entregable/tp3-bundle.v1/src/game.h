@@ -27,8 +27,8 @@ u8 zombieClassB;
 
 
 void game_init();
-void game_change_class(u8 player, u8 d);
-void game_move_zombie(u8 jugador, u8 d);
+void game_change_class(u8 player, s8 d);
+void game_move_zombie(u8 jugador, s8 d);
 
 
 #endif  /* !__GAME_H__ */

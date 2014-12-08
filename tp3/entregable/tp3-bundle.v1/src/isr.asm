@@ -32,7 +32,7 @@ extern proximo_indice
 global _isr%1 
 
 _isr%1:
-    xchg bx, bx
+    ; xchg bx, bx
     mov [registers_snapshot],eax
     mov [registers_snapshot+4],ebx
     mov [registers_snapshot+8],ecx
@@ -100,7 +100,7 @@ ISR 19 ; _isr0
 ;; -------------------------------------------------------------------------- ;;
 global _isr32
 _isr32:
-     xchg bx, bx
+     ; xchg bx, bx
     pushad
     call proximo_reloj
     call proximo_indice
@@ -111,7 +111,7 @@ _isr32:
     mov [sched_tarea_selector], ax
     call fin_intr_pic1
     popad
-    xchg bx, bx
+    ; xchg bx, bx
     jmp far [sched_tarea_offset]
     jmp .end
 
@@ -121,7 +121,7 @@ _isr32:
 
 .end:
     ; switchear tareas.
-    xchg bx, bx
+    ; xchg bx, bx
     iret
 
 ;;
@@ -140,6 +140,7 @@ _isr33:
     in al, 0x60
 
     mov dword [esp], eax
+    call fin_intr_pic1
     call handle_keyboard_interrumption
 
     ; mov dword [esp + 0x], 0
@@ -148,7 +149,6 @@ _isr33:
     ; mov dword [esp + 0x4], eax
     ; call printf
 
-    call fin_intr_pic1
     popad
     iret
 ;;
@@ -166,19 +166,20 @@ extern game_move_current_zombi
 ;extern entrarEnIdl
 ;extern salirDeIdl
 _isr102:
-    xchg bx, bx
+    ; xchg bx, bx
     pushad
     push eax
+    
     call game_move_current_zombi
     pop eax
-    xchg bx, bx
+    ; xchg bx, bx
     ;call entrarEnIdl
     popad
     jmp 0x80:0
     ;call salirDeIdl
 
     ; pd:eax,delta_x:edi,delta_y:esi, tipo: dx
-    xchg bx, bx
+    ; xchg bx, bx
     iret
 
 ;; Funciones Auxiliares

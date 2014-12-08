@@ -35,15 +35,18 @@ void sumarPuntoB(){
 	if(puntajeB==15){/*TODO terminoElJuego*/}
 }
 
-void game_change_class(u8 player, u8 d) {
+void game_change_class(u8 player, s8 d) {
+     // __asm __volatile("xchg %%bx, %%bx" : :);
+
 	if (player) {
 		zombieClassB = (zombieClassB+d) % 3;
 	} else {
+		// __asm __volatile("xchg %%bx, %%bx" : :);
 		zombieClassA = (zombieClassA+d) % 3;
 	}
 }
 
-void game_move_zombie(u8 player, u8 d) {
+void game_move_zombie(u8 player, s8 d) {
 	//TODO
 	if (player) {
 		if (currentPosB <= 1 || currentPosB >= 40) return;
@@ -72,20 +75,23 @@ void game_lanzar_zombi(u8 player) {
 }
 
 u8 mover_soldado(int x2, int y2,unsigned int player, page_directory* pd) {
-	char* text;
-
+	// char* text;
+	breakpoint();
     if(x2<=0){
-    	text = "me declaro spectrum",0;
-    	print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+    	// text = "me declaro spectrum";
+    	// print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0));
+		// breakpoint();
     	sumarPuntoB();
     	return 0;
     }else if(x2>=ANCHO_MAPA-1){
-    	text = "me declaro spectrum15",0;
-    	print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
-    	sumarPuntoA();
+    	// text = "me declaro spectrum15";
+    	// print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
+    	// breakpoint();
+		sumarPuntoA();
     	return 0;
     }else{
-    	setear_paginas (player, x2, y2, pd);
+    	breakpoint();
+		setear_paginas(player, x2, y2, pd);
     	return 1;
     }
 }
@@ -114,7 +120,6 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
 	unsigned int x;
 	unsigned int y;
 	get_position(&x,&y,recuperar_fisica(0x8000000,pd));
-
     unsigned int player = (recuperar_fisica(0x8001000,pd)<recuperar_fisica(0x8000000,pd));
     int x2 = (int) x;
     int y2 = (int) y;
@@ -122,7 +127,6 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
     	x2 += delta_x;
     	y2 += delta_y;
     }else{
-    	x2 -= delta_x;
     	y2 -= delta_y;
     }
 
@@ -133,6 +137,7 @@ void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
 
 
 void game_move_current_zombi(direccion dir) {
+	breakpoint();
 	if(dir==ADE){
 		memcpy((void*)0x8000000,(void*)0x8001000,0x1000);
 		movimiento((page_directory*)rcr3(),1,0,0);

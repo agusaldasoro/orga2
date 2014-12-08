@@ -16,7 +16,7 @@
 #define ERROR                   1
 
 
-#define DEBUG 0
+// #define DEBUG 0
 
 /* Misc */
 /* -------------------------------------------------------------------------- */
@@ -46,6 +46,10 @@
 typedef unsigned int u32;
 typedef unsigned short u16;
 typedef unsigned char u8;
+
+typedef int s32;
+typedef short s16;
+typedef char s8;
 
 #define ZOMBIE_VIRTUAL         0x8000000
 #define PAGE_SIZE              0x1000
