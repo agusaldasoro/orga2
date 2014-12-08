@@ -160,9 +160,9 @@ void handle_keyboard_interrumption(u8 scancode) {
     } else if (sc == 160) {
         game_change_class(PLAYER_A, 1);
     } else if (sc == 0x91) {
-        game_move_zombie(PLAYER_A, 1);
-    } else if (sc == 0x9f) {
         game_move_zombie(PLAYER_A, -1);
+    } else if (sc == 0x9f) {
+        game_move_zombie(PLAYER_A, 1);
     } else if (sc == 182) {
        game_lanzar_zombi(PLAYER_B);
     } else if (sc == 203) {
@@ -170,9 +170,9 @@ void handle_keyboard_interrumption(u8 scancode) {
     } else if (sc == 205) {
         game_change_class(PLAYER_B, 1);
     } else if (sc == 200) {
-        game_move_zombie(PLAYER_A, -1);
+        game_move_zombie(PLAYER_B, -1);
     } else if (sc == 208) {
-        game_move_zombie(PLAYER_A, 1);
+        game_move_zombie(PLAYER_B, 1);
     } else if (sc == 170) {
        game_lanzar_zombi(PLAYER_A);
     }

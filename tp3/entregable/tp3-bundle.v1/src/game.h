@@ -18,6 +18,7 @@ void game_jugador_mover(unsigned int jugador, unsigned int value);
 void game_lanzar_zombi(u8 jugador);
 
 void game_move_current_zombi(direccion dir);
+void mostrar_cursores(u8 player,s8 d);
 
 
 u32 currentPosA;

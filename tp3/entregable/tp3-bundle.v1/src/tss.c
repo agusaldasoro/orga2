@@ -102,7 +102,7 @@ tss* _get_next_tss(u8 player) {
 			currentZombieB++;
 			currentZombieB = currentZombieB % 8;
 			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
-		} while(!inUseB[currentZombieB] && i < 10);
+		} while(!inUseB[currentZombieB] && i <= CANT_ZOMBIS);
 
 		if (inUseB[currentZombieB]) ret = &tss_zombisB[currentZombieB];
 		//if (!inUseB[currentZombieB]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
@@ -114,7 +114,7 @@ tss* _get_next_tss(u8 player) {
 			currentZombieA++;
 			currentZombieA = currentZombieA % 8;
 			print_hex(currentZombieB,34,34,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
-		} while(!inUseA[currentZombieA] && i < 10);
+		} while(!inUseA[currentZombieA] && i <= CANT_ZOMBIS);
 
 		if (inUseA[currentZombieA]) ret = &tss_zombisA[currentZombieA];		
 		//if (!inUseB[currentZombieA]) print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));		
@@ -240,6 +240,7 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	tss->eflags = eflags;
 	tss->iomap = 0xffff;
 	tss->esp0 = 0x300000 - (paginas * 0x1000);
+	//tss->esp0 = (unsigned int) get_page_table() + 0x1000;
 	tss->ss0 = 0x40;
 	tss->eip = 0x8000000;
 }

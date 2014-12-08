@@ -12,7 +12,7 @@ unsigned short sched_proximo_indice() {
   return 0;
 }
 
-void start_zombie(u8 player, u8 class, u8 y) {
+void start_zombie(u8 player, u8 class, u32 y) {
 	printf(38,38,"star zombie: %d %d %d",(unsigned int)player,(unsigned int)class,(unsigned int)y);
 	breakpoint();
 	page_directory* pd =  mmu_inicializar_dir_zombie(player, class, y);

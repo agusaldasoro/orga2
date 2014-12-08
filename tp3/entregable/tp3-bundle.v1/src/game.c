@@ -23,6 +23,18 @@ void game_init() {
 	currentPosB = 20;
 	zombieClassA = MAGO;
 	zombieClassB = MAGO;
+	mostrar_cursores(1,0);
+	mostrar_cursores(0,0);
+}
+
+void mostrar_cursores(u8 player,s8 d){
+	if(!player){
+		print_string(" ",0,currentPosA, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
+		print_string("G",0,currentPosA+d, getFormat(C_FG_WHITE, 0, C_BG_RED, 0));
+	}else{
+		print_string(" ",79,currentPosB, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
+		print_string("G",79,currentPosB+d, getFormat(C_FG_WHITE, 0, C_BG_BLUE, 0));
+	}
 }
 
 void sumarPuntoA(){
@@ -49,10 +61,12 @@ void game_change_class(u8 player, s8 d) {
 void game_move_zombie(u8 player, s8 d) {
 	//TODO
 	if (player) {
-		if (currentPosB <= 1 || currentPosB >= 40) return;
+		if (currentPosB <= 0 || currentPosB >= ALTO_MAPA-1) return;
+		mostrar_cursores(player,d);
 		currentPosB = currentPosB + d;
 	} else {
-		if (currentPosA <= 1 || currentPosA >= 40) return;
+		if (currentPosA <= 0 || currentPosA >= ALTO_MAPA-1) return;
+		mostrar_cursores(player,d);
 		currentPosA = currentPosA + d;
 	}
 

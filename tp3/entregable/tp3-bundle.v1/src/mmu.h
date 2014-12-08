@@ -52,6 +52,7 @@ void copy_code(u32 fisica, u8 class, u8 player);
 unsigned int recuperar_fisica(unsigned int virtual, page_directory* pd);
 void get_position(unsigned int* x, unsigned int* y, unsigned int dir);
 void setear_paginas (unsigned int player, int x, int y, page_directory* pd);
+page_table* get_page_table();
 
 
 unsigned int paginas; 
