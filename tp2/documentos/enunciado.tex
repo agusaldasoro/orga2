@@ -195,16 +195,38 @@ Los resultados obtenidos en esta experimentaci\'on fueron menores que los anteri
 	\textbf{Desvío est\'andar}:	235,364 (ASM) y 462,615(C)\\
 	Ac\'a tambi\'en se puede apreciar que al eliminar los outliers, el Desvío est\'andar disminuye su valor. \\
 
-Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que fue ejecutado en una computadora con un procesador i5. \textcolor{red}{Podria explicarse un poco mas que pasa con los is}\\
+Se puede observar que las mediciones mejoran con la ejecuci\'on del ciclo infinito de fondo, esto se debe a que fue ejecutado en una computadora con un procesador i5. La familia ix de intel varía la frecuencia del clock de acuerdo al uso requerido. Por eso cuando ejecutamos los sumadores puede llegar a tardar menos que en la versi\'on sin ellos.\\
 \\
-\textcolor{red}{Volver a hacer las mediciones de esto, o buscar las viejas porque no me van los valores que hay, ademas hay una sola esperanza y varianza cuando tendr\'ia que haber dos casos.}
 
-% \indent Por este motivo, volvimos a ejecutar este caso una mayor cantidad de veces para que el procesador no modifique la frecuencia de clock, obteniendo los siguientes resultados: \\
-% \textbf{Esperanza:} 269.945,590 (ASM) y 9.524.152,001 (C) \\
-% \textbf{Desv\'io est\'andar:} 3.801,837 y 7.774.736,417 (C) \\
-% \textcolor{red}{Hacer el grafico de este.}\\
-% \\
-% Ahora s\'i ocurre algo m\'as intuitivo que es que aumentaron los valores de la esperanza en proporciones notables. '
+Por este motivo, volvimos a ejecutar este caso una mayor cantidad de veces para que el procesador no modifique la frecuencia de clock, obteniendo los siguientes resultados: \\
+\begin{itemize}
+\item[$\bullet$] Teniendo en cuenta todas las mediciones realizadas: \\
+\textbf{Esperanza:} 434.338,4653(ASM) y 12.183.006,91(C). \\
+\textbf{Desv\'io est\'andar:} 659,0435989(ASM) y 8.230.692,407(C).
+\item[$\bullet$] Eliminando los \textit{outliers}: \\
+\textbf{Esperanza:} 270.056,844(ASM) y 9.525.801,857(C). \\
+\textbf{Desv\'io est\'andar:} 524,7013438(ASM) y 8.648.990,473(C).
+\end{itemize}
+
+\begin{figure}[h!]
+  \begin{center}
+	\includegraphics[width=0.7\textwidth]{imagenes/perdidaASM}
+	\caption{Assembler}
+  \end{center}
+\end{figure}
+
+\newpage
+\begin{figure}[h!]
+  \begin{center}
+	\includegraphics[width=0.7\textwidth]{imagenes/perdidaC}
+	\caption{C}
+  \end{center}
+\end{figure}
+
+\indent \textit{Siendo el Caso 1 las mediciones de esperanza y Desvío est\'andar para todos los casos de test y el Caso 2 las mediciones sin tener en cuenta los cuatro outliers.}\\
+
+Tal como se puede apreciar en los gr\'aficos, la varianza en Assembler es casi despreciable pero la de C no lo es. Sin embargo, ahora s\'i ocurre algo m\'as intuitivo que es que aumentaron los valores de la esperanza en proporciones notables. \\
+\\
 
  \bigskip
 \textit{A partir de aquí todos los experimentos de mediciones deberán hacerse igual 
@@ -253,7 +275,7 @@ ASM & 362.232 & 2,079\\
 \end{figure}
 
 
-Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. Adem\'as, es notorio c\'omo el correr el programa con la orden de -o0 no efect\'ua ninguna optimizaci\'on. Tambi\'en se puede observar que el c\'odigo corrido en C bajo el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. \textcolor{red}{Esto se debe a que el flag de optimizaci\'on -o3 lo que hace es blablablaba y por eso es una buena optimizaci\'on para el c\'odigo.}
+Se puede observar que la varianza es casi despreciable considerando el valor de la esperanza. Adem\'as, es notorio c\'omo el correr el programa con la orden de -o0 no efect\'ua ninguna optimizaci\'on. Tambi\'en se puede observar que el c\'odigo corrido en C bajo el comando de -o3 tiene una esperanza menor a la del c\'odigo Assembler. Esto se debe a que el flag de optimizaci\'on -o3 lo que hace es utilizar instrucciones SSE para procesar 4 pixels por iteración, lo cual le brinda un boost de velocidad mucho mayor. Además de haberse reducido la cantidad de instrucciones. Tal cual lo explicado anteriormente. Y por este motivo, es una buena optimizaci\'on para el c\'odigo.
 
 \newpage
 
@@ -426,16 +448,23 @@ Por más que la imagen resultante no sea correcta, será posible tomar una
 medida aproximada del impacto de los saltos condicionales.
 Analizar como varía la performance. \\
 \\
-En la siguiente figura se ve c\'omo var\'ia la esperanza y el desv\'io est\'andar entre dos corridas de C con el flag -o1 ambas:
+En la siguiente figura se ve c\'omo var\'ia la esperanza y el desv\'io est\'andar entre dos corridas de C con el flag -o1 ambas, el Caso 1 es la versión original y el Caso 2 es comentando la guarda de las bandas:
 
 \begin{figure}[h!]
   \begin{center}
-	%\includegraphics[width=0.7\textwidth]{imagenes/31.jpg}
-    \textcolor{red}{Aca tambien me borraron el grafico!!!!! Y NO TENGO LOS VALORESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS}
+	\includegraphics[width=0.7\textwidth]{imagenes/saltitos}
   \end{center}
 \end{figure}
 
-En el gr\'afico anterior se puede ver que la influencia de los saltos condicionales es notable. \\
+Los valores del gr\'afico son:\\
+
+Versi\'on original: esperanza de 3.374.834,128	y varianza de 48.256,45868.\\
+
+Versi\'on sin guarda: esperanza de 1.333.624,786 y varianza de 2.545,912732.\\
+\\
+	
+
+En el gr\'afico anterior se puede ver que la influencia de los saltos condicionales es notable, ya que disminuye de manera notable la esperanza, siendo en ambos casos la varianza peque\~na. \\
 
 % ******************************************************************************
 \newpage
@@ -469,7 +498,7 @@ ASM & 3.703.203,5 & 115,659 \\
   \end{center}
 \end{figure}
 
-Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. En este caso, podemos notar una vez m\'as que el comando -o0 no ejerce ninguna optimizaci\'on para este programa, ya que es el que tiene mayor tiempo de ejecuci\'on. Bajo el flag -o1 presenta una mejor\'ia, pero sigue requiriendo un tiempo mayor que el programa en Lenguaje Assembler para su ejecuci\'on. Sin embargo, sucede algo llamativo que es que corriendo el lenguaje en lenguaje C tanto bajo el flag -o2 como para -o3 present\'o una esperanza menor que el c\'odigo en Assembler. \textcolor{red}{Asumismo que ocurre esto porque estos flagas est\'an dise\~nados para casos como este, donde ensamblan un c\'odigo fuente mejor que el nuestro en Assembler.}
+Aqu\'i tambi\'en el valor del desv\'io est\'andar es despreciable. En este caso, podemos notar una vez m\'as que el comando -o0 no ejerce ninguna optimizaci\'on para este programa, ya que es el que tiene mayor tiempo de ejecuci\'on. Bajo el flag -o1 presenta una mejor\'ia, pero sigue requiriendo un tiempo mayor que el programa en Lenguaje Assembler para su ejecuci\'on. Sin embargo, sucede algo llamativo que es que corriendo el lenguaje en lenguaje C tanto bajo el flag -o2 como para -o3 present\'o una esperanza menor que el c\'odigo en Assembler. Asumimos que ocurre esto porque estos flags est\'an dise\~nados para casos como este, donde ensamblan un c\'odigo fuente mejor que el nuestro en Assembler.
 
 
 % ------------------------------------------------------------------------------
