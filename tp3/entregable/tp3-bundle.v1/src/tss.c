@@ -14,7 +14,6 @@
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
 //tss reset_tss;
-//char noEstoyEnLaIdl;
 
 u8 inUseA[CANT_ZOMBIS] = {};
 u8 inUseB[CANT_ZOMBIS] = {};
@@ -33,7 +32,6 @@ u8 currentPlayer;
 u8 current_selector;
 
 void tss_inicializar() {
-	//noEstoyEnLaIdl = 1;
 	int i = 0;
 	while(i < CANT_ZOMBIS) {
 		inUseA[i] = 0;
@@ -43,7 +41,6 @@ void tss_inicializar() {
 	currentZombieA = 0;
 	currentZombieB = 0;
 
-	// inicializar tss_idle
 	tss_inicializar_tarea_idle();
 
     memcpy(&tss_idle, &tss_inicial, sizeof(tss));
@@ -58,15 +55,6 @@ void tss_inicializar() {
 	gdt[GDT_CURRENT_TSS].base_23_16 = ((u32) (&current_task) & 0x00FF0000) >> 16;
 	gdt[GDT_CURRENT_TSS].base_0_15  = (u32) (&current_task) & 0x0000FFFF;
 
-	//init_restart_tss();
-
-/*
-	gdt[GDT_NEXT_TSS].base_31_24 = ((u32) (&next_task) & 0xFF000000) >> 24;
-	gdt[GDT_NEXT_TSS].base_23_16 = ((u32) (&next_task) & 0x00FF0000) >> 16;
-	gdt[GDT_NEXT_TSS].base_0_15  = (u32) (&next_task) & 0x0000FFFF;
-*/
-    // add_entry((unsigned int) &tss_inicial, 0x67, 0x9, 1, 0);
-    // add_entry((unsigned int) &tss_idle, 0x67, 0x9, 1, 0);
 }
 
 void tss_inicializar_tarea_idle() {
@@ -100,9 +88,6 @@ void tss_inicializar_tarea_idle() {
 tss* _get_next_tss(u8 player) {
 	int i = 0;
 	tss* ret = 0;
-
-	//char* text;
-	//text = "me declaro spectrum",0;
 	
 	if (player) {
 		i = currentZombieB;
@@ -155,12 +140,7 @@ tss* get_next_tss() {
 	} 
 
 	if (!ret) {
-		//char* text;
-		//text = "no encuentra tss",0;
-		//print_string(text, 22, 22, getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
-
 		ret = &tss_idle;
-		//ret = 0;
 	}
 
 	return ret;

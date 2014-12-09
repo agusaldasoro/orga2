@@ -152,7 +152,6 @@ void print_map() {
     print_string(text, 37, 47, getFormat(C_FG_WHITE, 0, C_BG_RED  , 0));
     print_string(text, 42, 47, getFormat(C_FG_WHITE, 0, C_BG_BLUE , 0));
 
-   // print_debugger(0, 0);
 }
 
 

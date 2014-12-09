@@ -279,12 +279,3 @@ proximo_reloj:
                 popad
         ret
         
-
-;extern reset_zombie
-;global resetear_zombie
-;resetear_zombie:
-;    call reset_zombie
-;    
-;    mov [sched_tarea_selector], ax
-;    jmp far [sched_tarea_offset]
-;    jmp resetear_zombie

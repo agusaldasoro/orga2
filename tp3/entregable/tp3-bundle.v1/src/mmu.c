@@ -207,20 +207,13 @@ void setear_paginas(unsigned int player, int x, int y, page_directory* pd) {
 	breakpoint();
 	int i = 0;
 	int _x, _y;
-	// breakpoint();
 	while(i < 9) {
-		// breakpoint();
 		_x = x + offset_x_q[i] * (player ? 1 : -1);
-		// breakpoint();
 		_y = y + offset_y_q[i] * (player ? 1 : -1);
-		// breakpoint();
 
 		mmu_mapear_pagina(0x8000000 + (i*0x1000), pd, get_physical_address(_x, _y), 1, 1);
-		// breakpoint();
 		i++;
-		// breakpoint();
 	}
-	// breakpoint();
 	return;
 }
 

@@ -31,6 +31,5 @@ void _isr19();
 void _isr32();
 void _isr33();
 void _isr102();
-//void resetear_zombie();
 
 #endif  /* !__ISR_H__ */

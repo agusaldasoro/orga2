@@ -138,11 +138,6 @@ void game_move_zombie(u8 player, s8 d) {
 	}
 }
 
-
-void game_jugador_mover(unsigned int jugador, unsigned int value) {
-
-}
-
 void game_lanzar_zombi(u8 player) {
 	breakpoint();
 	if (player) {
@@ -194,16 +189,12 @@ void show_debugger(registers* regs) {
     print_debugger(currentPosA, zombieClassA, regs);
 }
 
-/* pd:eax,delta_x:edi,delta_y:esi, tipo: dx */
 void movimiento(page_directory* pd ,int delta_x,int delta_y,u8 tipo){
 
 	unsigned int x;
 	unsigned int y;
 	get_position(&x,&y,recuperar_fisica(0x8000000,pd));
 
-	// TODO : Por dios, explicar la magia atrás de esta línea.
-	//Es para determinar cual jugador es: si la fisica correspondiente a adelante es mas chica que la del centro
-	// entonces es el 1 y viceversa
     unsigned int player = (recuperar_fisica(0x8001000, pd) < recuperar_fisica(0x8000000, pd));
     int x2 = (int) x;
     int y2 = (int) y;
@@ -244,7 +235,7 @@ void game_move_current_zombi(direccion dir) {
 		memcpy((void*)0x8000000,(void*)0x8005000,0x1000);
 		movimiento((page_directory*)rcr3(),0,-1,claseActual);
 	} else {
-		printf(1, 1, "%s", "GUACHOS FORROS");		
+		printf(1, 1, "%s", "DIRECCION INVALIDA");		
 	}
 }
 

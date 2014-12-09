@@ -15,7 +15,6 @@
 void task() {
     /* Tarea */
     int i;
-    //print_hex(90765,15,15,getFormat(C_FG_WHITE, 0, C_BG_BLACK  , 0));
 
     breakpoint();
     for(i=0;i<100;i++) {
