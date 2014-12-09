@@ -103,11 +103,11 @@ Para pasar a modo protegido los pasos que debemos llevar a cabo son:
 \item[$\triangleright$] Habilitar A20 (en nuestro caso se resuelve haciendo \emph{call habilitar_A20}).
 \item[$\triangleright$] Cargar el registro GDTR con la direcci\'on base de la GDT (lo hacemos con la instrucci\'on  \\ \emph{lgdt} \emph{ [GDT_DESC]} la etiqueta GDT_DESC apunta al descriptor de la GDT en el c\'odigo).
 \item[$\triangleright$] Una vez hecho esto, estamos en condiciones de setear el bit PE del registro CR0 (debemos hacer: \emph{mov eax,cr0 ; or eax,1 ; mov cr0,eax}).
-\item[$\triangleright$] Lo siguiente a realizar es el \emph{jump far} a la siguiente instrucci\'on (utilizamos el selector de segmento \emph{0x50} y de offset la etiqueta \emph{modo_protegido} \textcolor{red}{por que el selector es 0x50??}).
-\item[$\triangleright$] Una vez ya en modo protegido, nos encontramos trabajando en 32 bits y ahora es cuando cargamos los registros de segmento (a los registros  \emph{es, ds, ss y gs} les asignamos el valor de \emph{0x40} y al registro \emph{fs} le asignamos el valor \emph{0x60} \textcolor{red}{aca habr\'ia que poner el porque de estos valores??}).
+\item[$\triangleright$] Lo siguiente a realizar es el \emph{jump far} a la siguiente instrucci\'on (utilizamos el selector de segmento \emph{0x50} y de offset la etiqueta \emph{modo_protegido}, de este modo se le da el índice del descriptor de código de nivel 0).
+\item[$\triangleright$] Una vez ya en modo protegido, nos encontramos trabajando en 32 bits y ahora es cuando cargamos los registros de segmento (a los registros  \emph{es, ds, ss y gs} les asignamos el valor de \emph{0x40} y al registro \emph{fs} le asignamos el valor \emph{0x60}).
 \end{itemize}
  \bigskip	
-Para setear la pila del kernel en la direcci\'on 0x27000 debemos llevar a cabo la siguiente instrucci\'on: 
+Para setear la pila del kernel en la direcci\'on 0x27000 debemos llevar a cabo las siguientes instrucciones: 
 \begin{codesnippet}
 \begin{verbatim}
     mov ebp, 0x27000
@@ -115,20 +115,12 @@ Para setear la pila del kernel en la direcci\'on 0x27000 debemos llevar a cabo l
 \end{verbatim}
 \end{codesnippet}
 
-{\large c)} \underline{Segmento adicional que describe el \'area de la pantalla en memoria que puede ser utilizado} \\ \underline{s\'olo por el kernel.}
-\\
-\textcolor{red}{HELP! aca no se que ponerrrrrrrr}
+\newpage
 
-\begin{codesnippet}
-\begin{verbatim}
-    ; Cambiar modo de video a 80 X 50
-    mov ax, 0003h
-    int 10h ; set mode 03h
-    xor bx, bx
-    mov ax, 1112h
-    int 10h ; load 8x8 font
-\end{verbatim}
-\end{codesnippet}
+{\large c)} \underline{Segmento adicional que describe el \'area de la pantalla en memoria que puede ser utilizado} \\ \underline{s\'olo por el kernel.}\\
+
+Al asignarle al registro \emph{fs} el valor \emph{0x60} le adjudicamos el área de la pantalla en memoria que puede ser utilizado sólo por el Kernel.\\
+
 
 
 {\large d)} \underline{Rutina que se encarga de limpiar la pantalla y pintar el \'area del mapa}
@@ -235,7 +227,7 @@ La funci\'on print_map la vamos a extender sum\'andole las siguientes instruccio
 
 Con el objetivo de hacer que lo descripto anteriormente sea una tarea m\'as simple contamos con las funciones: \emph{print_string} y \emph{get_format}.\\
 
-La funci\'on \textbf{print_string} recibe una posici\'on en el mapa (x,y), un char* con el texto que queremos imprimir en pantalla y un short con los atributos deseados. \textcolor{red}{PONER ALGO DE AVOID PRINT BUG}. Dentro de un \textit{for} que recorre horizontalmente la posici\'on en memoria a partir de la posici\'on (x,y), se va avanzando el char* y en cada iteraci\'on se le asigna a esa posici\'on de memoria el char actual con los atributos pasados por par\'ametro.\\
+La funci\'on \textbf{print_string} recibe una posici\'on en el mapa (x,y), un char* con el texto que queremos imprimir en pantalla y un short con los atributos deseados. Dentro de un \textit{for} que recorre horizontalmente la posici\'on en memoria a partir de la posici\'on (x,y), se va avanzando el char* y en cada iteraci\'on se le asigna a esa posici\'on de memoria el char actual con los atributos pasados por par\'ametro.\\
 %    // avoid black print bug
 %    unsigned char a = (unsigned char) attr;
 %    if (a == 0) {
@@ -252,7 +244,7 @@ unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned cha
 \end{verbatim}
 \end{codesnippet}
 
-
+\newpage
 {\large b)} \underline{Rutinas encargadas de inicializar el directorio y tablas de p\'aginas para el kernel.}\\
 
 Para poder mapear las direcciones 0x00000000 a 0x003FFFFF es necesaria una sola entrada en el Page Directory. En un primer momento, se crea un puntero a Page Directory en la direcci\'on 0x27000. Se limpian las 1024 entradas del Page Directory poniendo todos sus bits en 0.\\
@@ -268,7 +260,7 @@ Para que todo esto funcione y el primer \'indice del Page Directory apunte a un 
 Como ya contamos con un directorio de p\'aginas y una tabla de p\'aginas estamos en condiciones de activar paginaci\'on.\\
 
 
-Como para esto debemos poner en cr3 la base del directorio de p\'aginas y limpiar los bits PCD y PWT del mismo, basta con asignarle a cr3 el valor de 0x27000. De este modo la base queda en 0x27 y los bits limpios. \textcolor{red}{Es correcto esto?}\\
+Como para esto debemos poner en cr3 la base del directorio de p\'aginas y limpiar los bits PCD y PWT del mismo, basta con asignarle a cr3 el valor de 0x27000. De este modo la base queda en 0x27 y los bits limpios.\\
 
 Por \'ultimo resta setear el bit PG del cr0, lo hacemos mediante un or.
 
@@ -280,7 +272,7 @@ Como conocemos las limitaciones de memoria que se poseen y acorde el contexto de
 
 Luego contamos con las funciones \textit{get_page_directory} y \textit{get_page_table} las cuales nos brindan un nuevo page directory o una nueva page table correspondientemente. Ambas se basan en esta variable que poseemos. \\
 
-La funci\'on \textbf{get_page_directory} toma la variable global \textit{p\'aginas} y la multiplica por 4096 (el tama\~no) y se lo suma a la direcci\'on PAGES (que es 0x100000), siendo el n\'umero obtenido el puntero al nuevo Page Directory. Se inicializa en 0 cada \'indice de los 1024 que son y luego a la primer posici\'on se le da como base 0x28, se le da permiso de lectura/escritura y se setea el bit de presente \textcolor{red}{(por que hacemos esto con la primer posicion?)}. Por \'ultimo se incrementa en uno el contador de p\'aginas.\\
+La funci\'on \textbf{get_page_directory} toma la variable global \textit{p\'aginas} y la multiplica por 4096 (el tama\~no) y se lo suma a la direcci\'on PAGES (que es 0x100000), siendo el n\'umero obtenido el puntero al nuevo Page Directory. Se inicializa en 0 cada \'indice de los 1024 que son y luego a la primer posici\'on se le da como base 0x28, se le da permiso de lectura/escritura y se setea el bit de presente. Por \'ultimo se incrementa en uno el contador de p\'aginas.\\
 
 La funci\'on \textbf{get_page_table} tiene un comportamiento similar: adquiere el puntero a la nueva p\'agina de la misma manera, inicializa en cero sus 1024 entradas y por \'ultimo incrementa en uno el contador de \textit{p\'aginas}.\\
 
@@ -312,7 +304,7 @@ La funci\'on \textbf{mmu_inicializar_dir_zombie} recibe como par\'ametro el juga
 
 
 
-\bigskip
+\newpage
 
 {\large c)} \underline{Mapear y Des-Mapear p\'agina.}\\
 
@@ -405,23 +397,30 @@ Cada una de ellas se encuentra en los siguientes \'indices:
 
 Completamos la entrada de la TSS de la tarea Idle con la informaci\'on de la tarea Idle. La tarea Idle se encuentra en la direcci\'on 0x00016000. La pila se aloja en la misma direcci\'on que la pila del kernel y es mapeada con identity mapping. Esta tarea ocupa 1 pagina de 4KB y est\'a mapeada con identity mapping. Adem\'as la misma comparte el mismo CR3 que el kernel. \\
 
-Se le asigna de base 0xFFFFFFFF \textcolor{red}{POR QUE???????}. Al \textbf{eip} se le asigna el valor de 0x00016000, al \textbf{cr3} se le asigna el cr3 del kernel. Como la pila se setea en la posici\'on 0x27000 se les adjudica a \textbf{ebp} y \textbf{esp} ese valor. Los registros \textbf{es}, \textbf{ds}, \textbf{ss} y \textbf{gs} se les da el valor de 0x40 mientras que al \textbf{cs} el de 0x50 \textcolor{red}{Aca habria que explicar porque, no??}. Los \textbf{eflags} se ponen en 0x202 \textcolor{red}{as\'i quedan habilitadas las interrupciones (es por eso?)}. Y por \'ultimo se le asigna a \textbf{esp0} tambi\'en 0x27000 y a \textbf{ss0} 0x40.\\
+Se le asigna de base el puntero a la TSS de la Tarea Idle. Al \textbf{eip} se le asigna el valor de 0x00016000, al \textbf{cr3} se le asigna el cr3 del kernel. Como la pila se setea en la posici\'on 0x27000 se les adjudica a \textbf{ebp} y \textbf{esp} ese valor. Los registros \textbf{es}, \textbf{ds}, \textbf{ss} y \textbf{gs} se les da el valor de 0x40 mientras que al \textbf{cs} el de 0x50. Los \textbf{eflags} se ponen en 0x202 as\'i quedan habilitadas las interrupciones. Y por \'ultimo se le asigna a \textbf{esp0} tambi\'en 0x27000 y a \textbf{ss0} 0x40.\\
 \bigskip
 
 {\large c)} \underline{Completar una TSS libre con una tarea (Zombie).}\\
 
-\textcolor{red}{Construir una funci\'on que complete una TSS libre con los datos correspondientes a una
-tarea (zombi). El c\'odigo de las tareas se encuentra a partir de la direcci\'on 0x00010000
-ocupando una pagina de 4kb cada una seg\'un indica la figura 1. Para la direcci\'on de la
-pila se debe utilizar el mismo espacio de la tarea, la misma crecer\'a desde la base de la tarea. 
-Para el mapa de memoria se debe construir uno nuevo utilizando la funci\'on mmu inicializar dir zombi. 
-Adem\'as, tener en cuenta que cada tarea utilizar\'a una pila distinta de nivel 0, para esto se debe pedir una nueva pagina libre a tal fin.} \\
+Al momento de completar una TSS libre para una nueva tarea (Zombie) lo hacemos del siguiente modo:
+
+\begin{itemize}
+ \item La posición inicial de una tarea, es decir el \textbf{eip}, se le da el valor de 0x80000.
+\item Posee un selector de segmento de código y otro de datos, ambos de nivel 3.
+\item Se arma el stack para la tarea, en el mismo espacio (la página) de la tarea.
+\item Su \textbf{cr3} va a ser el puntero al nuevo Page Directory.
+\item Se le asigna una pila de nivel 0 en una página libre.
+ \end{itemize}
+
+
+
 \bigskip
 
 
 {\large d)} \underline{Primera ejecuci\'on de la Tarea Idle.}\\
 
-El c\'odigo necesario para saltar a la tarea Idle desde la ejecuci\'on de la tarea inicial se realiza con un salto cambiando las tss. \textcolor{red}{Es llevado a cabo con el siguiente c\'odigo?.}\\
+El c\'odigo necesario para saltar a la tarea Idle desde la ejecuci\'on de la tarea inicial se realiza con un salto cambiando las tss. 
+Es llevado a cabo con el siguiente c\'odigo:\\
 
 \begin{codesnippet}
 \begin{verbatim}
