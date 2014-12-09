@@ -13,7 +13,6 @@ sched_tarea_selector:   dw 0x00
 
 registers_snapshot dd 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 debuggerOn: dd 0x0
-; i have no idea what i am doing
 debuggerOn2: dd 0x0
 
 activarReset: dd 0x0
@@ -58,15 +57,6 @@ extern reducirZombiesActivos
     inc eax
     jmp .stack
 .endstack:
-    ;mov eax,[activarReset]
-    ;cmp eax,0
-    ;je .noReset
-    ;mov eax,0
-    ;mov [activarReset],eax
-    ;call preparar_resetear_tarea
-    ;mov [sched_tarea_selector], ax
-    ;jmp far [sched_tarea_offset]
-    ;.noReset:
 %endmacro
 
 %macro ISR 1
@@ -101,19 +91,6 @@ _isr%1:
     inc eax
     jmp .stack
 .endstack:
-    ;mov eax,[activarReset]
-    ;cmp eax,0
-    ;je .noReset
-    ;mov eax,0
-    ;mov [activarReset],eax
-    ;call preparar_resetear_tarea
-    ;mov [sched_tarea_selector], ax
-    ;jmp far [sched_tarea_offset]
-    ;.noReset
-;    call destruir_zombie
-;    jmp 0x80:0
-
-
     mov eax, %1
     push registers_snapshot
     push eax

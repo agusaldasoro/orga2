@@ -274,12 +274,9 @@ void print_debugger(unsigned int player, unsigned char class, registers* registe
     printfc(27, 34, grey, "fs %h", registers->fs);
     printfc(27, 36, grey, "gs %h", registers->gs);
     printfc(27, 38, grey, "ss %h", registers->ss);
-    printfc(27, 40, grey, "eflags %h", registers->eax);
+    // printfc(27, 40, grey, "eflags %h", registers-> );
 
 
-/** TODO: Imprimir los valores de los registros
-
-    // pegar_mapa() que teniamos guardado */
 }
 
 void print_clock_zombie(u8 player,unsigned i,unsigned int clock){
