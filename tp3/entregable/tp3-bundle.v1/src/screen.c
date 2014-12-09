@@ -192,7 +192,6 @@ char* getClassName(u8 class) {
 
 void print_debugger(unsigned int player, unsigned char class, registers* registers){
 
-    // TODO: copiar_mapa() en algun espacio de memoria libre
     ca (*screen)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
     ca gris;
     gris.c = 0;
@@ -250,7 +249,6 @@ void print_debugger(unsigned int player, unsigned char class, registers* registe
     printfc(27, 20, grey, "edi %h", registers->edi);
     printfc(27, 22, grey, "ebp %h", registers->ebp);
     printfc(27, 24, grey, "esp %h", registers->esp);
-    // printfc(27,26, grey, "eip %h          cr0", registers->e);
 
     printfc(42, 10, grey, "cr0 %h", registers->eax);
     printfc(42, 12, grey, "cr1 %h", registers->eax);
@@ -274,7 +272,6 @@ void print_debugger(unsigned int player, unsigned char class, registers* registe
     printfc(27, 34, grey, "fs %h", registers->fs);
     printfc(27, 36, grey, "gs %h", registers->gs);
     printfc(27, 38, grey, "ss %h", registers->ss);
-    // printfc(27, 40, grey, "eflags %h", registers-> );
 
 
 }

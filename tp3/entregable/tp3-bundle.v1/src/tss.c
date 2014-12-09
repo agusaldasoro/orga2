@@ -13,7 +13,6 @@
 
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
-//tss reset_tss;
 
 u8 inUseA[CANT_ZOMBIS] = {};
 u8 inUseB[CANT_ZOMBIS] = {};
