@@ -27,6 +27,7 @@ u32 currentPosB;
 u8 zombieClassA;
 u8 zombieClassB;
 
+void show_debugger(registers*);
 
 void game_init();
 void game_change_class(u8 player, s8 d);

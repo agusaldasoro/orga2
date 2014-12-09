@@ -30,11 +30,16 @@ void print_hex(unsigned int numero, unsigned int x, unsigned int y, unsigned sho
 
 unsigned char getFormat(unsigned char fore_color, char fore_bright, unsigned char back_color, char blink);
 
+u8 debugger;
+u8* map[8000];
+
 void clear_screen();
 void print_map();
 void print_exception(int number, registers* regs);
-void print_debugger(unsigned int player, unsigned char class);
 void print_clock_zombie(u8 player,unsigned i,unsigned int clock);
 void reset_clock_zombie(u8 player,unsigned i);
+void print_debugger(unsigned int player, unsigned char class, registers* registers);
+
+void toggle_debugger();
 
 #endif  /* !__SCREEN_H__ */

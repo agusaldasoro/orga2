@@ -63,8 +63,7 @@ bandas_asm:
     movdqu xmm1,[rdi+rax] ; agarro 16 bytes del source
     movdqu xmm2,xmm1
 
-    ; Pongo ceros en alpha así no jode en la suma 
-    ; (también podría aumentar en 255 los valores con los que comparo)
+    ; Pongo ceros el alpha así no jode en la suma 
     movdqu xmm15,[rgb_only_mask]
     pand xmm1,xmm15
     pand xmm2,xmm15

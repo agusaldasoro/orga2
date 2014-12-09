@@ -54,6 +54,7 @@ void game_init() {
 
 	zombiesActivosA = 0;
 	zombiesActivosB = 0;
+	debugger = 0;
 
 	termino_el_juego = 0;
 	contadorDeInactividad = 0;
@@ -187,6 +188,10 @@ void mover_pantalla(int x, int y, int x2, int y2, u8 tipo){
 		print_string("C", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 	if(tipo == ZOMBIE_MUERTO)
 		print_string("X", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+}
+
+void show_debugger(registers* regs) {
+    print_debugger(currentPosA, zombieClassA, regs);
 }
 
 /* pd:eax,delta_x:edi,delta_y:esi, tipo: dx */

@@ -10,6 +10,8 @@
 #include <stdarg.h>
 #include "game.h"
 
+u8 currentFormat;
+
 unsigned int strlen(const char *s) {
     unsigned int len = 0;
 
@@ -22,8 +24,8 @@ unsigned int strlen(const char *s) {
 
 void putc(char c, unsigned int col, unsigned int row) {
     // avoid black print bug
-    unsigned char attr = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
-
+    // unsigned char attr = getFormat(C_FG_WHITE, 0, C_BG_BLACK, 0);
+    u8 attr = currentFormat;
     if (c == '\n') putc('\r', col, row);
 
     ca (*p)[VIDEO_COLS] = (ca (*)[VIDEO_COLS]) VIDEO;
@@ -84,7 +86,7 @@ void _printf(unsigned int col, unsigned int row, char attr, const char *format, 
 
     // va_list args;
     // va_start(args, format);
-
+    currentFormat = attr;
     int nextArg = 0; // find a better name for this.
     int n;
     char *s;
@@ -197,5 +199,9 @@ void handle_keyboard_interrumption(u8 scancode) {
         game_move_zombie(PLAYER_B, 1);
     } else if (sc == 0xB6) {
         game_lanzar_zombi(PLAYER_B);
+    // } else if (sc == 0x95) {
+    //   __asm __volatile("xchg %%bx, %%bx" : :);
+    //    debuggerOn = !debuggerOn;
     }
+
 }
