@@ -28,13 +28,13 @@ extern sched_proximo_indice
 
 extern print_exception
 extern proximo_indice
+extern reducirZombiesActivos
 ;;
 ;; Definición de MACROS
 ;; -------------------------------------------------------------------------- ;;
 
 %macro TAKE_SNAPSHOT 1
-     xchg bx, bx
-      xchg bx, bx
+    xchg bx, bx
     mov [registers_snapshot],eax
     mov [registers_snapshot+4],ebx
     mov [registers_snapshot+8],ecx
@@ -67,8 +67,6 @@ extern proximo_indice
     ;mov [sched_tarea_selector], ax
     ;jmp far [sched_tarea_offset]
     ;.noReset:
-    call desalojarTarea
-    jmp 0x80:0    
 %endmacro
 
 %macro ISR 1
@@ -76,6 +74,7 @@ global _isr%1
 
 extern desalojarTarea
 extern preparar_resetear_tarea
+extern destruir_zombie
 
 _isr%1:
  xchg bx, bx
@@ -111,8 +110,8 @@ _isr%1:
     ;mov [sched_tarea_selector], ax
     ;jmp far [sched_tarea_offset]
     ;.noReset
-    call desalojarTarea
-    jmp 0x80:0
+;    call destruir_zombie
+;    jmp 0x80:0
 
 
     mov eax, %1
@@ -147,16 +146,17 @@ ISR 10 ; _isr0
 ISR 11 ; _isr0
 ISR 12 ; _isr0
 ISR 13 ; _isr0
-ISR 14 ; _isr0
+;ISR 14 ; _isr0
 ISR 15 ; _isr0
 ISR 16 ; _isr0
 ISR 17 ; _isr0
 ISR 18 ; _isr0
 ISR 19 ; _isr0
 
-; global _isr14
-; _isr14:
-;     jmp 0x80:0
+global _isr14
+_isr14:
+    call destruir_zombie
+    jmp 0x80:0    
 
 
 ;;

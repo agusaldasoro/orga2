@@ -102,11 +102,20 @@ void sumarPunto(u8 player){
 	}
 	reimprimirPuntaje(player);
 	u8 zombie_player = desalojarTarea();
-	if(zombie_player==1){
+	reducirZombiesActivos(zombie_player);
+}
+
+void reducirZombiesActivos(u8 player){
+	if(player==1){
 		zombiesActivosB--;
-	}else if(zombie_player==0){
+	}else if(player==0){
 		zombiesActivosA--;
 	}
+}
+
+void destruir_zombie(){
+	u8 zombie_player = desalojarTarea();
+	reducirZombiesActivos(zombie_player);
 }
 
 char* get_zombie_type(u32 type) {
@@ -176,11 +185,11 @@ void mover_pantalla(int x, int y, int x2, int y2, u8 tipo){
 		y2 -= ALTO_MAPA;
 	}
 	if (tipo == 0)
-		print_string("G", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+		print_string("G", x2, y2, getFormat(C_FG_BLACK,0,C_BG_GREEN,0));
 	if (tipo == 1)
-		print_string("M", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+		print_string("M", x2, y2, getFormat(C_FG_BLACK,0,C_BG_GREEN,0));
 	if (tipo == 2)
-		print_string("C", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
+		print_string("C", x2, y2, getFormat(C_FG_BLACK,0,C_BG_GREEN,0));
 	if(tipo == ZOMBIE_MUERTO)
 		print_string("X", x2, y2, getFormat(C_FG_LIGHT_GREY,0,C_BG_GREEN,0));
 }

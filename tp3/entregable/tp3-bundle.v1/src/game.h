@@ -36,6 +36,8 @@ char* get_zombie_type(u32 type);
 void terminar_juego();
 void revisarTerminacion();
 void revisar_terminar_por_inactividad();
+void reducirZombiesActivos(u8 player);
+void destruir_zombie();
 unsigned int contadorDeInactividad;
 
 #endif  /* !__GAME_H__ */
