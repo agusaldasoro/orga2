@@ -217,7 +217,6 @@ Para que el procesador utilice la IDT creada anteriormente, generamos la excepci
 Efectivamente, anduvo acorde a lo esperado.
 \newpage
 \section{Ejercicio 3}
-\textcolor{red}{Limpiar el buffer de video es hacer clear_screen???... Asumo que s\'i.}\\
 
 
 {\large a)} \underline{Implementaci\'on completa de print_map.} \\
@@ -362,6 +361,18 @@ Su funcionamiento consiste en pushear los registros, llamar a \textit{proximo_re
 La rutina asociada a la interrupci\'on de teclado fue programada en esta instancia de forma que si se presiona cualquiera de las teclas a utilizar en el juego, se presenta la misma en la esquina superior derecha de la pantalla. \\
 
 El comportamiento de este handler consiste en testear qu\'e tecla fue presionada (mediante \textit{in \textbf{al}, 0x60}), llamar a la funci\'on handle_keyboard_interrumption que recibe como par\'ametro \textbf{eax}. Esta funci\'on se encarga de imprimir en pantalla el char que corresponda a la tecla presionada. Luego el handler llama a \textit{fin_intr_pic1} y termina la ejecuci\'on un \textit{iret}. \\
+
+
+Luego, modificamos esta rutina y lo que ejecuta es:
+\begin{itemize}
+\item pushad
+\item Testea la tecla presionada, si es la \emph{y} setea la variable que indica si est\'a activo el debugger sino ejecuta \textit{handle_keyboard_interrumption}.
+\item popad
+\end{itemize}
+
+El \textbf{debugger} se va a comportar acorde a lo explicado m\'as adelante.\\
+
+Si entra en el \textbf{handle_keyboard_interrumption}, lo que sucede es testear hacia donde es el movimiento y de que jugador para luego llamar a la funci\'on \textit{movimiento} que mueva toda la paginaci\'on y lo mueva en pantalla.
 \bigskip
 
 {\large d)} \underline{Rutina asociada a la interrupci\'on 0x66.}\\
@@ -426,44 +437,111 @@ jmp 0x80:0
 
 {\large a)} \underline{Inicializar las estructuras de datos del scheduler.}\\
 
-\textcolor{red}{Completar.}\\
+En nuestro dise\~no contamos con las siguientes variables para llevar el control sobre el scheduler, qu\'e jugador est\'a jugando, cu\'al es el puntaje, cu\'antos zombies fueron lanzados y cu\'antos zombies hay activos:
+
+\begin{itemize}
+\item Puntaje de A y B, \textit{inicializados en cero}.
+\item Posici\'on actual de A y B en el eje de las \emph{y}, \textit{inicializados en 20 (mitad de la pantalla)}.
+\item Clase de zombie actual de A y B, \textit{inicializados en MAGO}.
+\item Cantidad de zombies disponibles para lanzar de A y B, \textit{inicializados en 20}.
+\item Cantidad de zombies activos de A y B, \textit{inicializados en 0}.
+\item Variable que indica si el debugger est\'a activo o no, \textit{inicializado en FALSE}.
+\item Variable que indica si termin\'o el juego, \textit{inicializado en FALSE}.
+\item Contador de cuanto tiempo hay de inactividad para terminar la ejecuci\'on, \textit{inicializado en 0}.
+\end{itemize}
+
+
+
 \bigskip
 
 {\large b)} \underline{Implementaci\'on pr\'oximo \'indice.}\\
-%Crear la funci\'on sched pr\'oximo indice() que devuelve el \'indice en la GDT de la pr\'oxima
-%tarea a ser ejecutada. Construir la rutina de forma devuelva una tarea de cada jugador
-%por vez seg\'un se explica en la secci\'on 3.2\\
 
-\textcolor{red}{Completar.}\\
+Implementamos la funci\'on \textbf{pr\'oximo \'indice} que devuelve el pr\'oximo \'indice en la GDT con la tss a ejecutar.\\
+
+La funci\'on tiene el siguiente comportamiento:
+
+\begin{itemize}
+\item Si la CURRENT_TSS no est\'a bussy, devuelve esta sino devuelve NEXT_TSS.
+\item Si el juego termin\'o devuelve la IDLE_TSS.
+\item Si la pr\'oxima tss a ejecutar es la misma que la actual, se devuelve 0 (as\'i no se ejecuta el cambio de tarea que ser\'ia inv\'alido).
+\end{itemize}
+
 \bigskip
 
 {\large c)} \underline{Rutina de atenci\'on a la interrupci\'on 0x66.}\\
 
+La rutina de atenci\'on a la \textbf{interrupci\'on 0x66 }se basa en pushear los registros, llamar a la funci\'on \textit{game_move_current_zombi} y luego hace \textit{pop} finalizando con un \textit{jmp far} y un\textit{ iret}.\\
 
-\textcolor{red}{Completar.}\\
-\bigskip
+La funci\'on \textbf{game_move_current_zombi} consiste en:
 
+\begin{itemize}
+\item Asigna el valor 0 al contador de inactividad.
+\item Eval\'ua cu\'al es el movimiento a realizar (ADE, ATR, DER o IZQ) y luego se copia el codigo de la tarea en la pr\'oxima p\'agina. Se mapean las nuevas p\'aginas y se adelanta al zombie en pantalla.
+\item Si el zombie muri\'o se suma el punto correspondiente.
+\end{itemize}
+
+\textit{
+En la funci\'on que ejecuta el movimiento, para saber a qu\'e jugador se corresponde se compara la direcci\'on f\'isica correspondiente al centro con la que est\'a mapeada ``adelante''; si es menor es el Jugador B.\\}
+
+
+
+\newpage
 {\large d)} \underline{Rutina de atenci\'on a la interrupci\'on del Clock.}\\
-%Modificar el c\'odigo necesario para que se realice el intercambio de tareas por cada ciclo de
-%reloj. El intercambio se realizar\'a seg\'un indique la funci\'on sched proximo \'indice().\\
 
-\textcolor{red}{Completar.}\\
+La rutina de atenci\'on de Interrupci\'on del clock consiste en:
+
+\begin{itemize}
+\item Se fija si est\'a seteada la variable del debuggerOn pero no est\'a habilitado el debugger (es decir debuggerOn2 == FALSE), si es as\'i activa la pantalla de debugg. En cambio si debuggerOn == TRUE y debuggerOn2 == TRUE, salta al final.
+\item En caso de tener que activar el debugger, mediante el macro TAKE_SNAPSHOT se copian todos los valores de los registros y se apilan antes de llamar a la funci\'on que va a imprimir el debugger en pantalla.
+\item Si es un caso contrario a los considerados anteriormente, lo que se hace es un call a: \textit{proximo_reloj}, \textit{revisarTerminacion} y \textit{proximo_indice}. Luego se hace el jmp far adecuado.
+\item En todos los casos, se llama previamente a la funci\'on fin_intr_pic1.
+\end{itemize}
+
+La funci\'on \textit{proximo_reloj} se encarga de cambiar el caracter en pantalla que marca a los zombies activos (relojito). La funci\'on  \textit{revisarTerminacion} lo que hace es fijarse si termin\'o la ejecuci\'on del juego. Y por \'ultimo, la funci\'on \textit{proximo_indice} indica qu\'e \'indice en la \emph{GDT} es el pr\'oximo a ejecutar.
+
+
 \bigskip
 
 {\large e)} \underline{Rutina de atenci\'on a las excepciones del procesador.}\\
-%Modificar las rutinas de excepciones del procesador para que desalojen a la tarea que
-%estaba corriendo y corran la pr\'oxima.\\
 
+El funcionamiento de esta rutina se basa en:
 
-\textcolor{red}{Completar.}\\
+\begin{itemize}
+\item Almacenar en memoria el estado de todos los registros y luego almacenarlos en la pila para ser pasados como par\'ametros.
+\item Llamar a la funci\'on desalojarTarea.
+\item Hacer un jmp far a la tarea Idle
+\item LLamar a la funci\'on print_exception.
+\end{itemize}
 \bigskip
 
+La funci\'on \textbf{desalojarTarea} funciona del siguiente modo:
+
+\begin{itemize}
+\item Si la tarea NEXT_TSS est\'a en Busy, esta es la que va a ser desalojada caso contrario va a ser la CURRENT_TSS.
+\item Compara con las tss guardadas del jugador A, para ver si le pertenece a \'el la tarea a desalojar. Si es as\'i, la encuentra y le limpia el valor de en uso a cero, el clock de zombies de esta tarea fija en cero y se resetea su clock.
+\item Si no pertenec\'ia al jugador A, se busca en el jugador y se hace lo mismo que lo explicado arriba.
+\end{itemize}
+\bigskip
+
+La funci\'on \textbf{print_exception} es la explicada en el \emph{Ejercicio 2}.
+
+\bigskip
+
+\newpage
 {\large f)} \underline{Mecanismo de Debugging.}\\
-%Implementar el mecanismo de debugging explicado en la secci\'on 3.4 que indicar\'a en pantalla
-%la raz\'on del desalojo de una tarea.
+
+Al momento de llamar a la interrupci\'on del teclado con la tecla \emph{y}, se chequea si ya estaba activado el debugger o no (esto es con la variable debuggerOn). Si no lo estaba, se almacena en memoria el contenido de toda la pantalla, de este modo se salva la pantalla previa a que se abra la ventana de Debugging. Adem\'as se le indica a la variable debuggerOn en TRUE y a la variable debuggerOn2 en FALSE, de este modo se asume que se activ\'o el Modo de Debugg, pero todav\'ia no se mostr\'o en pantalla.
+
+Si el debuggerOn hubiera estado en TRUE, lo que hace esta funci\'on es volver a copiar en el \'area del Mapa, la pantalla que hab\'ia sido guardada previamente en memoria.\\
+
+Cuando llega la interrupci\'on del reloj, esta chequea ambas variables y cuando lo haga si la variable debuggerOn == TRUE y debuggerOn2 == FALSE su comportamiento va a ser llamar a la funci\'on \\ \textit{show_debugger}. En caso contrario, su comportamiento va a ser acorde a lo explicado anteriormente.\\
 
 
-\textcolor{red}{Completar.}\\
+Contamos con un Macro que almacena en memoria todos los valores de registros al momento de la interrupci\'on, de este modo la funci\'on que imprime en pantalla la ventana de Debugging (\textit{show_debugger}) recibe como par\'ametro los mismos.\\
+
+La funci\'on \textbf{show_debugger} va a ser la encargada de ``pintar'' la pantalla con la ventana de debugger, imprimiendo los valores de los registros que fueron pasados por par\'ametro.
+
+
 \end{document}
 
 
