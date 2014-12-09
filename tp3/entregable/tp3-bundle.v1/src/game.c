@@ -137,11 +137,11 @@ void game_change_class(u8 player, s8 d) {
 
 void game_move_zombie(u8 player, s8 d) {
 	if (player) {
-		if (currentPosB <= 0 || currentPosB >= ALTO_MAPA-1) return;
+		if (currentPosB+d < 0 || currentPosB+d > ALTO_MAPA-1) return;
 		mostrar_cursores(player, d);
 		currentPosB = currentPosB + d;
 	} else {
-		if (currentPosA <= 0 || currentPosA >= ALTO_MAPA-1) return;
+		if (currentPosA+d < 0 || currentPosA+d > ALTO_MAPA-1) return;
 		mostrar_cursores(player, d);
 		currentPosA = currentPosA + d;
 	}
