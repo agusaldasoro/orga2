@@ -16,6 +16,8 @@ debuggerOn: dd 0x0
 ; i have no idea what i am doing
 debuggerOn2: dd 0x0
 
+activarReset: dd 0x0
+
 keyboard_str:   db "Teclado: %h",0
 
 ;; PIC
@@ -31,7 +33,8 @@ extern proximo_indice
 ;; -------------------------------------------------------------------------- ;;
 
 %macro TAKE_SNAPSHOT 1
-    ; xchg bx, bx
+     xchg bx, bx
+      xchg bx, bx
     mov [registers_snapshot],eax
     mov [registers_snapshot+4],ebx
     mov [registers_snapshot+8],ecx
@@ -55,7 +58,17 @@ extern proximo_indice
     inc eax
     jmp .stack
 .endstack:
-    
+    ;mov eax,[activarReset]
+    ;cmp eax,0
+    ;je .noReset
+    ;mov eax,0
+    ;mov [activarReset],eax
+    ;call preparar_resetear_tarea
+    ;mov [sched_tarea_selector], ax
+    ;jmp far [sched_tarea_offset]
+    ;.noReset:
+    call desalojarTarea
+    jmp 0x80:0    
 %endmacro
 
 %macro ISR 1
@@ -65,6 +78,7 @@ extern desalojarTarea
 extern preparar_resetear_tarea
 
 _isr%1:
+ xchg bx, bx
     mov [registers_snapshot],eax
     mov [registers_snapshot+4],ebx
     mov [registers_snapshot+8],ecx
@@ -88,13 +102,22 @@ _isr%1:
     inc eax
     jmp .stack
 .endstack:
-    mov eax, %1
-    push registers_snapshot
-    push eax
-    
+    ;mov eax,[activarReset]
+    ;cmp eax,0
+    ;je .noReset
+    ;mov eax,0
+    ;mov [activarReset],eax
+    ;call preparar_resetear_tarea
+    ;mov [sched_tarea_selector], ax
+    ;jmp far [sched_tarea_offset]
+    ;.noReset
     call desalojarTarea
     jmp 0x80:0
 
+
+    mov eax, %1
+    push registers_snapshot
+    push eax
     call print_exception
     jmp $
 
@@ -145,6 +168,8 @@ global _isr32
 _isr32:
     ; xchg bx, bx
     pushad
+    mov eax,1
+    mov [activarReset],eax
     mov eax,[debuggerOn] 
     cmp eax, 0
     je .nodebug
@@ -194,6 +219,8 @@ extern handle_keyboard_interrumption
 _isr33:
     pushad
     xor eax,eax
+    mov eax,0
+    mov [activarReset],eax
     in al, 0x60
     cmp al,0x95
     jne .nodebug
@@ -253,11 +280,11 @@ proximo_reloj:
         ret
         
 
-extern reset_zombie
-global resetear_zombie
-resetear_zombie:
-    call reset_zombie
-    ;jmp 0x80:0
-    mov [sched_tarea_selector], ax
-    jmp far [sched_tarea_offset]
-    jmp resetear_zombie
+;extern reset_zombie
+;global resetear_zombie
+;resetear_zombie:
+;    call reset_zombie
+;    
+;    mov [sched_tarea_selector], ax
+;    jmp far [sched_tarea_offset]
+;    jmp resetear_zombie

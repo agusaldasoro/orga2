@@ -13,7 +13,7 @@
 
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
-tss reset_tss;
+//tss reset_tss;
 //char noEstoyEnLaIdl;
 
 u8 inUseA[CANT_ZOMBIS] = {};
@@ -58,7 +58,7 @@ void tss_inicializar() {
 	gdt[GDT_CURRENT_TSS].base_23_16 = ((u32) (&current_task) & 0x00FF0000) >> 16;
 	gdt[GDT_CURRENT_TSS].base_0_15  = (u32) (&current_task) & 0x0000FFFF;
 
-	init_restart_tss();
+	//init_restart_tss();
 
 /*
 	gdt[GDT_NEXT_TSS].base_31_24 = ((u32) (&next_task) & 0xFF000000) >> 24;
@@ -178,6 +178,7 @@ tss* get_free_tss(u8 player,u8 class) {
 
 	}
 
+
 	if(i==CANT_ZOMBIS) return 0;
 
 	if(player){
@@ -292,12 +293,12 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	
 	tss->eflags = eflags;
 	tss->iomap = 0xffff;
-	//tss->esp0 = 0x300000 - (paginas * 0x1000);
-	tss->esp0 = (unsigned int) get_page_table() + 0x1000;
+	tss->esp0 = 0x300000 - (paginas * 0x1000);
+	//tss->esp0 = (unsigned int) get_page_table() + 0x1000;
 	tss->ss0 = 0x40;
 	tss->eip = 0x8000000;
 }
-
+/*
 void init_restart_tss(){
 	reset_tss.eip = (unsigned int) &(reset_zombie);
 	reset_tss.cr3 = rcr3();
@@ -343,3 +344,4 @@ unsigned int reset_zombie(){
 	init_tss(aResetear, (u32) rcr3(), ZOMBIE_VIRTUAL, ZOMBIE_VIRTUAL + PAGE_SIZE, (0x48| 3), (0x58 | 3), 0x202);
 	return res*8;
 }
+*/
