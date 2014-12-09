@@ -61,8 +61,10 @@ extern proximo_indice
 %macro ISR 1
 global _isr%1 
 
+extern desalojarTarea
+extern preparar_resetear_tarea
+
 _isr%1:
-    ; xchg bx, bx
     mov [registers_snapshot],eax
     mov [registers_snapshot+4],ebx
     mov [registers_snapshot+8],ecx
@@ -89,6 +91,10 @@ _isr%1:
     mov eax, %1
     push registers_snapshot
     push eax
+    
+    call desalojarTarea
+    jmp 0x80:0
+
     call print_exception
     jmp $
 
@@ -246,4 +252,12 @@ proximo_reloj:
                 popad
         ret
         
-        
+
+extern reset_zombie
+global resetear_zombie
+resetear_zombie:
+    call reset_zombie
+    ;jmp 0x80:0
+    mov [sched_tarea_selector], ax
+    jmp far [sched_tarea_offset]
+    jmp resetear_zombie

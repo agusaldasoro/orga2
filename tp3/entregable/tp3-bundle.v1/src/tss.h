@@ -65,6 +65,11 @@ u8 desalojarTarea();
 u8 claseActual;
 u8 termino_el_juego;
 
+
+unsigned int preparar_resetear_tarea();
+unsigned int reset_zombie();
+void init_restart_tss();
+
 tss tss_inicial;
 tss tss_idle;
 tss current_task;

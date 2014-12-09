@@ -13,6 +13,7 @@
 
 tss tss_zombisA[CANT_ZOMBIS];
 tss tss_zombisB[CANT_ZOMBIS];
+tss reset_tss;
 //char noEstoyEnLaIdl;
 
 u8 inUseA[CANT_ZOMBIS] = {};
@@ -56,6 +57,8 @@ void tss_inicializar() {
 	gdt[GDT_CURRENT_TSS].base_31_24 = ((u32) (&current_task) & 0xFF000000) >> 24;
 	gdt[GDT_CURRENT_TSS].base_23_16 = ((u32) (&current_task) & 0x00FF0000) >> 16;
 	gdt[GDT_CURRENT_TSS].base_0_15  = (u32) (&current_task) & 0x0000FFFF;
+
+	init_restart_tss();
 
 /*
 	gdt[GDT_NEXT_TSS].base_31_24 = ((u32) (&next_task) & 0xFF000000) >> 24;
@@ -286,12 +289,57 @@ void init_tss(tss* tss, u32 cr3, u32 eip, u32 stack, u16 ds, u16 cs, u32 eflags)
 	tss->gs = ds;
 	tss->cs = cs;
 	tss->fs = 0x60;
-	tss->eax = 0x3498;
 	
 	tss->eflags = eflags;
 	tss->iomap = 0xffff;
-	tss->esp0 = 0x300000 - (paginas * 0x1000);
-	//tss->esp0 = (unsigned int) get_page_table() + 0x1000;
+	//tss->esp0 = 0x300000 - (paginas * 0x1000);
+	tss->esp0 = (unsigned int) get_page_table() + 0x1000;
 	tss->ss0 = 0x40;
 	tss->eip = 0x8000000;
+}
+
+void init_restart_tss(){
+	reset_tss.eip = (unsigned int) &(reset_zombie);
+	reset_tss.cr3 = rcr3();
+	
+	reset_tss.ebp = (unsigned int) get_page_table()+0x1000;
+	reset_tss.esp = reset_tss.ebp;
+
+	reset_tss.es = 0x40;
+    reset_tss.ds = 0x40;
+    reset_tss.ss = 0x40;
+    reset_tss.gs = 0x40;
+    reset_tss.cs = 0x50;
+
+	reset_tss.eflags = 0x202;
+	reset_tss.iomap = 0xffff;
+
+	reset_tss.esp0 =  reset_tss.ebp;
+	reset_tss.ss0 = 0x40;
+}
+
+unsigned int preparar_resetear_tarea(){
+	unsigned int res;
+	if(!is_busy(&gdt[GDT_NEXT_TSS])){
+		res = GDT_NEXT_TSS;
+	}else{
+		res = GDT_CURRENT_TSS;
+	}
+	tss_set_base(&(gdt[res]), (u32) &reset_tss);
+	reset_tss.cr3 = rcr3();
+	return res*8;
+}
+
+unsigned int reset_zombie(){
+	tss* aResetear;
+	unsigned int res;
+	if(!is_busy(&gdt[GDT_NEXT_TSS])){
+		aResetear = recuperarBase(GDT_NEXT_TSS);
+		res = GDT_NEXT_TSS;
+	}else{
+		aResetear = recuperarBase(GDT_CURRENT_TSS);
+		res = GDT_CURRENT_TSS;
+	}
+	init_tss(aResetear, (u32) rcr3(), ZOMBIE_VIRTUAL, ZOMBIE_VIRTUAL + PAGE_SIZE, (0x48| 3), (0x58 | 3), 0x202);
+	return res*8;
 }
